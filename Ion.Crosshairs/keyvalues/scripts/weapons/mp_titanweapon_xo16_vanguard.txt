@@ -1,0 +1,25 @@
+WeaponData
+{
+	RUI_CrosshairData
+	{
+		Crosshair_1
+		{
+			"ui"						"ui/crosshair_alternator"
+			"base_spread"				"250.0"
+			Args
+			{
+				isFiring				weapon_is_firing
+			}
+		}
+
+		Crosshair_2
+		{
+			"ui"						"ui/crosshair_alternator"
+			"base_spread"				"250.0"
+			Args
+			{
+				isFiring				weapon_is_firing
+			}
+		}
+	}
+}

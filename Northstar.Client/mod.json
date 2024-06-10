@@ -48,8 +48,23 @@
 			"Flags": "ARCHIVE_PLAYERPROFILE"
 		},
 		{
-			"Name": "ns_communities_disabled_override",
+			"Name": "ns_communities_enabled_override",
+			"DefaultValue": "1",
+			"Flags": "ARCHIVE_PLAYERPROFILE"
+		},
+		{
+			"Name": "ns_cl_speedometer_mode",
 			"DefaultValue": "0",
+			"Flags": "ARCHIVE_PLAYERPROFILE"
+		},
+		{
+			"Name": "damage_indicators_mode",
+			"DefaultValue": "3",
+			"Flags": "ARCHIVE_PLAYERPROFILE"
+		},
+		{
+			"Name": "core_flyouts_enabled",
+			"DefaultValue": "1",
 			"Flags": "ARCHIVE_PLAYERPROFILE"
 		}
 	],
@@ -147,6 +162,42 @@
 			"RunOn": "UI",
 			"UICallback": {
 				"After": "AtlasAuthDialog"
+			}
+		},
+		{
+			"Path": "ui/menu_extras.nut",
+			"RunOn": "UI",
+			"UICallback": {
+				"Before": "AddExtrasMenu"
+			}
+		},
+		{
+			"Path": "ui/menu_dialog_textentry.nut",
+			"RunOn": "UI",
+			"UICallback": {
+				"Before": "AddDialogTextEntry"
+			}
+		},
+		{
+			"Path": "ui/menu_playerlist.nut",
+			"RunOn": "UI",
+			"UICallback" : {
+				"Before": "AddPlayerlistMenu"
+			}
+		},
+		{
+			"Path": "client/cl_playerlist.gnut",
+			"RunOn": "(CLIENT && MP)"
+		},
+		{
+			"Path": "client/rui/cl_damage_indicators.gnut",
+			"RunOn": "CLIENT"
+		},
+		{
+			"Path": "ui/menu_demopicker.nut",
+			"RunOn": "UI",
+			"UICallback": {
+				"Before": "AddDemopickerMenu"
 			}
 		}
 	],

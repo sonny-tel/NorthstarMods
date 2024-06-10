@@ -12,6 +12,10 @@ global function TriggerConnectToServerCallbacks
 
 const int BUTTONS_PER_PAGE = 15 // Number of servers we show
 const float DOUBLE_CLICK_TIME_MS = 0.4 // Max time between clicks for double click registering 
+const int SLIDER_PANEL_OFFSET = 1250
+const int SLIDER_OFFSET_X = 15
+const float SLIDER_MIN_Y = -30.0
+const float SLIDER_MAX_Y = 585.0
 
 // Stores mouse delta used for scroll bar
 struct {
@@ -78,6 +82,7 @@ struct {
 	int serverButtonFocusedID = 0
 	bool shouldFocus = true
 	bool cancelConnection = false
+    int modsChanged = 0
 	
 	// filtered array of servers
 	array<serverStruct> serversArrayFiltered
@@ -172,6 +177,7 @@ void function InitServerBrowserMenu()
 	AddMenuEventHandler( file.menu, eUIEvent.MENU_OPEN, OnServerBrowserMenuOpened )
 	AddMenuFooterOption( file.menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
 	AddMenuFooterOption( file.menu, BUTTON_Y, PrependControllerPrompts( BUTTON_Y, "#REFRESH_SERVERS" ), "#REFRESH_SERVERS", RefreshServers )
+    AddMenuFooterOption( file.menu, BUTTON_X, "#X_BUTTON_DIRECT_CONNECT", "Direct Connect", OnDirectConnectButton )
 
 	// Setup server buttons
 	var width = 1120.0  * ( GetScreenSize()[1] / 1080.0 )
@@ -219,7 +225,6 @@ void function InitServerBrowserMenu()
 
 	AddButtonEventHandler( Hud_GetChild( file.menu, "ConnectingButton"), UIE_CLICK, ConnectingButton_Activate )
 
-
 	// Hidden cause no need, if server descriptions become too long use this
 	Hud_SetEnabled( Hud_GetChild( file.menu, "BtnServerDescription"), false )
 	Hud_SetEnabled( Hud_GetChild( file.menu, "BtnServerMods"), false )
@@ -258,7 +263,6 @@ void function FlushMouseDeltaBuffer()
 	mouseDeltaBuffer.deltaY = 0
 }
 
-
 void function SliderBarUpdate()
 {
 	if ( file.filteredServers.len() <= BUTTONS_PER_PAGE )
@@ -273,8 +277,8 @@ void function SliderBarUpdate()
 
 	Hud_SetFocused( sliderButton )
 
-	float minYPos = -40.0 * ( GetScreenSize()[1] / 1080.0 )
-	float maxHeight = 562.0  * ( GetScreenSize()[1] / 1080.0 )
+	float minYPos = SLIDER_MIN_Y * ( GetScreenSize()[1] / 1080.0 )
+	float maxHeight = SLIDER_MAX_Y  * ( GetScreenSize()[1] / 1080.0 )
 	float maxYPos = minYPos - ( maxHeight - Hud_GetHeight( sliderPanel ) )
 	float useableSpace = ( maxHeight - Hud_GetHeight( sliderPanel ) )
 
@@ -288,9 +292,9 @@ void function SliderBarUpdate()
 	if ( newPos < maxYPos ) newPos = maxYPos
 	if ( newPos > minYPos ) newPos = minYPos
 
-	Hud_SetPos( sliderButton , 2, newPos )
-	Hud_SetPos( sliderPanel , 2, newPos )
-	Hud_SetPos( movementCapture , 2, newPos )
+	Hud_SetPos( sliderButton , SLIDER_OFFSET_X, newPos )
+	Hud_SetPos( sliderPanel , SLIDER_PANEL_OFFSET + SLIDER_OFFSET_X, (newPos * -1) + 160)
+	Hud_SetPos( movementCapture , SLIDER_OFFSET_X, newPos )
 
 	file.scrollOffset = -int( ( ( newPos - minYPos ) / useableSpace ) * ( file.filteredServers.len() - BUTTONS_PER_PAGE ) )
 	UpdateShownPage()
@@ -302,7 +306,7 @@ void function UpdateListSliderHeight( float servers )
 	var sliderPanel = Hud_GetChild( file.menu , "BtnServerListSliderPanel" )
 	var movementCapture = Hud_GetChild( file.menu , "MouseMovementCapture" )
 
-	float maxHeight = 562.0 * ( GetScreenSize()[1] / 1080.0 )
+	float maxHeight = SLIDER_MAX_Y * ( GetScreenSize()[1] / 1080.0 )
 	float minHeight = 80.0 * ( GetScreenSize()[1] / 1080.0 )
 
 	float height = maxHeight * ( BUTTONS_PER_PAGE / servers )
@@ -322,16 +326,16 @@ void function UpdateListSliderPosition( int servers )
 	var sliderPanel = Hud_GetChild( file.menu , "BtnServerListSliderPanel" )
 	var movementCapture = Hud_GetChild( file.menu , "MouseMovementCapture" )
 
-	float minYPos = -40.0 * ( GetScreenSize()[1] / 1080.0 )
-	float useableSpace = (562.0 * ( GetScreenSize()[1] / 1080.0 ) - Hud_GetHeight( sliderPanel ) )
+	float minYPos = SLIDER_MIN_Y * ( GetScreenSize()[1] / 1080.0 )
+	float useableSpace = (SLIDER_MAX_Y * ( GetScreenSize()[1] / 1080.0 ) - Hud_GetHeight( sliderPanel ) )
 
 	float jump = minYPos - ( useableSpace / ( float( servers ) - BUTTONS_PER_PAGE ) * file.scrollOffset )
 
 	if ( jump > minYPos ) jump = minYPos
 
-	Hud_SetPos( sliderButton , 2, jump )
-	Hud_SetPos( sliderPanel , 2, jump )
-	Hud_SetPos( movementCapture , 2, jump )
+	Hud_SetPos( sliderButton , SLIDER_PANEL_OFFSET, jump )
+	Hud_SetPos( sliderPanel , SLIDER_OFFSET_X + SLIDER_PANEL_OFFSET, ( jump * -1 ) + 160 )
+	Hud_SetPos( movementCapture , SLIDER_OFFSET_X, jump )
 }
 
 void function OnScrollDown( var button )
@@ -564,6 +568,9 @@ void function OnEnterPressed( arg )
 
 void function OnKeyRPressed( arg ) 
 {
+    if ( IsDialog( uiGlobal.activeMenu ) )
+        return
+
 	if ( !IsSearchBarFocused() ) 
 	{
 		RefreshServers(0);
@@ -708,6 +715,31 @@ void function RefreshServers( var button )
 	NSRequestServerList()
 
 	thread WaitForServerListRequest()
+}
+
+void function OnDirectConnectButton( var button )
+{
+    DialogData dialogData
+    dialogData.header = "Direct Connect"
+    dialogData.message = "Only connect to servers you trust.\nType in an IP or hostname below to connect to a server"
+
+    AddDialogButton( dialogData, "#OK", OnDirectConnectDialog )
+    AddDialogButton( dialogData, "#CANCEL" )
+
+    OpenTextEntryDialog( dialogData )    
+}
+
+void function OnDirectConnectDialog()
+{
+    var menu = GetMenu( "DialogTextEntry" )
+    var textEntry = Hud_GetChild( menu, "TextEntryBox" )
+
+    string ip = Hud_GetUTF8Text( textEntry )
+
+    if( ip == "" )
+        return
+
+    ClientCommand( "connect " + ip )
 }
 
 
@@ -962,6 +994,7 @@ void function OnServerSelected_Threaded( var button )
 
 	ServerInfo server = file.focusedServer
 	file.lastSelectedServer = server
+    file.modsChanged = 0
 
 	// Count mods that have been successfully downloaded
 	bool autoDownloadAllowed = GetConVarBool( "allow_mod_auto_download" )
@@ -1002,7 +1035,7 @@ void function OnServerSelected_Threaded( var button )
 			{
 				if ( DownloadMod( mod ) )
 				{
-					downloadedMods++
+					file.modsChanged++
 				}
 				else
 				{
@@ -1052,16 +1085,56 @@ void function OnServerSelected_Threaded( var button )
 
 	if ( server.requiresPassword )
 	{
-		OnCloseServerBrowserMenu()
-		AdvanceMenu( GetMenu( "ConnectWithPasswordMenu" ) )
+		//OnCloseServerBrowserMenu()
+		//dvanceMenu( GetMenu( "ConnectWithPasswordMenu" ) )
+        DialogData dialogData
+        dialogData.header = "Enter Password"
+        dialogData.message = "This server requires a password to join.\n\nEnter the password below."
+        dialogData.image = $"ui/menu/common/dialog_error"
+
+        AddDialogButton( dialogData, "#OK", OnPasswordTextEntry )
+        AddDialogButton( dialogData, "#CANCEL" )
+
+        OpenTextEntryDialog( dialogData )
 	}
 	else
 	{
 		TriggerConnectToServerCallbacks()
-		thread ThreadedAuthAndConnectToServer( "", downloadedMods != 0 )
+        DialogData dialogData
+        dialogData.header = "Join Server?"
+        dialogData.message = "You're about to connect to\n" + server.name + "\n\nAre you sure?"
+	    AddDialogButton( dialogData, "#YES", DoAuthToServer )
+        AddDialogButton( dialogData, "#NO" )
+
+        OpenDialog( dialogData )
 	}
 }
 
+void function OnPasswordTextEntry()
+{
+    var menu = GetMenu( "DialogTextEntry" )
+    var textEntry = Hud_GetChild( menu, "TextEntryBox" )
+
+    string password = Hud_GetUTF8Text( textEntry )
+
+    if( password == "" )
+        return
+
+    thread ThreadedAuthAndConnectToServer( password, file.modsChanged != 0 )
+}
+
+void function DoAuthToServer()
+{
+	// no Ion servers so just do this
+	SetConVarBool( "ns_skip_vanilla_integrity_check", true )
+
+	thread ThreadedAuthAndConnectToServer( "", file.modsChanged != 0 )
+}
+
+void function CancelAuthToServer()
+{
+    file.cancelConnection = true
+}
 
 void function ThreadedAuthAndConnectToServer( string password = "", bool modsChanged = false )
 {
@@ -1070,14 +1143,22 @@ void function ThreadedAuthAndConnectToServer( string password = "", bool modsCha
 
 	NSTryAuthWithServer( file.lastSelectedServer.index, password )
 
-	ToggleConnectingHUD( true )
+    DialogData connectingDialogData
+    connectingDialogData.showSpinner = true
+    connectingDialogData.header = "Connecting"
+    connectingDialogData.message = "Connecting to " + file.lastSelectedServer.name
+    AddDialogButton( connectingDialogData, "#CANCEL", CancelAuthToServer )
+
+    OpenDialog( connectingDialogData )
+
+	//ToggleConnectingHUD( true )
 
 	while ( NSIsAuthenticatingWithServer() && !file.cancelConnection )
 	{
 		WaitFrame()
 	}
 
-	ToggleConnectingHUD( false )
+	//ToggleConnectingHUD( false )
 
 	if ( file.cancelConnection )
 	{

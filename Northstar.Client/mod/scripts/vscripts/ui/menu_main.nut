@@ -297,6 +297,7 @@ void function LaunchSPTrialMission()
 
 void function LaunchMP()
 {
+	SetConVarBool( "ns_skip_vanilla_integrity_check", false )
 	NSResetToken()
 	uiGlobal.launching = eLaunching.MULTIPLAYER
 	LaunchGame()
@@ -651,8 +652,8 @@ void function UpdateTrialLabel()
 	//bool isTrialVersion
 	//bool lastIsTrialVersion = Script_IsRunningTrialVersion()
 
-	Hud_SetColor( file.trialLabel, 101, 109, 207, 255 )
-	Hud_SetText( file.trialLabel, "+ NORTHSTAR" )
+	Hud_SetColor( file.trialLabel, 0, 206, 209, 255 )
+	Hud_SetText( file.trialLabel, "ION" )
 	Hud_SetVisible( file.trialLabel, true )
 
 	//while ( GetTopNonDialogMenu() == file.menu )

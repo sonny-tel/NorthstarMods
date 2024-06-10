@@ -12,6 +12,19 @@
 		"CORE_MOD_DISABLE_WARNING"  "Disabling core mods can break your client!"
 		"DISABLE" "Disable"
 
+		"AITDM_UI_SCORE" ""
+		"OUT_OF_BOUNDS_WARNING"						""
+		"SETTING_INDICATOR_INCOMING" "Incoming Only"
+		"SETTING_INDICATOR_OUTGOING" "Outgoing Only"
+		"SETTING_INDICATOR_ALL"	"All"
+		"MENU_DEMOS" "Demos"
+		"MENU_TITLE_DEMOPICKER" "Demo List"
+		"MENU_TITLE_DEMO" "Demo"
+		"STOP_WATCHING_DEMO" "Do you really want to stop watching:\n%s1"
+
+		"X_BUTTON_DEMOFOOTER"					"%[X_BUTTON|]% Demo: %s1 (%s2)"
+		"DEMOFOOTER"							"Demo: %s1 (%s2)"
+
 		"DIALOG_TITLE_INSTALLED_NORTHSTAR" "Thanks for installing Northstar!"
 		"AUTHENTICATION_AGREEMENT_DIALOG_TEXT" "For Northstar to work, it needs to authenticate using the Northstar master server. This will require sending your origin token to the master server, it will not be stored or used for any other purposes.
 Press Yes if you agree to this. This choice can be changed in the mods menu at any time."
@@ -388,5 +401,8 @@ Press Yes if you agree to this. This choice can be changed in the mods menu at a
 		"MOD_CORRUPTED"						"Downloaded archive checksum does not match verified signature."
 		"NO_DISK_SPACE_AVAILABLE"			"There is not enough space on your disk."
 		"MOD_FETCHING_FAILED_GENERAL"		"Mod extraction failed. Check logs for more details."
+
+		"MENU_TITLE_EXTRAS"					"Extras"
+		"MENU_TITLE_PLAYERLIST"				"Player List"
 	}
 }

@@ -102,10 +102,8 @@ void function InitMainMenuPanel()
 		var videoButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#VIDEO" )
 		Hud_AddEventHandler( videoButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "VideoMenu" ) ) )
 	#endif
-
-	// MOD SETTINGS
-	var modSettingsButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MOD_SETTINGS" )
-	Hud_AddEventHandler( modSettingsButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "ModSettings" ) ) )
+	var extrasButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "Extras" )
+	Hud_AddEventHandler( extrasButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "ExtrasMenu" ) ) )
 
 	var spotlightLargeButton = Hud_GetChild( file.spotlightPanel, "SpotlightLarge" )
 	spotlightLargeButton.SetNavLeft( file.spButtons[0] )
@@ -428,10 +426,6 @@ void function UpdatePlayButton( var button )
 			else if ( button == file.fdButton && GetConVarInt( "ns_has_agreed_to_send_token" ) != NS_AGREED_TO_SEND_TOKEN )
 			{
 				message = "#AUTHENTICATIONAGREEMENT_NO"
-				file.mpButtonActivateFunc = null
-			}
-			else if ( button == file.mpButton && GetConVarBool( "ns_skip_vanilla_integrity_check") )
-			{
 				file.mpButtonActivateFunc = null
 			}
 			else if ( button == file.mpButton )
@@ -867,7 +861,7 @@ void function UpdateWhatsNewData()
 	if ( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.newInfoTitle1 ) == "" && NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.newInfoTitle2 ) == "" && NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.newInfoTitle3 ) == "" )
 		isVisible = false
 
-	RuiSetBool( file.whatsNew, "isVisible", isVisible )
+	RuiSetBool( file.whatsNew, "isVisible", false )
 }
 
 void function UpdateSpotlightData()

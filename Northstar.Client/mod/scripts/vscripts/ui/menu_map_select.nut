@@ -7,7 +7,10 @@ global function InitMapsMenu
 
 
 const int BUTTONS_PER_PAGE = 4
-
+const int SLIDER_PANEL_OFFSET = 1250
+const int SLIDER_OFFSET_X = 12
+const float SLIDER_MIN_Y = -22.0
+const float SLIDER_MAX_Y = 622.0 
 
 struct {
 	int deltaX = 0
@@ -360,8 +363,8 @@ void function SliderBarUpdate()
 
 	Hud_SetFocused(sliderButton)
 
-	float minYPos = -42.0 * (GetScreenSize()[1] / 1080.0)
-	float maxHeight = 582.0  * (GetScreenSize()[1] / 1080.0)
+	float minYPos = SLIDER_MIN_Y * (GetScreenSize()[1] / 1080.0)
+	float maxHeight = SLIDER_MAX_Y  * (GetScreenSize()[1] / 1080.0)
 	float maxYPos = minYPos - (maxHeight - Hud_GetHeight( sliderPanel ))
 	float useableSpace = ( maxHeight - Hud_GetHeight( sliderPanel ))
 
@@ -375,9 +378,9 @@ void function SliderBarUpdate()
 	if ( newPos < maxYPos ) newPos = maxYPos
 	if ( newPos > minYPos ) newPos = minYPos
 
-	Hud_SetPos( sliderButton , 2, newPos )
-	Hud_SetPos( sliderPanel , 2, newPos )
-	Hud_SetPos( movementCapture , 2, newPos )
+	Hud_SetPos( sliderButton , SLIDER_OFFSET_X, newPos )
+	Hud_SetPos( sliderPanel , SLIDER_OFFSET_X, newPos )
+	Hud_SetPos( movementCapture , SLIDER_OFFSET_X, newPos )
 
 	int compensate = 0
 	if ( file.mapsArrayFiltered.len() % 3 != 0 )
@@ -395,7 +398,7 @@ void function UpdateListSliderHeight()
 	
 	float maps = float ( file.mapsArrayFiltered.len() / 3 )
 
-	float maxHeight = 582.0 * (GetScreenSize()[1] / 1080.0)
+	float maxHeight = SLIDER_MAX_Y * (GetScreenSize()[1] / 1080.0)
 	float minHeight = 80.0 * (GetScreenSize()[1] / 1080.0)
 
 	float height = maxHeight * ( float( BUTTONS_PER_PAGE ) / maps )
@@ -424,8 +427,8 @@ void function UpdateListSliderPosition()
 	
 	float maps = float ( file.mapsArrayFiltered.len() / 3 + compensate )
 
-	float minYPos = -42.0 * (GetScreenSize()[1] / 1080.0)
-	float useableSpace = (582.0 * (GetScreenSize()[1] / 1080.0) - Hud_GetHeight( sliderPanel ))
+	float minYPos = SLIDER_MIN_Y * (GetScreenSize()[1] / 1080.0)
+	float useableSpace = (SLIDER_MAX_Y * (GetScreenSize()[1] / 1080.0) - Hud_GetHeight( sliderPanel ))
 
 	float jump = minYPos - ( useableSpace / ( maps - float( BUTTONS_PER_PAGE ) ) * file.scrollOffset )
 
@@ -433,9 +436,9 @@ void function UpdateListSliderPosition()
 
 	if ( jump > minYPos ) jump = minYPos
 
-	Hud_SetPos( sliderButton , 2, jump )
-	Hud_SetPos( sliderPanel , 2, jump )
-	Hud_SetPos( movementCapture , 2, jump )
+	Hud_SetPos( sliderButton , SLIDER_OFFSET_X, jump )
+	Hud_SetPos( sliderPanel , SLIDER_OFFSET_X, jump )
+	Hud_SetPos( movementCapture , SLIDER_OFFSET_X, jump )
 }
 
 void function OnDownArrowSelected( var button )

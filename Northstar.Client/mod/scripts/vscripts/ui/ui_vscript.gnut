@@ -71,6 +71,7 @@ global struct DialogData
 	table<int,bool> coloredButton
 	bool darkenBackground = false
 	bool useFullMessageHeight = false
+    void functionref( string ) ornull textFieldCallback = null
 
 	array<DialogButtonData> buttonData
 	array<DialogFooterData> footerData

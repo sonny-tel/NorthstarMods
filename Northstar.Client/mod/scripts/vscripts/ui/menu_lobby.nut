@@ -16,6 +16,8 @@ global function Lobby_UpdateInboxButtons
 global function GetTimeToRestartMatchMaking
 
 global function RefreshCreditsAvailable
+global function SetUIPlayerCreditsInfo
+global function GetUICreditsAvailableElems
 
 global function InviteFriendsIfAllowed
 global function SetPutPlayerInMatchmakingAfterDelay
@@ -181,8 +183,8 @@ void function InitLobbyMenu()
 	AddMenuFooterOption( menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
 	AddMenuFooterOption( menu, BUTTON_BACK, "#BACK_BUTTON_POSTGAME_REPORT", "#POSTGAME_REPORT", OpenPostGameMenu, IsPostGameMenuValid )
 	AddMenuFooterOption( menu, BUTTON_TRIGGER_RIGHT, "#R_TRIGGER_CHAT", "", null, IsVoiceChatPushToTalk )
-	// Client side progression toggle
-
+    AddMenuFooterOption( menu, BUTTON_Y, PrependControllerPrompts(BUTTON_Y, "#MENU_TITLE_MODS"), "#MENU_TITLE_MODS", OpenModsMenu )
+	//AddMenuFooterOption( menu, BUTTON_SHOULDER_RIGHT, PrependControllerPrompts(BUTTON_SHOULDER_RIGHT, "sans"), "sans", OpenSans )
 	InitChatroom( menu )
 
 	file.chatroomMenu = Hud_GetChild( menu, "ChatRoomPanel" )
@@ -228,6 +230,16 @@ void function InitLobbyMenu()
 	RegisterSignal( "PutPlayerInMatchmakingAfterDelay" )
 	RegisterSignal( "CancelRestartingMatchmaking" )
 	RegisterSignal( "LeaveParty" )
+}
+
+void function OpenSans( var button )
+{
+	LaunchExternalWebBrowser( "https://jcw87.github.io/c2-sans-fight/", WEBBROWSER_FLAG_MUTEGAME )
+}
+
+void function OpenModsMenu( var button )
+{
+    AdvanceMenu( GetMenu( "ModListMenu" ) )
 }
 
 void function ShowToggleProgressionDialog( var button )
@@ -400,9 +412,8 @@ void function SetupComboButtonTest( var menu )
 		var soundButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#VIDEO" )
 		Hud_AddEventHandler( soundButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "VideoMenu" ) ) )
 	#endif
-	// MOD SETTINGS
-	var modSettingsButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MOD_SETTINGS" )
-	Hud_AddEventHandler( modSettingsButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "ModSettings" ) ) )
+	var extrasButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "Extras" )
+	Hud_AddEventHandler( extrasButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "ExtrasMenu" ) ) )
 
 	comboStruct.navUpButtonDisabled = true
 	comboStruct.navDownButton = file.genUpButton
@@ -637,6 +648,9 @@ void function OnLobbyMenu_Open()
 	InitDLCStore()
 
 	DoNSButtonState()
+
+	if(!IsPrivateMatch())
+		SetConVarBool( "ns_skip_vanilla_integrity_check", false )
 
 	thread UpdateCachedNewItems()
 	if ( file.putPlayerInMatchmakingAfterDelay )
@@ -1275,6 +1289,11 @@ void function RefreshCreditsAvailable( int creditsOverride = -1 )
 	}
 }
 
+array function GetUICreditsAvailableElems()
+{
+	return file.creditsAvailableElems
+}
+
 void function SetUIPlayerCreditsInfo( var infoElement, int credits, int xp, int gen, int level, int nextLevel, bool isPVE, int pveCredits, string pveTitle )
 {
 	var rui = Hud_GetRui( infoElement )
@@ -1621,7 +1640,7 @@ void function MatchmakingSetCountdownTimer( float time, bool useServerTime = tru
 
 void function OnLobbyLevelInit()
 {
-	if( NSIsVanilla() && ( !GetConVarBool( "ns_communities_disabled_override" ) ) )
+	if( NSIsVanilla() && ( GetConVarBool( "ns_communities_enabled_override" ) ) )
 		SetConVarBool( "communities_enabled", true)
 	else
 		SetConVarBool( "communities_enabled", false)

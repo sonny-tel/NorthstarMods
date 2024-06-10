@@ -206,10 +206,10 @@ void function InitPrivateMatchMenu()
 
 	AddMenuFooterOption( menu, BUTTON_A, "#A_BUTTON_SELECT", "" )
 	AddMenuFooterOption( menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
-
 	AddMenuFooterOption( menu, BUTTON_Y, "#Y_BUTTON_SWITCH_TEAMS", "#SWITCH_TEAMS", PCSwitchTeamsButton_Activate, CanSwitchTeams )
 	AddMenuFooterOption( menu, BUTTON_X, "#X_BUTTON_MUTE", "#MOUSE2_MUTE", null, CanMute )
 	AddMenuFooterOption( menu, BUTTON_SHOULDER_RIGHT, "#RB_TRIGGER_TOGGLE_SPECTATE", "#SPECTATE_TEAM", PCToggleSpectateButton_Activate, CanSwitchTeams )
+	//AddMenuFooterOption( menu, BUTTON_TRIGGER_LEFT, PrependControllerPrompts(BUTTON_TRIGGER_LEFT, "#MENU_TITLE_MODS"), "#MENU_TITLE_MODS", OpenModsMenu )
 
 	AddMenuVarChangeHandler( "focus", UpdateFooterOptions )
 	AddMenuVarChangeHandler( "isFullyConnected", UpdateFooterOptions )
@@ -227,6 +227,10 @@ void function InitPrivateMatchMenu()
 	#endif
 }
 
+void function OpenModsMenu( var button )
+{
+    AdvanceMenu( GetMenu( "ModListMenu" ) )
+}
 
 void function OnSelectMapButton_Activate( var button )
 {
@@ -334,8 +338,8 @@ void function SetupComboButtons( var menu, var navUpButton, var navDownButton  )
 		var soundButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#VIDEO" )
 		Hud_AddEventHandler( soundButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "VideoMenu" ) ) )
 	#endif
-	var knbButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#KNB_MENU_HEADER" )
-	Hud_AddEventHandler( knbButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "KnowledgeBaseMenu" ) ) )
+	var extrasButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "Extras" )
+	Hud_AddEventHandler( extrasButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "ExtrasMenu" ) ) )
 
 	ComboButtons_Finalize( comboStruct )
 }

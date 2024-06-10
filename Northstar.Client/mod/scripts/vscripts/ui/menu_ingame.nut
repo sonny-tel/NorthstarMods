@@ -86,8 +86,11 @@ void function InitInGameMPMenu()
 	var leaveButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#LEAVE_MATCH" )
 	Hud_AddEventHandler( leaveButton, UIE_CLICK, OnLeaveButton_Activate )
 	#if DEV
+	if( !NSIsVanilla() )
+	{
 		var devButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "Dev" )
 		Hud_AddEventHandler( devButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "DevMenu" ) ) )
+	}
 	#endif
 
 	headerIndex++
@@ -111,10 +114,8 @@ void function InitInGameMPMenu()
 		var soundButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#VIDEO" )
 		Hud_AddEventHandler( soundButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "VideoMenu" ) ) )
 	#endif
-
-	// MOD SETTINGS
-	var modSettingsButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "Mod Settings" )
-	Hud_AddEventHandler( modSettingsButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "ModSettings" ) ) )
+	var extrasButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "Extras" )
+	Hud_AddEventHandler( extrasButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "ExtrasMenu" ) ) )
 
 	// Nobody reads the FAQ so we replace it with ModSettings because of the limited combobutton space available
 	//file.faqButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#KNB_MENU_HEADER" )
@@ -129,6 +130,61 @@ void function InitInGameMPMenu()
 
 	AddMenuFooterOption( menu, BUTTON_A, "#A_BUTTON_SELECT" )
 	AddMenuFooterOption( menu, BUTTON_B, "#B_BUTTON_CLOSE", "#CLOSE" )
+	AddMenuFooterOption( menu, BUTTON_Y, PrependControllerPrompts(BUTTON_Y, "#MENU_TITLE_MODS"), "#MENU_TITLE_MODS", OpenModsMenu )
+	AddMenuFooterOption( menu, BUTTON_X, "#X_BUTTON_INBOX_ACCEPT", "#INBOX_ACCEPT", OpenDemoMenuDialog, Demo_IsPlayingBack, UpdateDemoFooterMP )
+}
+
+void function OpenDemoMenuDialog( var button )
+{
+	DialogData dialogData
+	dialogData.header = "#MENU_TITLE_DEMO"
+	dialogData.message = Localize( "#STOP_WATCHING_DEMO", GetDemoFileFromPicker() )
+	AddDialogButton( dialogData, "#CANCEL" )
+	AddDialogButton( dialogData, "#YES_RETURN_TO_TITLE_MENU", StopDemo )
+
+	OpenDialog( dialogData )
+}
+
+void function StopDemo()
+{
+	Demo_StopPlayback()
+}
+
+void function UpdateDemoFooterMP( InputDef data )
+{
+	EndSignal( uiGlobal.signalDummy, "EndFooterUpdateFuncs" )
+
+	while ( data.conditionCheckFunc() )
+	{
+		int index = int( Hud_GetScriptID( data.vguiElem ) )
+		float percentage = 0
+		float tickPos = Demo_GetPlaybackTick().tofloat()
+		float maxTicks = Demo_GetTotalTicks().tofloat()
+		string strpercentage = "Unknown"
+		string name = Demo_GetCurrentDemoName()
+
+		if(!name.len())
+			name = "?"
+
+		if( Demo_GetPlaybackTick() != 0 )
+		{
+			percentage = (tickPos / maxTicks) * 100
+		}
+
+		strpercentage = "%%" + percentage.tointeger()
+
+		if ( IsControllerModeActive() )
+			SetFooterText( file.menuMP, index, Localize( "#X_BUTTON_DEMOFOOTER", GetDemoNameFromPicker(), strpercentage ) )
+		else
+			SetFooterText( file.menuMP, index, Localize( "#DEMOFOOTER", GetDemoNameFromPicker(), strpercentage ) )
+
+		WaitFrame()
+	}
+}
+
+void function OpenModsMenu( var button )
+{
+    AdvanceMenu( GetMenu( "ModListMenu" ) )
 }
 
 void function OnInGameMPMenu_Open()
@@ -260,10 +316,8 @@ void function InitInGameSPMenu()
 		var videoButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#VIDEO" )
 		Hud_AddEventHandler( videoButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "VideoMenu" ) ) )
 	#endif
-	
-	// MOD SETTINGS
-	var modSettingsButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "Mod Settings" )
-	Hud_AddEventHandler( modSettingsButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "ModSettings" ) ) )
+	var extrasButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "Extras" )
+	Hud_AddEventHandler( extrasButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "ExtrasMenu" ) ) )
 
 	array<var> orderedButtons
 
@@ -299,8 +353,40 @@ void function InitInGameSPMenu()
 
 	AddMenuFooterOption( menu, BUTTON_A, "#A_BUTTON_SELECT" )
 	AddMenuFooterOption( menu, BUTTON_B, "#B_BUTTON_CLOSE", "#CLOSE" )
+	AddMenuFooterOption( menu, BUTTON_Y, PrependControllerPrompts(BUTTON_Y, "#MENU_TITLE_MODS"), "#MENU_TITLE_MODS", OpenModsMenu )
+	AddMenuFooterOption( menu, BUTTON_X, "#X_BUTTON_INBOX_ACCEPT", "#INBOX_ACCEPT", OpenDemoMenuDialog, Demo_IsPlayingBack, UpdateDemoFooterSP )
 }
 
+void function UpdateDemoFooterSP( InputDef data )
+{
+	EndSignal( uiGlobal.signalDummy, "EndFooterUpdateFuncs" )
+
+	int index = int( Hud_GetScriptID( data.vguiElem ) )
+
+	while ( data.conditionCheckFunc() )
+	{
+		float percentage = 0
+		float tickPos = Demo_GetPlaybackTick().tofloat()
+		float maxTicks = Demo_GetTotalTicks().tofloat()
+		string name = "Unknown"
+
+		if( Demo_GetPlaybackTick() != 0 )
+		{
+			percentage = (tickPos / maxTicks) * 100
+		}
+
+		name = "%%" + percentage.tointeger()
+
+		printt(name + " position in demo with " + Demo_GetPlaybackTick() + " and " + Demo_GetTotalTicks())
+
+		if ( IsControllerModeActive() )
+			SetFooterText( file.menuSP, index, Localize( "#X_BUTTON_DEMOFOOTER" ) + name )
+		else
+			SetFooterText( file.menuSP, index, Localize( "#DEMOFOOTER" ) + name )
+
+		WaitFrame()
+	}
+}
 
 void function OnOpenInGameSPMenu()
 {

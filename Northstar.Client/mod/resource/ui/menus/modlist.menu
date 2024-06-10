@@ -297,7 +297,7 @@ resource/ui/menus/modlist.menu
 			zpos	-1
 
 			rui		"ui/knowledgebase_panel.rpak"
-			visible	1
+			visible	0
 
 			pin_to_sibling			FilterButtonsRowAnchor
 			pin_corner_to_sibling	TOP_LEFT
@@ -429,6 +429,7 @@ resource/ui/menus/modlist.menu
 			tall	112
 
 			rui	"ui/knowledgebase_panel.rpak"
+            visible 0
 
 			pin_to_sibling			LabelDetails
 			pin_corner_to_sibling	TOP
@@ -443,6 +444,7 @@ resource/ui/menus/modlist.menu
 			labelText	"ConVars"
 			ConVar		"modlist_show_convars"
 			wide 300
+            ypos -15
 
 			list
 			{
@@ -475,8 +477,8 @@ resource/ui/menus/modlist.menu
 			rui		ui/basic_image.rpak
 			wide	30
 			tall	30
-			xpos		-10
-			ypos		-5
+			xpos		-15
+			ypos		-20
 			visible 0
 
 			pin_to_sibling			ModButtonsPanel
@@ -534,16 +536,13 @@ resource/ui/menus/modlist.menu
 
 		BtnModListUpArrow
 		{
-			ControlName			RuiButton
+			ControlName			BaseModHybridButton
 			InheritProperties	RuiSmallButton
 			
-			wide	40
-			tall	40
+			wide	20
+			tall	20
 			xpos	2
 			ypos	2
-
-			image		"vgui/hud/white"
-			drawColor	"255 255 255 128"
 
 			pin_to_sibling			LabelDetails
 			pin_corner_to_sibling	TOP_RIGHT
@@ -552,15 +551,16 @@ resource/ui/menus/modlist.menu
 
 		BtnModListUpArrowPanel
 		{
-			ControlName	RuiPanel
+			ControlName	ImagePanel
 			
-			wide	40
-			tall	40
+			wide	20
+			tall	20
 			xpos	2
 			ypos	2
 
-			rui		"ui/knowledgebase_panel.rpak"
+			image		"vgui/uparrow"
 			visible	1
+            scaleImage					1
 			zpos	-1
 
 			pin_to_sibling			LabelDetails
@@ -570,16 +570,13 @@ resource/ui/menus/modlist.menu
 
 		BtnModListDownArrow
 		{
-			ControlName			RuiButton
+			ControlName			BaseModHybridButton
 			InheritProperties	RuiSmallButton
 			
-			wide	40
-			tall	40
+			wide	20
+			tall	20
 			xpos	2
-			ypos	-646
-
-			image		"vgui/hud/white"
-			drawColor	"255 255 255 128"
+			ypos	-666
 
 			pin_to_sibling			LabelDetails
 			pin_corner_to_sibling	TOP_RIGHT
@@ -588,16 +585,37 @@ resource/ui/menus/modlist.menu
 
 		BtnModListDownArrowPanel
 		{
-			ControlName	RuiPanel
+			ControlName	ImagePanel
 			
-			wide	40
-			tall	40
+			wide	20
+			tall	20
 			xpos	2
-			ypos	-646
+			ypos	-666
 			zpos	-1
 
-			rui	"ui/knowledgebase_panel.rpak"
+			image	"vgui/downarrow"
 			visible	1
+            scaleImage 1
+
+			pin_to_sibling			LabelDetails
+			pin_corner_to_sibling	TOP_RIGHT
+			pin_to_sibling_corner	TOP_LEFT
+		}
+
+		BtnModListSliderBackground
+		{
+			ControlName	ImagePanel
+			
+			wide	20
+			tall	624
+			xpos	2
+			ypos	-40
+			zpos	-1
+
+			image		"vgui/backgroundbar"
+			visible	1
+            scaleImage 1
+
 
 			pin_to_sibling			LabelDetails
 			pin_corner_to_sibling	TOP_RIGHT
@@ -606,17 +624,14 @@ resource/ui/menus/modlist.menu
 
 		BtnModListSlider
 		{
-			ControlName			RuiButton
+			ControlName			BaseModHybridButton
 			InheritProperties	RuiSmallButton
 			
-			wide	40
-			tall	604
+			wide	20
+			tall	624
 			xpos	2
-			ypos	-40
+			ypos	-20
 			zpos	0
-
-			image		"vgui/hud/white"
-			drawColor	"255 255 255 128"
 
 			pin_to_sibling			LabelDetails
 			pin_corner_to_sibling	TOP_RIGHT
@@ -625,16 +640,17 @@ resource/ui/menus/modlist.menu
 
 		BtnModListSliderPanel
 		{
-			ControlName	RuiPanel
+			ControlName	ImagePanel
 			
-			wide	40
-			tall	604
+			wide	20
+			tall	624
 			xpos	2
 			ypos	-40
 			zpos	-1
 
-			rui		"ui/knowledgebase_panel.rpak"
+			image		"vgui/scrollbar"
 			visible	1
+            scaleImage 1
 
 
 			pin_to_sibling			LabelDetails
