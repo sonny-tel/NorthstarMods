@@ -109,8 +109,8 @@ Resource/UI/LoadingProgress.res
 	LoadingLabelInfo
 	{
 		ControlName				Label
-		xpos					r300
-		ypos					r100
+		xpos					r260
+		ypos					r85
 		wide 200
 		auto_tall_tocontents	1
 		labelText				""
