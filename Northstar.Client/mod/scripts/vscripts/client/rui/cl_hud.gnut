@@ -492,6 +492,7 @@ void function MedalThink( MessageData messageData )
 
 void function AddMedal( ScoreEvent scoreEvent, int pointValue, float earnedValue, float ownedValue, int displayType )
 {
+	asset medalIcon
 	bool showCrosshairMedal = (displayType & eEventDisplayType.GAMEMODE) != 0
 	bool isChallenge = (displayType & eEventDisplayType.CHALLENGE) != 0
 	bool forced = (displayType & eEventDisplayType.MEDAL_FORCED) > 0
@@ -501,7 +502,10 @@ void function AddMedal( ScoreEvent scoreEvent, int pointValue, float earnedValue
 		return
 
 	int earnedOwnedValue = int( (earnedValue + ownedValue) * 100 )
-	asset medalIcon = $""
+	if( GetConVarBool( "use_no_medal_icons") )
+		medalIcon = $""
+	else
+		medalIcon = ScoreEvent_GetMedalIcon( scoreEvent )
 
 	if ( showCrosshairMedal )
 	{

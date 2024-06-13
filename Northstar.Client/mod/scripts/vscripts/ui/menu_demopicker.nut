@@ -109,26 +109,24 @@ void function GetAndFormatDemoNames()
     //demo_2024-6-9_95-25-41_550_p2452__mp_colony02.dem
     foreach( string demo in Demo_GetDemoFiles() )
     {
-
+		string orig = demo
+		string mapName = "mp_lobby"
+	
         array<string> toks = split(demo, "_")
 
-        string mapName
+		foreach(string map in GetPrivateMatchMaps())
+		{
+			if(orig.find(map))
+				mapName = map
+		}
 
-        // this is so fucking bad lol
-        if(toks[6] == "lf")
-            mapName = toks[5] + "_" + toks[6] + "_" + toks[7]
-        else 
-            mapName = toks[5] + "_" + toks[6]
-
-        array<string> mapAndExt = split(mapName, ".")
-
-        if(mapAndExt[0] == "mp_lobby")
+        if(mapName == "mp_lobby")
             continue
 
         array<string> hoursMinsSecs = split( toks[2], "-" )
         string newTime = hoursMinsSecs[0] + ":" + hoursMinsSecs[1]
 
-        file.demoNames.append( toks[1] + " " + newTime + " " + Localize( GetMapDisplayName( mapAndExt[0] ) ) )
+        file.demoNames.append( toks[1] + " " + newTime + " " + Localize( GetMapDisplayName( mapName ) ) )
         file.demoPaths.append(demo)
     }
 }

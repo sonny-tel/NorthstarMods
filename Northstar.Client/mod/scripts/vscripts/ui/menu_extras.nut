@@ -40,6 +40,7 @@ void function InitExtrasMenu()
 
 	SetupButton( Hud_GetChild( menu, "SwchDamageIndicators"), "Damage Indicators", "Sets whether incoming and/or outgoing damage indicators are enabled." )
 	SetupButton( Hud_GetChild( menu, "SwchCoreFlyouts"), "Core Notifications", "Sets whether you'll see flyouts when someone gets core." )
+	SetupButton( Hud_GetChild( menu, "SwchMedalIcons"), "Disable Medal Icons", "Hides score event medals." )
 
 	SetupButton( Hud_GetChild( menu, "BtnPlayDemo"), "Play Demo", "Play a demo file." )
 	Hud_AddEventHandler( Hud_GetChild( menu, "BtnPlayDemo"), UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "DemopickerMenu" ) ) )

@@ -206,20 +206,26 @@ resource/ui/menus/video.menu
 				"#SETTING_ON"  	1
 			}
 			navUp					SwchDamageIndicators
-			navDown					SwchColorBlindMode
+			navDown					SwchMedalIcons
 		}
 
-		SwchColorBlindMode
+		SwchMedalIcons
 		{
 			ControlName				RuiButton
 			InheritProperties		SwitchButton
-			classname				"AdvancedVideoButtonClass"
 			style					DialogListButton
 			pin_to_sibling			SwchCoreFlyouts
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
 			navUp					SwchCoreFlyouts
 			navDown					SwchSprintCameraSmoothing
+			ConVar					"use_no_medal_icons"
+
+			list
+			{
+				"#SETTING_OFF"  0
+				"#SETTING_ON"  	1
+			}
 			// list is populated by code
 		}
 
@@ -229,10 +235,10 @@ resource/ui/menus/video.menu
 			InheritProperties		SwitchButton
 			classname				"AdvancedVideoButtonClass"
 			style					DialogListButton
-			pin_to_sibling			SwchColorBlindMode
+			pin_to_sibling			SwchMedalIcons
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
-			navUp					SwchColorBlindMode
+			navUp					SwchMedalIcons
 			navDown					SwchEnableDemos
 			// list is populated by code
 		}

@@ -298,7 +298,7 @@ void function LaunchSPTrialMission()
 void function LaunchMP()
 {
 	SetConVarBool( "ns_skip_vanilla_integrity_check", false )
-	NSResetToken()
+	SetConVarString( "serverFilter", "" )
 	uiGlobal.launching = eLaunching.MULTIPLAYER
 	LaunchGame()
 }

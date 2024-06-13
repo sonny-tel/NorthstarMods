@@ -111,12 +111,11 @@ Resource/UI/LoadingProgress.res
 		ControlName				Label
 		xpos					r300
 		ypos					r100
-		wide					1630 [$WIDESCREEN_16_9]
-		wide					1441 [!$WIDESCREEN_16_9]
+		wide 200
 		auto_tall_tocontents	1
 		labelText				""
-		textalign				"right"
-		font					Default_28
+		textalign				east
+		font					Default_21
 		wrap 					1
 		fgcolor_override 		"255 255 255 255"
 		visible					1
@@ -162,9 +161,9 @@ Resource/UI/LoadingProgress.res
 	{
 		ControlName				ContinuousProgressBar
 		xpos					0
-		ypos					1072
+		ypos					1075
 		wide					%100
-		tall					8
+		tall					5
 		visible					1
 		enabled					1
 		bgcolor_override		"0 0 0 0"

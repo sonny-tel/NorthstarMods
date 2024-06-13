@@ -66,6 +66,11 @@
 			"Name": "core_flyouts_enabled",
 			"DefaultValue": "1",
 			"Flags": "ARCHIVE_PLAYERPROFILE"
+		},
+		{
+			"Name": "use_no_medal_icons",
+			"DefaultValue": "0",
+			"Flags": "ARCHIVE_PLAYERPROFILE"
 		}
 	],
 	"Scripts": [
