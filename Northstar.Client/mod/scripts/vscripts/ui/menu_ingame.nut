@@ -161,10 +161,7 @@ void function UpdateDemoFooterMP( InputDef data )
 		float tickPos = Demo_GetPlaybackTick().tofloat()
 		float maxTicks = Demo_GetTotalTicks().tofloat()
 		string strpercentage = "Unknown"
-		string name = Demo_GetCurrentDemoName()
-
-		if(!name.len())
-			name = "?"
+		string name = "?"
 
 		if( Demo_GetPlaybackTick() != 0 )
 		{
