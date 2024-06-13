@@ -202,7 +202,7 @@ void function GameModes_Init()
 	GameMode_SetDefaultScoreLimits( gameMode, 0, 4 )
 	GameMode_SetDefaultTimeLimits( gameMode, 5, 4.0 )
 	GameMode_AddScoreboardColumnData( gameMode, "#SCOREBOARD_TITAN_KILLS", PGS_TITAN_KILLS, 1 )
-	GameMode_AddScoreboardColumnData( gameMode, "#SCOREBOARD_TITAN_DAMAGE", PGS_ASSAULT_SCORE, 3 )
+	GameMode_AddScoreboardColumnData( gameMode, "#SCOREBOARD_TITAN_DAMAGE", PGS_ASSAULT_SCORE, 4 )
 	GameMode_AddScoreboardColumnData( gameMode, "#SCOREBOARD_PING", PGS_PING, 1 )
 	GameMode_SetColor( gameMode, [223, 94, 0, 255] )
 
