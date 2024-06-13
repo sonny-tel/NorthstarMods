@@ -598,8 +598,8 @@ void function InitChatroom( var parentMenu )
 	AddEventHandlerToButton( openInviteUI.openInvitePanel, "OpenInviteCountdownText", UIE_CLICK, JoinOpenInvite_OnClick )
 	AddEventHandlerToButton( openInviteUI.openInvitePanel, "OpenInviteMessageButtonOverlay", UIE_CLICK, JoinOpenInvite_OnClick )
 
-	AddMenuFooterOption( parentMenu, BUTTON_SHOULDER_LEFT, "#LB_MUTEROOM", "#MUTEROOM", MuteRoom, ChatroomIsNotMuted )
-	AddMenuFooterOption( parentMenu, BUTTON_SHOULDER_LEFT, "#LB_UNMUTEROOM", "#UNMUTEROOM", UnmuteRoom, ChatroomIsMuted )
+	AddMenuFooterOption( parentMenu, BUTTON_SHOULDER_LEFT, "#LB_MUTEROOM", "#MUTEROOM", MuteRoom, ChatroomIsNotMuted, UpdateChatRoomButtons )
+	AddMenuFooterOption( parentMenu, BUTTON_SHOULDER_LEFT, "#LB_UNMUTEROOM", "#UNMUTEROOM", UnmuteRoom, ChatroomIsMuted, UpdateChatRoomButtons )
 	AddMenuFooterOption( parentMenu, BUTTON_Y, "#Y_BUTTON_OPENINVITE_DESTROY_FOOTER", "#OPENINVITE_DESTROY", LeaveOpenInviteButton, CanDestroyOpenInvite )
 	AddMenuFooterOption( parentMenu, BUTTON_Y, "#Y_BUTTON_OPENINVITE_JOIN_FOOTER", "#OPENINVITE_JOIN", JoinOpenInvite, CanJoinOpenInvite )
 	AddMenuFooterOption( parentMenu, BUTTON_Y, "#Y_BUTTON_OPENINVITE_LEAVE_FOOTER", "#OPENINVITE_LEAVE", LeaveOpenInviteButton, CanLeaveOpenInvite )
@@ -611,6 +611,83 @@ void function InitChatroom( var parentMenu )
 
 	Hud_AddEventHandler( chatroomUI.chatroomWidget, UIE_LOSE_FOCUS, LostFocus )
 	Hud_AddEventHandler( chatroomUI.chatroomWidget, UIE_GET_FOCUS, GotFocus )
+}
+
+void function ShowToggleProgressionDialog()
+{
+	bool enabled = Progression_GetPreference()
+
+	DialogData dialogData
+	dialogData.menu = GetMenu( "AnnouncementDialog" )
+	dialogData.header = enabled ? "#PROGRESSION_TOGGLE_ENABLED_HEADER" : "#PROGRESSION_TOGGLE_DISABLED_HEADER"
+	dialogData.message = enabled ? "#PROGRESSION_TOGGLE_ENABLED_BODY" : "#PROGRESSION_TOGGLE_DISABLED_BODY"
+	dialogData.image = $"ui/menu/common/dialog_announcement_1"
+
+	AddDialogButton( dialogData, "#YES", enabled ? DisableProgression : EnableProgression )
+	AddDialogButton( dialogData, "#NO" )
+
+	OpenDialog( dialogData )
+}
+
+void function EnableProgression()
+{
+	Progression_SetPreference( true )
+
+	// update the cache just in case something changed
+	UpdateCachedLoadouts_Delayed()
+
+	DialogData dialogData
+	dialogData.menu = GetMenu( "AnnouncementDialog" )
+	dialogData.header = "#PROGRESSION_ENABLED_HEADER"
+	dialogData.message = "#PROGRESSION_ENABLED_BODY"
+	dialogData.image = $"ui/menu/common/dialog_announcement_1"
+
+	AddDialogButton( dialogData, "#OK" )
+
+	EmitUISound( "UI_Menu_Item_Purchased_Stinger" )
+
+	OpenDialog( dialogData )
+}
+
+void function DisableProgression()
+{
+	Progression_SetPreference( false )
+
+	DialogData dialogData
+	dialogData.menu = GetMenu( "AnnouncementDialog" )
+	dialogData.header = "#PROGRESSION_DISABLED_HEADER"
+	dialogData.message = "#PROGRESSION_DISABLED_BODY"
+	dialogData.image = $"ui/menu/common/dialog_announcement_1"
+
+	AddDialogButton( dialogData, "#OK" )
+	
+	OpenDialog( dialogData )
+}
+
+void function UpdateChatRoomButtons( InputDef data )
+{
+	EndSignal( uiGlobal.signalDummy, "EndFooterUpdateFuncs" )
+
+	int index = int( Hud_GetScriptID( data.vguiElem ) )
+
+	while( data.conditionCheckFunc() )
+	{
+		bool progEnabled = Progression_GetPreference()
+		
+		string progressionTitle = progEnabled ? "#DISABLE_PROGRESSION" : "#ENABLE_PROGRESSION"
+
+		if( !NSIsVanilla() )
+			SetFooterText( uiGlobal.activeMenu, index, Localize( progressionTitle ) )
+		else
+		{
+			if( data.activateFunc == MuteRoom )
+				SetFooterText( uiGlobal.activeMenu, index, Localize( "#MUTEROOM" ) )
+			else 
+				SetFooterText( uiGlobal.activeMenu, index, Localize( "#UNMUTEROOM" ) )
+		}
+
+		WaitFrame()
+	}
 }
 
 void function bsupdate()
@@ -881,12 +958,24 @@ bool function ChatroomIsNotMuted()
 
 void function MuteRoom( var button )
 {
+	if( !NSIsVanilla() )
+	{
+		ShowToggleProgressionDialog()
+		return
+	}
+
 	printt( "muting the room" )
 	ClientCommand( "muteroom" )
 }
 
 void function UnmuteRoom( var button )
 {
+	if( !NSIsVanilla() )
+	{
+		ShowToggleProgressionDialog()
+		return
+	}
+
 	printt( "unmuting the room" )
 	ClientCommand( "unmuteroom" )
 }

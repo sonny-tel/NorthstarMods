@@ -242,60 +242,6 @@ void function OpenModsMenu( var button )
     AdvanceMenu( GetMenu( "ModListMenu" ) )
 }
 
-void function ShowToggleProgressionDialog( var button )
-{
-	if( Hud_IsLocked( button ) )
-		return;
-
-	bool enabled = Progression_GetPreference()
-
-	DialogData dialogData
-	dialogData.menu = GetMenu( "AnnouncementDialog" )
-	dialogData.header = enabled ? "#PROGRESSION_TOGGLE_ENABLED_HEADER" : "#PROGRESSION_TOGGLE_DISABLED_HEADER"
-	dialogData.message = enabled ? "#PROGRESSION_TOGGLE_ENABLED_BODY" : "#PROGRESSION_TOGGLE_DISABLED_BODY"
-	dialogData.image = $"ui/menu/common/dialog_announcement_1"
-
-	AddDialogButton( dialogData, "#NO" )
-	AddDialogButton( dialogData, "#YES", enabled ? DisableProgression : EnableProgression )
-
-	OpenDialog( dialogData )
-}
-
-void function EnableProgression()
-{
-	Progression_SetPreference( true )
-
-	// update the cache just in case something changed
-	UpdateCachedLoadouts_Delayed()
-
-	DialogData dialogData
-	dialogData.menu = GetMenu( "AnnouncementDialog" )
-	dialogData.header = "#PROGRESSION_ENABLED_HEADER"
-	dialogData.message = "#PROGRESSION_ENABLED_BODY"
-	dialogData.image = $"ui/menu/common/dialog_announcement_1"
-
-	AddDialogButton( dialogData, "#OK" )
-
-	EmitUISound( "UI_Menu_Item_Purchased_Stinger" )
-
-	OpenDialog( dialogData )
-}
-
-void function DisableProgression()
-{
-	Progression_SetPreference( false )
-
-	DialogData dialogData
-	dialogData.menu = GetMenu( "AnnouncementDialog" )
-	dialogData.header = "#PROGRESSION_DISABLED_HEADER"
-	dialogData.message = "#PROGRESSION_DISABLED_BODY"
-	dialogData.image = $"ui/menu/common/dialog_announcement_1"
-
-	AddDialogButton( dialogData, "#OK" )
-	
-	OpenDialog( dialogData )
-}
-
 void function SetupComboButtonTest( var menu )
 {
 	ComboStruct comboStruct = ComboButtons_Create( menu )
@@ -558,9 +504,6 @@ void function InviteFriendsIfAllowed( var button )
 	if ( Hud_IsLocked( button ) )
 		return
 
-	if ( !NSIsVanilla() )
-		ShowToggleProgressionDialog( button )
-
 	entity player = GetUIPlayer()
 	if ( IsValid( player ) && Player_NextAvailableMatchmakingTime( player ) > 0 )
 	{
@@ -764,6 +707,7 @@ void function DoNSButtonState()
 		ComboButton_SetText( file.findGameButton, "#MENU_TITLE_FIND_GAME" )
 		ComboButton_SetText( file.inviteRoomButton, "#MENU_TITLE_INVITE_ROOM" )
 		ComboButton_SetText( file.inviteFriendsButton, "#MENU_TITLE_INVITE_FRIENDS" )
+		Hud_SetVisible( file.inviteFriendsButton, true )
 
 		Hud_SetLocked( file.inboxButton, false )
 		Hud_SetLocked( file.browseNetworkButton, false )
@@ -781,7 +725,8 @@ void function DoNSButtonState()
 
 		ComboButton_SetText( file.findGameButton, "#MENU_TITLE_SERVER_BROWSER" )
 		ComboButton_SetText( file.inviteRoomButton, "#PRIVATE_MATCH" )
-		ComboButton_SetText( file.inviteFriendsButton, "#TOGGLE_PROGRESSION" )
+		//ComboButton_SetText( file.inviteFriendsButton, "#TOGGLE_PROGRESSION" )
+		Hud_SetVisible( file.inviteFriendsButton, false )
 
 		Hud_SetLocked( file.inboxButton, true )
 		Hud_SetLocked( file.browseNetworkButton, true )
