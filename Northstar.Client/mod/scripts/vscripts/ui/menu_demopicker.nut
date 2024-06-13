@@ -140,6 +140,7 @@ void function DemoButton_Activate( var button, int elemNum )
     file.lastPickedDemoPrettyName = file.demoNames[elemNum]    
 
 	file.selectedElemNum = elemNum
+	ClientCommand( "stopdemo" )
     ClientCommand( "playdemo " + file.demoPaths[elemNum] )
 }
 
