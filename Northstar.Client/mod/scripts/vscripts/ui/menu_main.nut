@@ -298,6 +298,16 @@ void function LaunchSPTrialMission()
 void function LaunchMP()
 {
 	SetConVarBool( "ns_skip_vanilla_integrity_check", false )
+	if( GetConVarBool( "ns_communities_enabled_override" ) )
+	{
+		SetConVarBool( "communities_enabled", true)
+		SetConVarString( "communities_hostname", "R2-pc.stryder.respawn.com")
+	}	
+	else
+	{
+		SetConVarBool( "communities_enabled", false)
+		SetConVarString( "communities_hostname", "")
+	}
 	SetConVarString( "serverFilter", "" )
 	uiGlobal.launching = eLaunching.MULTIPLAYER
 	LaunchGame()

@@ -118,6 +118,7 @@ struct
 
 	bool isFDMode = false
 	bool shouldAutoOpenFDMenu = false
+	string oldCommunitiesHostname
 } file
 
 void function MenuLobby_Init()
@@ -1585,11 +1586,6 @@ void function MatchmakingSetCountdownTimer( float time, bool useServerTime = tru
 
 void function OnLobbyLevelInit()
 {
-	if( NSIsVanilla() && ( GetConVarBool( "ns_communities_enabled_override" ) ) )
-		SetConVarBool( "communities_enabled", true)
-	else
-		SetConVarBool( "communities_enabled", false)
-
 	UpdateCallsignElement( file.callsignCard )
 	RefreshCreditsAvailable()
 }

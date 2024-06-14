@@ -519,6 +519,9 @@ void function OnPlayFDButton_Activate( var button ) // repurposed for launching 
 {
 	if ( !Hud_IsLocked( button ) )
 	{
+		SetConVarBool( "communities_enabled", false)
+		SetConVarString( "communities_hostname", "")
+
 		NSTryAuthWithLocalServer()
 		thread TryAuthWithLocalServer()
 	}
