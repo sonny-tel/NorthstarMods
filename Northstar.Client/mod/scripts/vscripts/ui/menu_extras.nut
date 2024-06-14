@@ -41,41 +41,49 @@ void function InitExtrasMenu()
 	SetupButton( Hud_GetChild( menu, "SwchDamageIndicators"), "Damage Indicators", "Sets whether incoming and/or outgoing damage indicators are enabled." )
 	SetupButton( Hud_GetChild( menu, "SwchCoreFlyouts"), "Core Notifications", "Sets whether you'll see flyouts when someone gets core." )
 	SetupButton( Hud_GetChild( menu, "SwchMedalIcons"), "Disable Medal Icons", "Hides score event medals." )
+	SetupButton( Hud_GetChild( menu, "SwchMinimalOOBWarning"), "Minimal Out-Of-Bounds Warning", "Show only the timer from OOB warning." )
+	SetupButton( Hud_GetChild( menu, "SwchSpeedometer"), "Show Speedometer", "Shows a speedometer in KPH or MPH. (You will need to reload the current level for this to update.)" )
 
 	SetupButton( Hud_GetChild( menu, "BtnPlayDemo"), "Play Demo", "Play a demo file." )
 	Hud_AddEventHandler( Hud_GetChild( menu, "BtnPlayDemo"), UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "DemopickerMenu" ) ) )
 	SetupButton( Hud_GetChild( menu, "SwchEnableDemos"), "Enable Demos", "Sets whether demos are enabled." )
 	SetupButton( Hud_GetChild( menu, "SwchDemoAutorecord"), "Automatically Record Demos", "Enables automatic recording of game matches as Demos." )
 	SetupButton( Hud_GetChild( menu, "SwchDemoWriteLocalFile"), "Write Demo Files", "Sets whether demos are written to disk." )
-
-	SetupButton( Hud_GetChild( menu, "BtnTogglePauseDemo" ), "Pause/Play Current Demo", "Will pause or play current demo, alternatively you can bind this to a key in the controls menu.\nNote: you must be in a demo for this to do anything." )
-	Hud_AddEventHandler( Hud_GetChild( menu, "BtnPlayDemo"), UIE_CLICK, OnTogglePauseDemoButton_Active )
 	
-	SetupButton( Hud_GetChild( Hud_GetChild( menu, "SldDemoTimescale" ), "BtnDropButton" ), "Demo Timescale", "Sets the timescale of the current demo." )
-	AddButtonEventHandler( Hud_GetChild( menu, "TextEntryDemoTimescale" ), UIE_CHANGE, TextEntryDemoTimescale_Changed )
+
+	SetupButton( Hud_GetChild( menu, "SwchBloom"), "Bloom", "Sets whether bloom is enabled." )
+	SetupButton( Hud_GetChild( menu, "SwchDOF"), "Depth-of-field", "Sets whether DOF is enabled, can be set to only work in Lobby." )
+
+	SetupButton( Hud_GetChild( Hud_GetChild( menu, "SldSunScale" ), "BtnDropButton" ), "Sun Scale", "Sets the size of the Sun lighting particle." )
+	AddButtonEventHandler( Hud_GetChild( menu, "TextEntrySunScale" ), UIE_CHANGE, TextEntrySunScale_Changed )
+	SetupButton( Hud_GetChild( Hud_GetChild( menu, "SldSkyScale" ), "BtnDropButton" ), "Sky Scale", "Sets size of the Sky lighting particle." )
+	AddButtonEventHandler( Hud_GetChild( menu, "TextEntrySkyScale" ), UIE_CHANGE, TextEntrySkyScale_Changed )
+
 
     AddMenuFooterOption( menu, BUTTON_A, "#A_BUTTON_SELECT" )
 	AddMenuFooterOption( menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
-	// AddMenuFooterOption( menu, BUTTON_X, "#X_BUTTON_APPLY", "#APPLY", ApplyVideoSettingsButton_Activate, AreVideoSettingsChanged )
-	// AddMenuFooterOption( menu, BUTTON_Y, "#Y_BUTTON_RESTORE_SETTINGS", "#MENU_RESTORE_SETTINGS", RestoreRecommendedDialog, ShouldEnableRestoreRecommended )
 }
 
-void function TextEntryDemoTimescale_Changed( var button )
+void function TextEntrySkyScale_Changed( var button )
 {
-    var menu = GetMenu( "DialogTextEntry" )
-    var textEntry = Hud_GetChild( menu, "TextEntryBox" )
-
-    string value = Hud_GetUTF8Text( textEntry )
-
-    if( value == "" )
-        return
-
-    ClientCommand( "demo_timescale " + value )
+	try
+	{
+		float num = Hud_GetUTF8Text( Hud_GetChild( file.menu, "TextEntrySkyScale" ) ).tofloat()
+		SetConVarFloat( "mat_sky_scale", num )
+	}
+	catch(ex)
+	{}
 }
 
-void function OnTogglePauseDemoButton_Active( var button )
+void function TextEntrySunScale_Changed( var button )
 {
-	ClientCommand( "demo_togglepause" )
+	try
+	{
+		float num = Hud_GetUTF8Text( Hud_GetChild( file.menu, "TextEntrySunScale" ) ).tofloat()
+		SetConVarFloat( "mat_sun_scale", num )
+	}
+	catch(ex)
+	{}
 }
 
 void function OnPlayDemoButton_Activate( var button )
@@ -107,10 +115,10 @@ void function TextEntrySldInviteDuration_Changed( var button )
 {
 	try
 	{
-		int num = Hud_GetUTF8Text( Hud_GetChild( file.menu, "TextEntrySldInviteDuration" ) ).tointeger()
+		float num = Hud_GetUTF8Text( Hud_GetChild( file.menu, "TextEntrySldInviteDuration" ) ).tofloat()
 
 		if ( num >= 1 || num <= 120 )
-			SetConVarInt( "openinvite_duration_default", num )
+			SetConVarFloat( "openinvite_duration_default", num )
 	}
 	catch(ex)
 	{}

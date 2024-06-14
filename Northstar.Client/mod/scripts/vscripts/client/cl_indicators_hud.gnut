@@ -249,8 +249,15 @@ function ActivateOutOfBoundsIndicator()
 
 	player.hudElems.OutOfBoundsWarning_Anchor.Show()
 
-	player.hudElems.OutOfBoundsWarning_Message.Show()
-	player.hudElems.OutOfBoundsWarning_Message.SetPulsate( 0.5, 1.0, 10 )
+	if( !GetConVarBool( "minimal_oob_warning" ) )
+	{
+		player.hudElems.OutOfBoundsWarning_Anchor.SetPos((1920 / 2) - 2, (1080 / 2) - 45)
+		player.hudElems.OutOfBoundsWarning_Message.Show()
+		player.hudElems.OutOfBoundsWarning_Message.SetPulsate( 0.5, 1.0, 10 )
+	} else
+	{
+		player.hudElems.OutOfBoundsWarning_Anchor.SetPos((1920 / 2) - 235, (1080 / 2) - 65)
+	}
 
 	player.hudElems.OutOfBoundsWarning_Timer.Show()
 	player.hudElems.OutOfBoundsWarning_Timer.SetPulsate( 0.5, 1.0, 10 )

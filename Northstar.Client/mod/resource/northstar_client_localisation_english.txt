@@ -13,7 +13,6 @@
 		"DISABLE" "Disable"
 
 		"AITDM_UI_SCORE" ""
-		"OUT_OF_BOUNDS_WARNING"						""
 		"SETTING_INDICATOR_INCOMING" "Incoming Only"
 		"SETTING_INDICATOR_OUTGOING" "Outgoing Only"
 		"SETTING_INDICATOR_ALL"	"All"
@@ -21,6 +20,10 @@
 		"MENU_TITLE_DEMOPICKER" "Demo List"
 		"MENU_TITLE_DEMO" "Demo"
 		"STOP_WATCHING_DEMO" "Do you really want to stop watching:\n%s1"
+		"SETTING_LOBBYONLY" "Lobby Only"
+		"SETTING_METRIC" "Metric (KPH)"
+		"SETTING_IMPERIAL" "Imperial (MPH)"
+
 
 		"X_BUTTON_DEMOFOOTER"					"%[X_BUTTON|]% Demo: %s1 (%s2)"
 		"DEMOFOOTER"							"Demo: %s1 (%s2)"

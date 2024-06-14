@@ -53,22 +53,32 @@
 			"Flags": "ARCHIVE_PLAYERPROFILE"
 		},
 		{
-			"Name": "ns_cl_speedometer_mode",
+			"Name": "damage_indicators_mode",
 			"DefaultValue": "0",
 			"Flags": "ARCHIVE_PLAYERPROFILE"
 		},
 		{
-			"Name": "damage_indicators_mode",
-			"DefaultValue": "3",
-			"Flags": "ARCHIVE_PLAYERPROFILE"
-		},
-		{
 			"Name": "core_flyouts_enabled",
-			"DefaultValue": "1",
+			"DefaultValue": "0",
 			"Flags": "ARCHIVE_PLAYERPROFILE"
 		},
 		{
 			"Name": "use_no_medal_icons",
+			"DefaultValue": "0",
+			"Flags": "ARCHIVE_PLAYERPROFILE"
+		},
+		{
+			"Name": "force_dof_disable",
+			"DefaultValue": "0",
+			"Flags": "ARCHIVE_PLAYERPROFILE"
+		},
+		{
+			"Name": "minimal_oob_warning",
+			"DefaultValue": "0",
+			"Flags": "ARCHIVE_PLAYERPROFILE"
+		},
+		{
+			"Name": "show_speedometer",
 			"DefaultValue": "0",
 			"Flags": "ARCHIVE_PLAYERPROFILE"
 		}
@@ -203,6 +213,13 @@
 			"RunOn": "UI",
 			"UICallback": {
 				"Before": "AddDemopickerMenu"
+			}
+		},
+		{
+			"Path": "client/cl_dof_override.gnut",
+			"RunOn": "CLIENT",
+			"ClientCallback": {
+				"After": "DoMapspawnDofUpdate"
 			}
 		}
 	],

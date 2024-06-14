@@ -66,18 +66,38 @@ resource/ui/menus/video.menu
 			InheritProperties		WideButton
 			xpos					120
 			ypos					160
-			navUp					SwchRagdolls
+			navUp					SldSkyScale
 			navDown					SwchCommunitiesEnabled
 			tabPosition				1
 		}
+
+		ImgCommunitiesSubheaderBackground
+		{
+			ControlName				ImagePanel
+			InheritProperties		SubheaderBackground
+			xpos					96
+			ypos					225
+		}
+		LblCommunitiesSubheaderText
+		{
+			ControlName				Label
+			InheritProperties		SubheaderText
+			pin_to_sibling			ImgCommunitiesSubheaderBackground
+			pin_corner_to_sibling	LEFT
+			pin_to_sibling_corner	LEFT
+			labelText				"COMMUNITIES"
+		}
+
 		SwchCommunitiesEnabled // mat_setvideomode 1280 720 1 0
 		{
 			ControlName				RuiButton
 			InheritProperties		SwitchButton
 			style					DialogListButton
-			pin_to_sibling			BtnPlayerList
+			pin_to_sibling			LblCommunitiesSubheaderText
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
+			ypos 3
+			xpos					-22
 			ConVar					"ns_communities_enabled_override"
 			list
 			{
@@ -171,15 +191,34 @@ resource/ui/menus/video.menu
             pin_corner_to_sibling	LEFT
             pin_to_sibling_corner	RIGHT
 		}
+
+		ImgHudSubheaderBackground
+		{
+			ControlName				ImagePanel
+			InheritProperties		SubheaderBackground
+			xpos					96
+			ypos					440
+		}
+		LblHudSubheaderText
+		{
+			ControlName				Label
+			InheritProperties		SubheaderText
+			pin_to_sibling			ImgHudSubheaderBackground
+			pin_corner_to_sibling	LEFT
+			pin_to_sibling_corner	LEFT
+			labelText				"HUD"
+		}
+
 		SwchDamageIndicators // mat_setvideomode 1280 720 1 0
 		{
 			ControlName				RuiButton
 			InheritProperties		SwitchButton
 			style					DialogListButton
-			pin_to_sibling			SldInviteDuration
-			ypos					40
+			pin_to_sibling LblHudSubheaderText
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
+			ypos 3
+			xpos					-22
 			ConVar					"damage_indicators_mode"
 			list
 			{
@@ -188,7 +227,7 @@ resource/ui/menus/video.menu
 				"#SETTING_INDICATOR_OUTGOING"  	2
 				"#SETTING_INDICATOR_ALL" 	  	3
 			}
-			navUp					SwchFilterByRegion
+			navUp					SldInviteDuration
 			navDown					SwchCoreFlyouts
 		}
 		SwchCoreFlyouts
@@ -218,7 +257,7 @@ resource/ui/menus/video.menu
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
 			navUp					SwchCoreFlyouts
-			navDown					SwchSprintCameraSmoothing
+			navDown					SwchMinimalOOBWarning
 			ConVar					"use_no_medal_icons"
 
 			list
@@ -229,18 +268,40 @@ resource/ui/menus/video.menu
 			// list is populated by code
 		}
 
-		SwchSprintCameraSmoothing
+		SwchMinimalOOBWarning
 		{
 			ControlName				RuiButton
 			InheritProperties		SwitchButton
-			classname				"AdvancedVideoButtonClass"
 			style					DialogListButton
 			pin_to_sibling			SwchMedalIcons
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
 			navUp					SwchMedalIcons
+			navDown					SwchSpeedometer
+			ConVar					"minimal_oob_warning"
+			list
+			{
+				"#SETTING_OFF"  0
+				"#SETTING_ON"  	1
+			}
+		}
+		SwchSpeedometer
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			style					DialogListButton
+			pin_to_sibling			SwchMinimalOOBWarning
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SwchMinimalOOBWarning
 			navDown					SwchEnableDemos
-			// list is populated by code
+			ConVar					"show_speedometer"
+			list
+			{
+				"#SETTING_OFF"  0
+				"#SETTING_METRIC" 2
+				"#SETTING_IMPERIAL" 1
+			}
 		}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -250,7 +311,7 @@ resource/ui/menus/video.menu
 			ControlName				ImagePanel
 			InheritProperties		SubheaderBackground
 			xpos					96
-			ypos					576
+			ypos					700
 		}
 		LblDemoSubheaderText
 		{
@@ -271,7 +332,7 @@ resource/ui/menus/video.menu
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
 			xpos					-22
-			navUp					SwchSprintCameraSmoothing
+			navUp					SwchSpeedometer
 			navDown					SwchEnableDemos
 		}
 		SwchEnableDemos
@@ -324,35 +385,81 @@ resource/ui/menus/video.menu
 				"#SETTING_ON"  	1
 			}
 			navUp					SwchDemoAutorecord
-			navDown					BtnTogglePauseDemo
+			navDown					SwchBloom
 			// list is populated by code
 		}
-		BtnTogglePauseDemo
+
+		// Mouse/Keyboard subheader
+		ImgVideoSubheaderBackground	[!$GAMECONSOLE]
+		{
+			ControlName				ImagePanel
+			InheritProperties		SubheaderBackground
+			xpos					950
+			ypos					440
+		}
+		LblVideoSubheaderText [!$GAMECONSOLE]
+		{
+			ControlName				Label
+			InheritProperties		SubheaderText
+			pin_to_sibling			ImgVideoSubheaderBackground
+			pin_corner_to_sibling	LEFT
+			pin_to_sibling_corner	LEFT
+			labelText				"VIDEO"
+		}
+
+		SwchBloom
 		{
 			ControlName				RuiButton
-			InheritProperties		WideButton
-			ypos 40
-			pin_to_sibling			SwchDemoWriteLocalFile
+			InheritProperties		SwitchButton
+			style					DialogListButton
+			pin_to_sibling			ImgVideoSubheaderBackground
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
+			ConVar					"mat_disable_bloom"
+			list
+			{
+				"#SETTING_OFF"  1
+				"#SETTING_ON"  	0
+			}
 			navUp					SwchDemoWriteLocalFile
-			navDown					SldDemoTimescale
+			navDown					SwchDOF
+			xpos					-22
 			// list is populated by code
 		}
-		SldDemoTimescale [!$GAMECONSOLE]
+		SwchDOF
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			style					DialogListButton
+			pin_to_sibling			SwchBloom
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SwchBloom
+			navDown					SldSunScale
+			ConVar "force_dof_disable"
+			list
+			{
+				"#SETTING_ON"  	0
+				"#SETTING_OFF"  1
+				"#SETTING_LOBBYONLY" 2
+			}
+			// list is populated by code
+		}
+
+		SldSunScale [!$GAMECONSOLE]
 		{
 			ControlName				SliderControl
 			InheritProperties		SliderControl
-			pin_to_sibling			BtnTogglePauseDemo
+			pin_to_sibling			SwchDOF
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
-			navUp					SwchFilterByLanguage
-			navDown					SwchDamageIndicators
-			minValue				-1
+			navUp					SwchDOF
+			navDown					SldSkyScale
+			minValue				0
 			maxValue				5
-			stepSize				1
+			stepSize				0.01
 			inverseFill				0
-			conCommand 				"demo_timescale"
+			conCommand 				"mat_sun_scale"
 			BtnDropButton
 			{
 				ControlName				RuiButton
@@ -366,7 +473,7 @@ resource/ui/menus/video.menu
 				command					""
 			}
 		}
-		TextEntryDemoTimescale
+		TextEntrySunScale
 		{
 			ControlName				TextEntry
 			xpos                    8
@@ -384,115 +491,59 @@ resource/ui/menus/video.menu
 			allowSpecialCharacters	0
 			unicode					0
 
-			pin_to_sibling			SldDemoTimescale
+			pin_to_sibling			SldSunScale
             pin_corner_to_sibling	LEFT
             pin_to_sibling_corner	RIGHT
 		}
-		SwchSunShadowDetail
+
+		SldSkyScale [!$GAMECONSOLE]
 		{
-			ControlName				RuiButton
-			InheritProperties		SwitchButton
-			classname				"AdvancedVideoButtonClass"
-			style					DialogListButton
-			pin_to_sibling			SwchEnableDemos
-			pin_corner_to_sibling	TOP_LEFT
-			pin_to_sibling_corner	TOP_RIGHT
-			navUp					TextEntryDemoTimescale
-			navDown					SwchSpotShadowDetail
-			xpos					90
-			ypos					0
-			// list is populated by code
-		}
-		SwchSpotShadowDetail
-		{
-			ControlName				RuiButton
-			InheritProperties		SwitchButton
-			classname				"AdvancedVideoButtonClass"
-			style					DialogListButton
-			pin_to_sibling			SwchSunShadowDetail
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			pin_to_sibling			SldSunScale
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
-			navUp					SwchSunShadowDetail
-			navDown					SwchDynamicSpotShadows
-			// list is populated by code
-		}
-		SwchDynamicSpotShadows
-		{
-			ControlName				RuiButton
-			InheritProperties		SwitchButton
-			classname				"AdvancedVideoButtonClass"
-			style					DialogListButton
-			pin_to_sibling			SwchSpotShadowDetail
-			pin_corner_to_sibling	TOP_LEFT
-			pin_to_sibling_corner	BOTTOM_LEFT
-			navUp					SwchSpotShadowDetail
-			navDown					SwchModelDetail
-			// list is populated by code
-		}
-		SwchModelDetail
-		{
-			ControlName				RuiButton
-			InheritProperties		SwitchButton
-			classname				"AdvancedVideoButtonClass"
-			style					DialogListButton
-			pin_to_sibling			SwchDynamicSpotShadows
-			pin_corner_to_sibling	TOP_LEFT
-			pin_to_sibling_corner	BOTTOM_LEFT
-			navUp					SwchDynamicSpotShadows
-			navDown					SwchModelFadeDist
-			// list is populated by code
-		}
-		SwchModelFadeDist
-		{
-			ControlName				RuiButton
-			InheritProperties		SwitchButton
-			classname				"AdvancedVideoButtonClass"
-			style					DialogListButton
-			pin_to_sibling			SwchModelDetail
-			pin_corner_to_sibling	TOP_LEFT
-			pin_to_sibling_corner	BOTTOM_LEFT
-			navUp					SwchModelDetail
-			navDown					SwchEffectsDetail
-			// list is populated by code
-		}
-		SwchEffectsDetail // This option is not currently stored or applied by code
-		{
-			ControlName				RuiButton
-			InheritProperties		SwitchButton
-			classname				"AdvancedVideoButtonClass"
-			style					DialogListButton
-			pin_to_sibling			SwchModelFadeDist
-			pin_corner_to_sibling	TOP_LEFT
-			pin_to_sibling_corner	BOTTOM_LEFT
-			navUp					SwchModelFadeDist
-			navDown					SwchImpactMarks
-			// list is populated by code
-		}
-		SwchImpactMarks
-		{
-			ControlName				RuiButton
-			InheritProperties		SwitchButton
-			classname				"AdvancedVideoButtonClass"
-			style					DialogListButton
-			pin_to_sibling			SwchEffectsDetail
-			pin_corner_to_sibling	TOP_LEFT
-			pin_to_sibling_corner	BOTTOM_LEFT
-			navUp					SwchEffectsDetail
-			navDown					SwchRagdolls
-			// list is populated by code
-		}
-		SwchRagdolls
-		{
-			ControlName				RuiButton
-			InheritProperties		SwitchButton
-			classname				"AdvancedVideoButtonClass"
-			style					DialogListButton
-			pin_to_sibling			SwchImpactMarks
-			pin_corner_to_sibling	TOP_LEFT
-			pin_to_sibling_corner	BOTTOM_LEFT
-			navUp					SwchImpactMarks
+			navUp					SldSunScale
 			navDown					BtnPlayerList
-			// list is populated by code
+			minValue				0
+			maxValue				5
+			stepSize				0.01
+			inverseFill				0
+			conCommand 				"mat_sky_scale"
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
+		}
+		TextEntrySkyScale
+		{
+			ControlName				TextEntry
+			xpos                    8
+			zpos					100 // This works around input weirdness when the control is constructed by code instead of VGUI blackbox.
+			wide					50
+			tall					30
+			visible					1
+			enabled					1
+			textHidden				0
+			editable				1
+			maxchars				3
+			NumericInputOnly		1
+			font 					Default_21
+			allowRightClickMenu		0
+			allowSpecialCharacters	0
+			unicode					0
+
+			pin_to_sibling			SldSkyScale
+            pin_corner_to_sibling	LEFT
+            pin_to_sibling_corner	RIGHT
 		}
 
 		FooterButtons

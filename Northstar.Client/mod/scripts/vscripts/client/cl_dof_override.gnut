@@ -1,0 +1,10 @@
+global function DoMapspawnDofUpdate
+
+void function DoMapspawnDofUpdate()
+{
+    if( GetConVarInt("force_dof_disable") >= 1 )
+        SetConVarBool("dof_enable", false)
+
+    if(GetConVarInt("force_dof_disable") == 2 && IsLobby())
+        SetConVarBool("dof_enable", true)
+}
