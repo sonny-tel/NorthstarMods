@@ -48,7 +48,7 @@
 			"Flags": "ARCHIVE_PLAYERPROFILE"
 		},
 		{
-			"Name": "ns_communities_enabled_override",
+			"Name": "ns_communities_enabled",
 			"DefaultValue": "1",
 			"Flags": "ARCHIVE_PLAYERPROFILE"
 		},
