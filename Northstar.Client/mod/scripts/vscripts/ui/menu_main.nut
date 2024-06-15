@@ -298,7 +298,7 @@ void function LaunchSPTrialMission()
 void function LaunchMP()
 {
 	SetConVarBool( "ns_skip_vanilla_integrity_check", false )
-	if( GetConVarBool( "ns_communities_enabled_override" ) )
+	if( GetConVarBool( "ns_communities_enabled" ) )
 	{
 		SetConVarBool( "communities_enabled", true)
 		SetConVarString( "communities_hostname", "R2-pc.stryder.respawn.com")

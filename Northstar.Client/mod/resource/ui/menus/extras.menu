@@ -98,7 +98,7 @@ resource/ui/menus/video.menu
 			pin_to_sibling_corner	BOTTOM_LEFT
 			ypos 3
 			xpos					-22
-			ConVar					"ns_communities_enabled_override"
+			ConVar					"ns_communities_enabled"
 			list
 			{
 				"#SETTING_OFF"	0
