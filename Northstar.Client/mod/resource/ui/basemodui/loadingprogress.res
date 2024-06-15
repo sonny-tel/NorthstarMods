@@ -109,14 +109,14 @@ Resource/UI/LoadingProgress.res
 	LoadingLabelInfo
 	{
 		ControlName				Label
-		xpos					r260
-		ypos					r90
-		wide 200
-		auto_tall_tocontents	1
+		xpos					r400
+		ypos					r85
+		wide 300
+		auto_tall_tocontents	0
 		labelText				""
-		textalign				east
+		textAlignment				east
 		font					Default_21
-		wrap 					1
+		wrap 					0
 		fgcolor_override 		"255 255 255 255"
 		visible					1
 	}
