@@ -112,11 +112,9 @@ Resource/UI/LoadingProgress.res
 		xpos					r400
 		ypos					r85
 		wide 300
-		auto_tall_tocontents	0
 		labelText				""
 		textAlignment				east
 		font					Default_21
-		wrap 					0
 		fgcolor_override 		"255 255 255 255"
 		visible					1
 	}
