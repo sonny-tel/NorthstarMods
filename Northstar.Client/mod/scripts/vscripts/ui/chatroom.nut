@@ -95,6 +95,7 @@ struct
 	bool currentUserIsStreaming = false
 	array<ChatroomWidget> chatroomUIs
 	bool hasFocus
+	array<var> activeMenus
 } file
 
 bool function IsVoiceChatPushToTalk()
@@ -517,6 +518,8 @@ void function InitChatroom( var parentMenu )
 {
 	RegisterSignal( "StopUserInfoLookups" )
 
+
+	file.activeMenus.append( parentMenu )
 	file.communityChatroomMode = "chatroom"
 
 	var menu = Hud_GetChild( parentMenu, "ChatroomPanel" )
@@ -676,14 +679,17 @@ void function UpdateChatRoomButtons( InputDef data )
 		
 		string progressionTitle = progEnabled ? "#DISABLE_PROGRESSION" : "#ENABLE_PROGRESSION"
 
-		if( !NSIsVanilla() )
-			SetFooterText( uiGlobal.activeMenu, index, Localize( progressionTitle ) )
-		else
+		foreach( var menu in file.activeMenus )
 		{
-			if( data.activateFunc == MuteRoom )
-				SetFooterText( uiGlobal.activeMenu, index, Localize( "#MUTEROOM" ) )
-			else 
-				SetFooterText( uiGlobal.activeMenu, index, Localize( "#UNMUTEROOM" ) )
+			if( !NSIsVanilla() )
+				SetFooterText( menu, index, Localize( progressionTitle ) )
+			else
+			{
+				if( data.activateFunc == MuteRoom )
+					SetFooterText( menu, index, Localize( "#MUTEROOM" ) )
+				else 
+					SetFooterText( menu, index, Localize( "#UNMUTEROOM" ) )
+			}
 		}
 
 		WaitFrame()
