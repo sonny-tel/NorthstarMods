@@ -864,16 +864,15 @@ void function UpdateWhatsNewData()
 	// if ( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.newInfoTitle1 ) == "" && NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.newInfoTitle2 ) == "" && NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.newInfoTitle3 ) == "" )
 	// 	isVisible = false
 
-	isVisible = false
 
 	RuiSetBool( file.whatsNew, "isVisible", false )
 }
 
 void function UpdateSpotlightData()
 {
-	// SetSpotlightButtonData( file.spotlightButtons[0], expect string( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.largeButtonUrl ) ), expect int( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.largeButtonImageIndex ) ), expect string( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.largeButtonTitle ) ), expect string( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.largeButtonText ) ) )
-	// SetSpotlightButtonData( file.spotlightButtons[1], expect string( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.smallButton1Url ) ), expect int( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.smallButton1ImageIndex ) ), expect string( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.smallButton1Title ) ) )
-	// SetSpotlightButtonData( file.spotlightButtons[2], expect string( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.smallButton2Url ) ), expect int( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.smallButton2ImageIndex ) ), expect string( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.smallButton2Title ) ) )
+	SetSpotlightButtonData( file.spotlightButtons[0], expect string( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.largeButtonUrl ) ), expect int( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.largeButtonImageIndex ) ), expect string( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.largeButtonTitle ) ), expect string( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.largeButtonText ) ) )
+	SetSpotlightButtonData( file.spotlightButtons[1], expect string( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.smallButton1Url ) ), expect int( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.smallButton1ImageIndex ) ), expect string( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.smallButton1Title ) ) )
+	SetSpotlightButtonData( file.spotlightButtons[2], expect string( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.smallButton2Url ) ), expect int( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.smallButton2ImageIndex ) ), expect string( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.smallButton2Title ) ) )
 }
 
 void function SetSpotlightButtonData( var button, string link, int imageIndex, string title, string details = "skip" )

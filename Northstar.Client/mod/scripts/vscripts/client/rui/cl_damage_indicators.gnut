@@ -198,6 +198,9 @@ void function PlayerDidDamageText( float damage, vector damagePosition, entity v
     if( !GetLocalClientPlayer().IsTitan() )
         return
 
+	if ( !victim.IsTitan() )
+		return
+
     if( GetConVarInt( "damage_indicators_mode" ) >= 2 )
     {
 	    float damageScale = 1.0
