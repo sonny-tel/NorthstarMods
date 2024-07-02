@@ -28,15 +28,30 @@ struct OutgoingDamageData
 	vector msgPos
 }
 
+struct 
+{
+	float previousProgressValue
+	float fadeOutTime
+	bool hasTakenDamage = false
+	float barX
+	float barY
+	float bobFrequency
+	float bobAmplitude
+	float previousCameraPos
+	float previousTime
+} file
+
 table<entity, OutgoingDamageData> damageIndicators
 
 void function Cl_DamageIndicator_Init()
 {
 	foreach ( k, v in eDamageSourceId )
 	{
-		AddLocalPlayerTookDamageCallback( v, PlayerTookDamage )
+		AddLocalPlayerTookDamageCallback( v, TitanPlayerTookDamage )
 	}
-	
+
+	thread PilotDamageBar()
+
     float right = (GetScreenSize()[1] / 9.0) * 16.0
 	float down = GetScreenSize()[1]
 	float xOffset = (GetScreenSize()[0] - right) / 2
@@ -44,7 +59,109 @@ void function Cl_DamageIndicator_Init()
     thread Thread_StackingDamageFlyoutText()
 }
 
-void function PlayerTookDamage( float damage, vector pos, int damageType, int damageSourceId, entity attacker )
+void function PilotDamageBar()
+{
+	file.previousProgressValue = 1.0
+	file.fadeOutTime = Time()
+	file.previousTime = Time()
+
+	for(;;)
+	{
+		entity player = GetLocalViewPlayer()
+
+		if ( !GetConVarBool("show_healthbars") )
+		{
+			WaitFrame()
+			continue
+		}
+
+		if ( !player )
+		{
+			WaitFrame()
+			continue
+		}
+
+		entity cockpit = player.GetCockpit()
+
+		if(!cockpit)
+		{
+			WaitFrame()
+			continue
+		}
+
+		local panel = cockpit.e.mainVGUI.GetPanel()
+		local healthProgressBar = HudElement( "healthProgressBar", panel )
+
+		if ( !file.barX || !file.barY )
+		{
+			local position = healthProgressBar.GetPos()
+
+			file.barX = expect float( position[0].tofloat() )
+			file.barY = expect float( position[1].tofloat() )
+			WaitFrame()
+			continue
+		}
+
+		if ( player.IsTitan() || clGlobal.isMenuOpen )
+    	{
+			healthProgressBar.Hide()
+			WaitFrame() 
+			continue
+		}
+
+		if( !IsAlive( player ) )
+		{
+			file.hasTakenDamage = false;
+			healthProgressBar.Hide()
+			WaitFrame() 
+			continue
+		}
+
+
+		float currentHealth = player.GetHealth().tofloat()
+		float maxHealth = player.GetMaxHealth().tofloat()
+
+		float progressValue = ( currentHealth / maxHealth )
+		float lerpSpeed = 0.1;
+		float lerpedValue = file.previousProgressValue + lerpSpeed * ( progressValue - file.previousProgressValue )
+
+		if( ( currentHealth < maxHealth ) && ( currentHealth > 0 ) )
+		{
+			file.hasTakenDamage = true;
+
+			healthProgressBar.Show() 
+			healthProgressBar.SetAlpha( 255 )
+			file.fadeOutTime = Time()
+		}
+
+		healthProgressBar.SetBarProgress( lerpedValue )
+
+		file.previousProgressValue = progressValue
+
+		if( Time() - file.fadeOutTime >= 2.0  )
+		{
+			thread HealthFadeoutThread()
+		}
+		WaitFrame()
+	}
+}
+
+void function HealthFadeoutThread()
+{
+	entity player = GetLocalViewPlayer()
+	entity cockpit = player.GetCockpit()
+	local panel = cockpit.e.mainVGUI.GetPanel()
+	local healthProgressBar = HudElement( "healthProgressBar", panel )
+	if( file.fadeOutTime >= 2.0 )
+		healthProgressBar.FadeOverTime( 0, 0.2 )
+
+	wait 0.2
+
+	if( file.fadeOutTime >= 2.0 && IsValid( cockpit ) )
+		healthProgressBar.Hide()
+}
+
+void function TitanPlayerTookDamage( float damage, vector pos, int damageType, int damageSourceId, entity attacker )
 {
 	if (!GetLocalViewPlayer().IsTitan())
         return

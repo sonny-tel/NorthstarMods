@@ -43,6 +43,7 @@ void function InitExtrasMenu()
 	SetupButton( Hud_GetChild( menu, "SwchMedalIcons"), "Disable Medal Icons", "Hides score event medals." )
 	SetupButton( Hud_GetChild( menu, "SwchMinimalOOBWarning"), "Minimal Out-Of-Bounds Warning", "Show only the timer from OOB warning." )
 	SetupButton( Hud_GetChild( menu, "SwchSpeedometer"), "Show Speedometer", "Shows a speedometer in KPH or MPH. (You will need to reload the current level for this to update.)" )
+	SetupButton( Hud_GetChild( menu, "SwchHealthBar"), "Show Pilot Health Indicator", "Shows a small healthbar under the crosshair.\nNote: Isn't aligned to the crosshair cockpit so it may look weird." )
 
 	SetupButton( Hud_GetChild( menu, "BtnPlayDemo"), "Play Demo", "Play a demo file." )
 	Hud_AddEventHandler( Hud_GetChild( menu, "BtnPlayDemo"), UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "DemopickerMenu" ) ) )

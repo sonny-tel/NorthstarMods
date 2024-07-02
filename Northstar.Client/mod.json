@@ -81,6 +81,11 @@
 			"Name": "show_speedometer",
 			"DefaultValue": "0",
 			"Flags": "ARCHIVE_PLAYERPROFILE"
+		},
+		{
+			"Name": "show_healthbars",
+			"DefaultValue": "0",
+			"Flags": "ARCHIVE_PLAYERPROFILE"
 		}
 	],
 	"Scripts": [

@@ -165,7 +165,7 @@ Resource/UI/LoadingProgress.res
 		visible					1
 		enabled					1
 		bgcolor_override		"0 0 0 0"
-		fgcolor_override		"255 255 255 255"
+		fgcolor_override		"190 190 190 255"
 	}
 
 	GameModeInfoRui

@@ -413,19 +413,19 @@ void function UpdatePlayButton( var button )
 				message = "#CONTACTING_RESPAWN_SERVERS"
 				file.mpButtonActivateFunc = null
 			}
-			// else if ( button == file.mpButton && !isMPAllowed )
-			// {
-			// 	message = "#MULTIPLAYER_NOT_AVAILABLE"
-			//  file.mpButtonActivateFunc = null
-			// }
-			else if ( button == file.mpButton && !hasLatestPatch )
-			{
-				message = "#ORIGIN_UPDATE_AVAILABLE"
-				file.mpButtonActivateFunc = null
-			}
 			else if ( button == file.fdButton && GetConVarInt( "ns_has_agreed_to_send_token" ) != NS_AGREED_TO_SEND_TOKEN )
 			{
 				message = "#AUTHENTICATIONAGREEMENT_NO"
+				file.mpButtonActivateFunc = null
+			}
+			else if ( button == file.mpButton && !isMPAllowed )
+			{
+				message = "#MULTIPLAYER_NOT_AVAILABLE"
+			 	file.mpButtonActivateFunc = null
+			}
+			else if ( button == file.mpButton && !hasLatestPatch )
+			{
+				message = "#ORIGIN_UPDATE_AVAILABLE"
 				file.mpButtonActivateFunc = null
 			}
 			else if ( button == file.mpButton )
