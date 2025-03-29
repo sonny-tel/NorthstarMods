@@ -7,52 +7,16 @@
 			"argTypes":""
 		},
 		{
-			"name":"NSIsModEnabled",
+			"name":"NSGetModsInformation",
 			"helpText":"",
-			"returnTypeString":"bool",
-			"argTypes":"string modName"
+			"returnTypeString":"array<ModInfo>",
+			"argTypes":""
 		},
 		{
 			"name":"NSSetModEnabled",
 			"helpText":"",
 			"returnTypeString":"void",
 			"argTypes":"string modName, bool enabled"
-		},
-		{
-			"name":"NSGetModDescriptionByModName",
-			"helpText":"",
-			"returnTypeString":"string",
-			"argTypes":"string modName"
-		},
-		{
-			"name":"NSGetModVersionByModName",
-			"helpText":"",
-			"returnTypeString":"string",
-			"argTypes":"string modName"
-		},
-		{
-			"name":"NSGetModDownloadLinkByModName",
-			"helpText":"",
-			"returnTypeString":"string",
-			"argTypes":"string modName"
-		},
-		{
-			"name":"NSGetModLoadPriority",
-			"helpText":"",
-			"returnTypeString":"int",
-			"argTypes":"string modName"
-		},
-		{
-			"name":"NSIsModRequiredOnClient",
-			"helpText":"",
-			"returnTypeString":"bool",
-			"argTypes":"string modName"
-		},
-		{
-			"name":"NSGetModConvarsByModName",
-			"helpText":"",
-			"returnTypeString":"array<string>",
-			"argTypes":"string modName"
 		},
 		{
 			"name":"DecodeJSON",
@@ -261,52 +225,10 @@
 			"argTypes":""
 		},
 		{
-			"name":"NSIsModEnabled",
-			"helpText":"",
-			"returnTypeString":"bool",
-			"argTypes":"string modName"
-		},
-		{
 			"name":"NSSetModEnabled",
 			"helpText":"",
 			"returnTypeString":"void",
 			"argTypes":"string modName, bool enabled"
-		},
-		{
-			"name":"NSGetModDescriptionByModName",
-			"helpText":"",
-			"returnTypeString":"string",
-			"argTypes":"string modName"
-		},
-		{
-			"name":"NSGetModVersionByModName",
-			"helpText":"",
-			"returnTypeString":"string",
-			"argTypes":"string modName"
-		},
-		{
-			"name":"NSGetModDownloadLinkByModName",
-			"helpText":"",
-			"returnTypeString":"string",
-			"argTypes":"string modName"
-		},
-		{
-			"name":"NSGetModLoadPriority",
-			"helpText":"",
-			"returnTypeString":"int",
-			"argTypes":"string modName"
-		},
-		{
-			"name":"NSIsModRequiredOnClient",
-			"helpText":"",
-			"returnTypeString":"bool",
-			"argTypes":"string modName"
-		},
-		{
-			"name":"NSGetModConvarsByModName",
-			"helpText":"",
-			"returnTypeString":"array<string>",
-			"argTypes":"string modName"
 		},
 		{
 			"name":"DecodeJSON",
@@ -467,9 +389,15 @@
 			"argTypes":""
 		},
 		{
-			"name":"NSIsModEnabled",
+			"name":"NSGetModsInformation",
 			"helpText":"",
-			"returnTypeString":"bool",
+			"returnTypeString":"array<ModInfo>",
+			"argTypes":""
+		},
+		{
+			"name":"NSGetModInformation",
+			"helpText":"",
+			"returnTypeString":"array<ModInfo>",
 			"argTypes":"string modName"
 		},
 		{
@@ -479,40 +407,11 @@
 			"argTypes":"string modName, bool enabled"
 		},
 		{
-			"name":"NSGetModDescriptionByModName",
-			"helpText":"",
-			"returnTypeString":"string",
-			"argTypes":"string modName"
-		},
-		{
-			"name":"NSGetModVersionByModName",
-			"helpText":"",
-			"returnTypeString":"string",
-			"argTypes":"string modName"
-		},
-		{
-			"name":"NSGetModDownloadLinkByModName",
-			"helpText":"",
-			"returnTypeString":"string",
-			"argTypes":"string modName"
-		},
-		{
-			"name":"NSGetModLoadPriority",
-			"helpText":"",
-			"returnTypeString":"int",
-			"argTypes":"string modName"
-		},
-		{
-			"name":"NSIsModRequiredOnClient",
-			"helpText":"",
-			"returnTypeString":"bool",
-			"argTypes":"string modName"
-		},
-		{
-			"name":"NSGetModConvarsByModName",
-			"helpText":"",
-			"returnTypeString":"array<string>",
-			"argTypes":"string modName"
+			"name": "NSFetchVerifiedModsManifesto",
+			"helpText": "Retrieves the verified mods list from the central authority (GitHub).",
+			"returnTypeString": "void",
+			"argTypes": ""
+
 		},
 		{
 			"name": "NSIsModDownloadable",
@@ -526,6 +425,12 @@
 			"helpText": "downloads a given mod from distant API to local game profile",
 			"returnTypeString": "void",
 			"argTypes": "string name, string version"
+		},
+		{
+			"name": "NSCancelModDownload",
+			"helpText": "prevents installation of the mod currently being installed",
+			"returnTypeString": "void",
+			"argTypes": ""
 		},
 		{
 			"name": "NSGetModInstallState",

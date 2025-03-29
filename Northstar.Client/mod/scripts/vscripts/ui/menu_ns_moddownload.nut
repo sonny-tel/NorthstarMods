@@ -1,12 +1,15 @@
 global function DownloadMod
 global function DisplayModDownloadErrorDialog
+global function FetchVerifiedModsManifesto
 
 global enum eModInstallStatus
 {
+    MANIFESTO_FETCHING,
     DOWNLOADING,
     CHECKSUMING,
     EXTRACTING,
     DONE,
+    ABORTED,
     FAILED,
     FAILED_READING_ARCHIVE,
     FAILED_WRITING_TO_DISK,
@@ -18,6 +21,35 @@ global enum eModInstallStatus
 
 const int MB = 1024*1000;
 
+
+void function FetchVerifiedModsManifesto()
+{
+	print("Start fetching verified mods manifesto from the Internet")
+
+	// Fetching UI
+	DialogData dialogData
+	dialogData.header = Localize( "#MANIFESTO_FETCHING_TITLE" )
+	dialogData.message = Localize( "#MANIFESTO_FETCHING_TEXT" )
+	dialogData.showSpinner = true;
+
+	// Prevent user from closing dialog
+	dialogData.forceChoice = true;
+	OpenDialog( dialogData )
+
+	// Do the actual fetching
+	NSFetchVerifiedModsManifesto()
+
+	ModInstallState state = NSGetModInstallState()
+	while ( state.status == eModInstallStatus.MANIFESTO_FETCHING )
+	{
+		state = NSGetModInstallState()
+		WaitFrame()
+	}
+
+	// Close dialog when manifesto has been received
+	CloseActiveMenu()
+}
+
 bool function DownloadMod( RequiredModInfo mod )
 {
 	// Downloading mod UI
@@ -25,6 +57,11 @@ bool function DownloadMod( RequiredModInfo mod )
 	dialogData.header = Localize( "#DOWNLOADING_MOD_TITLE" )
 	dialogData.message = Localize( "#DOWNLOADING_MOD_TEXT", mod.name, mod.version )
 	dialogData.showSpinner = true;
+
+	// Prevent download button
+	AddDialogButton( dialogData, "#CANCEL", void function() {
+		NSCancelModDownload()
+	})
 
 	// Prevent user from closing dialog
 	dialogData.forceChoice = true;
@@ -46,6 +83,13 @@ bool function DownloadMod( RequiredModInfo mod )
 		WaitFrame()
 	}
 
+	// If download was aborted, don't close UI since it was closed by clicking cancel button
+	if ( state.status == eModInstallStatus.ABORTED )
+	{
+		print("Mod download was cancelled by the user.")
+		return false;
+	}
+
 	printt( "Mod status:", state.status )
 
 	// Close loading dialog
@@ -58,6 +102,10 @@ void function UpdateModDownloadDialog( RequiredModInfo mod, ModInstallState stat
 {
 	switch ( state.status )
 	{
+	case eModInstallStatus.MANIFESTO_FETCHING:
+		Hud_SetText( header, Localize( "#MANIFESTO_FETCHING_TITLE" ) )
+		Hud_SetText( body, Localize( "#MANIFESTO_FETCHING_TEXT" ) )
+		break
 	case eModInstallStatus.DOWNLOADING:
 		Hud_SetText( header, Localize( "#DOWNLOADING_MOD_TITLE_W_PROGRESS", string( state.ratio ) ) )
 		Hud_SetText( body, Localize( "#DOWNLOADING_MOD_TEXT_W_PROGRESS", mod.name, mod.version, floor( state.progress / MB ), floor( state.total / MB ) ) )
@@ -78,6 +126,12 @@ void function UpdateModDownloadDialog( RequiredModInfo mod, ModInstallState stat
 void function DisplayModDownloadErrorDialog( string modName )
 {
 	ModInstallState state = NSGetModInstallState()
+
+	// If user cancelled download, no need to display an error message
+	if ( state.status == eModInstallStatus.ABORTED )
+	{
+		return
+	}
 
 	DialogData dialogData
 	dialogData.header = Localize( "#FAILED_DOWNLOADING", modName )

@@ -7,7 +7,7 @@
 	"ConVars": [
 		{
 			"Name": "allow_mod_auto_download",
-			"DefaultValue": "0"
+			"DefaultValue": "1"
 		},
 		{
 			"Name": "filter_hide_empty",
@@ -48,7 +48,11 @@
 			"Flags": "ARCHIVE_PLAYERPROFILE"
 		},
 		{
-			"Name": "ns_communities_enabled",
+			"Name": "modemenu_mode_filter",
+			"DefaultValue": "-1"
+    },
+    {
+      "Name": "ns_communities_enabled",
 			"DefaultValue": "1",
 			"Flags": "ARCHIVE_PLAYERPROFILE"
 		},
