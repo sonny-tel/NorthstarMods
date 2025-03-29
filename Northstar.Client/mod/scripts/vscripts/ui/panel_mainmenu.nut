@@ -82,8 +82,8 @@ void function InitMainMenuPanel()
 	buttonIndex = 0
 	var multiplayerHeader = AddComboButtonHeader( comboStruct, headerIndex, "#MULTIPLAYER_ALLCAPS" )
 	// "Launch Multiplayer" button removed because we don't support vanilla yet :clueless:
-	//file.mpButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MULTIPLAYER_LAUNCH" )
-	//Hud_AddEventHandler( file.mpButton, UIE_CLICK, OnPlayMPButton_Activate )
+	file.mpButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MULTIPLAYER_LAUNCH" )
+	Hud_AddEventHandler( file.mpButton, UIE_CLICK, OnPlayMPButton_Activate )
 	file.fdButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_LAUNCH_NORTHSTAR" )
 	Hud_AddEventHandler( file.fdButton, UIE_CLICK, OnPlayFDButton_Activate )
 	Hud_SetLocked( file.fdButton, true )
@@ -102,10 +102,8 @@ void function InitMainMenuPanel()
 		var videoButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#VIDEO" )
 		Hud_AddEventHandler( videoButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "VideoMenu" ) ) )
 	#endif
-	
-	// MOD SETTINGS
-	var modSettingsButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MOD_SETTINGS" )
-	Hud_AddEventHandler( modSettingsButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "ModSettings" ) ) )
+	var extrasButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "Extras" )
+	Hud_AddEventHandler( extrasButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "ExtrasMenu" ) ) )
 
 	var spotlightLargeButton = Hud_GetChild( file.spotlightPanel, "SpotlightLarge" )
 	spotlightLargeButton.SetNavLeft( file.spButtons[0] )
@@ -145,6 +143,7 @@ void function OnShowMainMenuPanel()
 	Signal( uiGlobal.signalDummy, "EndShowMainMenuPanel" )
 	EndSignal( uiGlobal.signalDummy, "EndShowMainMenuPanel" )
 
+
 	foreach ( button in file.menuButtons )
 	{
 		int buttonID = int( Hud_GetScriptID( button ) )
@@ -171,7 +170,7 @@ void function OnShowMainMenuPanel()
 
 	UpdateSPButtons()
 	// dont try and update the launch multiplayer button, because it doesn't exist
-	//thread UpdatePlayButton( file.mpButton )
+	thread UpdatePlayButton( file.mpButton )
 	thread UpdatePlayButton( file.fdButton )
 	thread MonitorTrialVersionChange()
 
@@ -397,6 +396,8 @@ void function UpdatePlayButton( var button )
 			{
 				printt( "isOriginConnected:", isOriginConnected )
 				printt( "isStryderAuthenticated:", isStryderAuthenticated )
+				printt( "isMPAllowed:", isMPAllowed )
+				printt( "hasLatestPatch:", hasLatestPatch )
 			}
 
 			buttonText = "#MULTIPLAYER_LAUNCH"
@@ -412,46 +413,30 @@ void function UpdatePlayButton( var button )
 				message = "#CONTACTING_RESPAWN_SERVERS"
 				file.mpButtonActivateFunc = null
 			}
+			else if ( button == file.fdButton && GetConVarInt( "ns_has_agreed_to_send_token" ) != NS_AGREED_TO_SEND_TOKEN )
+			{
+				message = "#AUTHENTICATIONAGREEMENT_NO"
+				file.mpButtonActivateFunc = null
+			}
 			else if ( button == file.mpButton && !isMPAllowed )
 			{
 				message = "#MULTIPLAYER_NOT_AVAILABLE"
-				file.mpButtonActivateFunc = null
+			 	file.mpButtonActivateFunc = null
 			}
 			else if ( button == file.mpButton && !hasLatestPatch )
 			{
 				message = "#ORIGIN_UPDATE_AVAILABLE"
 				file.mpButtonActivateFunc = null
 			}
-			else if ( button == file.fdButton && GetConVarInt( "ns_has_agreed_to_send_token" ) != NS_AGREED_TO_SEND_TOKEN )
-			{
-				message = "#AUTHENTICATIONAGREEMENT_NO"
-				file.mpButtonActivateFunc = null
-			}
 			else if ( button == file.mpButton )
 			{
-				// restrict non-vanilla players from accessing official servers
-				bool hasNonVanillaMods = false
-				foreach ( ModInfo mod in NSGetModsInformation() )
-				{
-					if ( mod.enabled && mod.requiredOnClient )
-					{
-						hasNonVanillaMods = true
-						break
-					}
-				}
-
-				if ( hasNonVanillaMods )
-					file.mpButtonActivateFunc = null
-				else
-					file.mpButtonActivateFunc = LaunchMP
+				file.mpButtonActivateFunc = LaunchMP
 			}
 
 			isLocked = file.mpButtonActivateFunc == null ? true : false
-			if( button == file.fdButton )
-				thread TryUnlockNorthstarButton()
-			else
-				Hud_SetLocked( button, isLocked )
-		#endif
+			Hud_SetLocked( button, isLocked )
+			thread TryUnlockNorthstarButton()
+			#endif
 
 		if ( Script_IsRunningTrialVersion() && !IsTrialPeriodActive() && file.mpButtonActivateFunc != LaunchGamePurchase )
 		{
@@ -462,7 +447,7 @@ void function UpdatePlayButton( var button )
 		}
 
 		// dont try and update the launch multiplayer button, because it doesn't exist
-		//ComboButton_SetText( file.mpButton, buttonText )
+		ComboButton_SetText( file.mpButton, buttonText )
 
 		ComboButton_SetText( file.fdButton, "#MENU_LAUNCH_NORTHSTAR" )
 		//Hud_SetEnabled( file.fdButton, false )
@@ -534,7 +519,9 @@ void function OnPlayFDButton_Activate( var button ) // repurposed for launching 
 {
 	if ( !Hud_IsLocked( button ) )
 	{
-		SetConVarString( "communities_hostname", "" ) // disable communities due to crash exploits that are still possible through it
+		SetConVarBool( "communities_enabled", false)
+		SetConVarString( "communities_hostname", "")
+
 		NSTryAuthWithLocalServer()
 		thread TryAuthWithLocalServer()
 	}
@@ -562,7 +549,7 @@ void function TryAuthWithLocalServer()
 		WaitFrame()
 	}
 
-	if ( NSWasAuthSuccessful() )
+	if ( NSWasAuthSuccessful() || GetConVarBool( "ns_auth_allow_insecure" ) )
 	{
 		NSCompleteAuthWithLocalServer()
 		if ( GetConVarString( "mp_gamemode" ) == "solo" )
@@ -573,7 +560,7 @@ void function TryAuthWithLocalServer()
 		ClientCommand( "setplaylist tdm" )
 		ClientCommand( "map mp_lobby" )
 	}
-	else 
+	else
 	{
 		CloseAllDialogs()
 
@@ -869,15 +856,16 @@ void function UpdateWhatsNewData()
 {
 	// file.promoData.newInfo_ImageIndex
 	//RuiSetString( file.whatsNew, "line1Text", "`2%$rui/menu/main_menu/whats_new_bulletpoint%`0 Updated Live Fire Maps!\n`2%$rui/menu/main_menu/whats_new_bulletpoint%`0 Prime Titans`0 in the Store\n`2%$rui/menu/main_menu/whats_new_bulletpoint% DOUBLE XP`0 weekend!" )//file.promoData.newInfo_Title1 )
-	RuiSetString( file.whatsNew, "line1Text", expect string( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.newInfoTitle1 ) ) )
-	RuiSetString( file.whatsNew, "line2Text", expect string( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.newInfoTitle2 ) ) )
-	RuiSetString( file.whatsNew, "line3Text", expect string( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.newInfoTitle3 ) ) )
+	// RuiSetString( file.whatsNew, "line1Text", expect string( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.newInfoTitle1 ) ) )
+	// RuiSetString( file.whatsNew, "line2Text", expect string( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.newInfoTitle2 ) ) )
+	// RuiSetString( file.whatsNew, "line3Text", expect string( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.newInfoTitle3 ) ) )
 
 	bool isVisible = true
-	if ( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.newInfoTitle1 ) == "" && NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.newInfoTitle2 ) == "" && NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.newInfoTitle3 ) == "" )
-		isVisible = false
+	// if ( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.newInfoTitle1 ) == "" && NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.newInfoTitle2 ) == "" && NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.newInfoTitle3 ) == "" )
+	// 	isVisible = false
 
-	RuiSetBool( file.whatsNew, "isVisible", isVisible )
+
+	RuiSetBool( file.whatsNew, "isVisible", false )
 }
 
 void function UpdateSpotlightData()

@@ -102,15 +102,24 @@ void function InitModMenu()
 		BUTTON_X,
 		PrependControllerPrompts( BUTTON_X, "#RELOAD_MODS" ),
 		"#RELOAD_MODS",
-		OnReloadModsButtonPressed
+		OnReloadModsButtonPressed,
+        ShouldShowFooterButtons
 	)
 	AddMenuFooterOption(
 		file.menu,
 		BUTTON_BACK,
 		PrependControllerPrompts( BUTTON_Y, "#AUTHENTICATION_AGREEMENT" ),
 		"#AUTHENTICATION_AGREEMENT",
-		OnAuthenticationAgreementButtonPressed
+		OnAuthenticationAgreementButtonPressed,
+        ShouldShowFooterButtons
 	)
+    AddMenuFooterOption(
+        file.menu,
+        BUTTON_Y,
+        PrependControllerPrompts( BUTTON_Y, "#MENU_TITLE_MATCH_SETTINGS" ),
+        "#MENU_TITLE_MATCH_SETTINGS",
+        OnModSettingsButtonPressed
+    )
 
 	// Nuke weird rui on filter switch
 	RuiSetString( Hud_GetRui( Hud_GetChild( file.menu, "SwtBtnShowFilter")), "buttonText", "")
@@ -124,12 +133,21 @@ void function OnModMenuOpened()
 {
 	file.enabledMods = GetEnabledModsArray() // used to check if mods should be reloaded
 
+	UI_SetPresentationType( ePresentationType.NO_MODELS )
+
 	UpdateList()
 	UpdateListSliderHeight()
 	UpdateListSliderPosition()
 
-	RegisterButtonPressedCallback(MOUSE_WHEEL_UP , OnScrollUp)
-	RegisterButtonPressedCallback(MOUSE_WHEEL_DOWN , OnScrollDown)
+    try
+    {
+        RegisterButtonPressedCallback(MOUSE_WHEEL_UP , OnScrollUp)
+	    RegisterButtonPressedCallback(MOUSE_WHEEL_DOWN , OnScrollDown)
+    } catch ( ex )
+    {
+        printt( "OnModMenuOpened error: " + ex )
+    }
+
 }
 
 void function OnModMenuClosed()
@@ -164,6 +182,14 @@ void function OnModMenuClosed()
 	}
 	if ( current.len() != file.enabledMods.len() || reload ) // Only reload if we have to
 		ReloadMods()
+}
+
+bool function ShouldShowFooterButtons()
+{
+    if( IsLevelMultiplayer( GetActiveLevel() ) )
+        return false
+
+    return !IsLobby()
 }
 
 void function OnModButtonFocused( var button )
@@ -207,7 +233,11 @@ void function OnModButtonPressed( var button )
 	ModInfo mod = file.mods[ int ( Hud_GetScriptID( Hud_GetParent( button ) ) ) + file.scrollOffset - 1 ].mod
 	string modName = mod.name
 	if ( StaticFind( modName ) && mod.enabled )
+  {
+    if( IsLobby() || IsLevelMultiplayer( GetActiveLevel() ) )
+        return
 		CoreModToggleDialog( modName )
+  }
 	else
 	{
 		NSSetModEnabled( modName, !mod.enabled )
@@ -244,6 +274,11 @@ void function OnReloadModsButtonPressed( var button )
 void function OnAuthenticationAgreementButtonPressed( var button )
 {
 	NorthstarMasterServerAuthDialog()
+}
+
+void function OnModSettingsButtonPressed( var button )
+{
+    AdvanceMenu( GetMenu( "ModSettings") )
 }
 
 void function OnModLinkButtonPressed( var button )
@@ -577,8 +612,8 @@ void function SliderBarUpdate()
 
 	Hud_SetFocused(sliderButton)
 
-	float minYPos = -40.0 * (GetScreenSize()[1] / 1080.0)
-	float maxHeight = 604.0  * (GetScreenSize()[1] / 1080.0)
+	float minYPos = -20.0 * (GetScreenSize()[1] / 1080.0)
+	float maxHeight = 624.0  * (GetScreenSize()[1] / 1080.0)
 	float maxYPos = minYPos - (maxHeight - Hud_GetHeight( sliderPanel ))
 	float useableSpace = (maxHeight - Hud_GetHeight( sliderPanel ))
 
@@ -607,8 +642,8 @@ void function UpdateListSliderPosition()
 
 	float mods = float ( file.mods.len() )
 
-	float minYPos = -40.0 * (GetScreenSize()[1] / 1080.0)
-	float useableSpace = (604.0 * (GetScreenSize()[1] / 1080.0) - Hud_GetHeight( sliderPanel ))
+	float minYPos = -18.0 * (GetScreenSize()[1] / 1080.0)
+	float useableSpace = (626.0 * (GetScreenSize()[1] / 1080.0) - Hud_GetHeight( sliderPanel ))
 
 	float jump = minYPos - (useableSpace / ( mods - float( PANELS_LEN ) ) * file.scrollOffset)
 
@@ -627,7 +662,7 @@ void function UpdateListSliderHeight()
 
 	float mods = float ( file.mods.len() )
 
-	float maxHeight = 604.0 * (GetScreenSize()[1] / 1080.0)
+	float maxHeight = 648.0 * (GetScreenSize()[1] / 1080.0)
 	float minHeight = 80.0 * (GetScreenSize()[1] / 1080.0)
 
 	float height = maxHeight * ( float( PANELS_LEN ) / mods )

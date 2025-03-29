@@ -67,6 +67,13 @@ void function OnViewStatsWeapons_Open()
 
 	file.allMaps = GetPrivateMatchMaps()
 
+	for(int i = file.allMaps.len() - 1; i >= 0; i--)
+	{
+		string mapName = file.allMaps[i]
+		if(!IsLevelMultiplayer(mapName))
+			file.allMaps.remove(i)
+	}
+
 	file.gridData.numElements = file.allMaps.len()
 
 	if ( !file.isGridInitialized )

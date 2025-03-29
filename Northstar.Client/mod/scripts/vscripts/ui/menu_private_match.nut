@@ -41,6 +41,8 @@ struct
 	var titanButton
 	var boostsButton
 	var storeButton
+	var storeNewReleasesButton
+	var storeBundlesButton
 	var factionButton
 	var bannerButton
 	var patchButton
@@ -204,10 +206,10 @@ void function InitPrivateMatchMenu()
 
 	AddMenuFooterOption( menu, BUTTON_A, "#A_BUTTON_SELECT", "" )
 	AddMenuFooterOption( menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
-
 	AddMenuFooterOption( menu, BUTTON_Y, "#Y_BUTTON_SWITCH_TEAMS", "#SWITCH_TEAMS", PCSwitchTeamsButton_Activate, CanSwitchTeams )
 	AddMenuFooterOption( menu, BUTTON_X, "#X_BUTTON_MUTE", "#MOUSE2_MUTE", null, CanMute )
 	AddMenuFooterOption( menu, BUTTON_SHOULDER_RIGHT, "#RB_TRIGGER_TOGGLE_SPECTATE", "#SPECTATE_TEAM", PCToggleSpectateButton_Activate, CanSwitchTeams )
+	//AddMenuFooterOption( menu, BUTTON_TRIGGER_LEFT, PrependControllerPrompts(BUTTON_TRIGGER_LEFT, "#MENU_TITLE_MODS"), "#MENU_TITLE_MODS", OpenModsMenu )
 
 	AddMenuVarChangeHandler( "focus", UpdateFooterOptions )
 	AddMenuVarChangeHandler( "isFullyConnected", UpdateFooterOptions )
@@ -225,6 +227,10 @@ void function InitPrivateMatchMenu()
 	#endif
 }
 
+void function OpenModsMenu( var button )
+{
+    AdvanceMenu( GetMenu( "ModListMenu" ) )
+}
 
 void function OnSelectMapButton_Activate( var button )
 {
@@ -247,7 +253,10 @@ void function OnSelectMatchSettings_Activate( var button )
 	if ( Hud_IsLocked( button ) )
 		return
 
-	AdvanceMenu( GetMenu( "CustomMatchSettingsCategoryMenu" ) )
+	if(NSIsVanilla())
+		AdvanceMenu( GetMenu( "MatchSettingsMenu" ) )
+	else
+		AdvanceMenu( GetMenu( "CustomMatchSettingsCategoryMenu" ) )
 }
 
 void function SetupComboButtons( var menu, var navUpButton, var navDownButton  )
@@ -270,6 +279,10 @@ void function SetupComboButtons( var menu, var navUpButton, var navDownButton  )
 
 	file.matchSettingsButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_MATCH_SETTINGS" )
 	Hud_AddEventHandler( file.matchSettingsButton, UIE_CLICK, OnSelectMatchSettings_Activate )
+
+	var friendsButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_INVITE_FRIENDS" )
+	file.inviteFriendsButton = friendsButton
+	Hud_AddEventHandler( friendsButton, UIE_CLICK, InviteFriendsIfAllowed )
 
 	headerIndex++
 	buttonIndex = 0
@@ -306,10 +319,10 @@ void function SetupComboButtons( var menu, var navUpButton, var navDownButton  )
 	file.storeHeader = AddComboButtonHeader( comboStruct, headerIndex, "#MENU_HEADER_STORE" )
 	file.storeButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_STORE_BROWSE" )
 	Hud_AddEventHandler( file.storeButton, UIE_CLICK, OnStoreButton_Activate )
-	var storeNewReleasesButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_STORE_NEW_RELEASES" )
-	Hud_AddEventHandler( storeNewReleasesButton, UIE_CLICK, OnStoreNewReleasesButton_Activate )
-	var storeBundlesButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_STORE_BUNDLES" )
-	Hud_AddEventHandler( storeBundlesButton, UIE_CLICK, OnStoreBundlesButton_Activate )
+	file.storeNewReleasesButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_STORE_NEW_RELEASES" )
+	Hud_AddEventHandler( file.storeNewReleasesButton, UIE_CLICK, OnStoreNewReleasesButton_Activate )
+	file.storeBundlesButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_STORE_BUNDLES" )
+	Hud_AddEventHandler( file.storeBundlesButton, UIE_CLICK, OnStoreBundlesButton_Activate )
 
 	headerIndex++
 	buttonIndex = 0
@@ -325,8 +338,8 @@ void function SetupComboButtons( var menu, var navUpButton, var navDownButton  )
 		var soundButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#VIDEO" )
 		Hud_AddEventHandler( soundButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "VideoMenu" ) ) )
 	#endif
-	var knbButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#KNB_MENU_HEADER" )
-	Hud_AddEventHandler( knbButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "KnowledgeBaseMenu" ) ) )
+	var extrasButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "Extras" )
+	Hud_AddEventHandler( extrasButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "ExtrasMenu" ) ) )
 
 	ComboButtons_Finalize( comboStruct )
 }
@@ -559,18 +572,22 @@ function UpdatePrivateMatchButtons()
 {
 	var menu = file.menu
 
+	UpdateStoreButtons()
+
 	if ( level.ui.privatematch_starting == ePrivateMatchStartState.STARTING )
 	{
 		RHud_SetText( file.startMatchButton, "#STOP_MATCH" )
 		Hud_SetLocked( file.selectMapButton, true )
 		Hud_SetLocked( file.selectModeButton, true )
 		Hud_SetLocked( file.matchSettingsButton, true )
+		Hud_SetLocked( file.inviteFriendsButton, true )
 	}
 	else
 	{
 		RHud_SetText( file.startMatchButton, "#START_MATCH" )
 		Hud_SetLocked( file.selectMapButton, false )
 		Hud_SetLocked( file.selectModeButton, false )
+		Hud_SetLocked( file.inviteFriendsButton, false )
 
 		string modeName = PrivateMatch_GetSelectedMode()
 		bool settingsLocked = IsFDMode( modeName )
@@ -579,6 +596,22 @@ function UpdatePrivateMatchButtons()
 			CloseActiveMenu()
 
 		Hud_SetLocked( file.matchSettingsButton, settingsLocked )
+	}
+}
+
+function UpdateStoreButtons()
+{
+	if ( NSIsVanilla() )
+	{
+		Hud_SetLocked( file.storeButton, false )
+		Hud_SetLocked( file.storeNewReleasesButton, false )
+		Hud_SetLocked( file.storeBundlesButton, false )
+	} 
+	else
+	{
+		Hud_SetLocked( file.storeButton, true )
+		Hud_SetLocked( file.storeNewReleasesButton, true )
+		Hud_SetLocked( file.storeBundlesButton, true )
 	}
 }
 
@@ -815,6 +848,7 @@ function UpdatePlayerInfo()
 
 void function OnPrivateMatchMenu_Open()
 {
+	ClientCommand( "loadPlaylists" ) // reload playlists so the modes menu has the all the stuff to lock
 	Lobby_SetFDMode( false )
 	OnLobbyMenu_Open()
 }

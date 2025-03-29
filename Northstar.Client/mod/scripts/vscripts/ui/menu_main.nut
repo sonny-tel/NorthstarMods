@@ -75,7 +75,8 @@ void function OnMainMenu_Open()
 	Signal( uiGlobal.signalDummy, "EndOnMainMenu_Open" )
 	EndSignal( uiGlobal.signalDummy, "EndOnMainMenu_Open" )
 
-	SetConVarString( "communities_hostname", "" ) // disable communities due to crash exploits that are still possible through it
+	// HACK: I dont even remember why I set this
+	SetConVarInt( "mp_allowed", 1 )
 
 	UpdatePromoData() // On script restarts this gives us the last data until the new request is complete
 	RequestMainMenuPromos() // This will be ignored if there was a recent request. "infoblock_requestInterval"
@@ -299,6 +300,18 @@ void function LaunchSPTrialMission()
 
 void function LaunchMP()
 {
+	SetConVarBool( "ns_skip_vanilla_integrity_check", false )
+	if( GetConVarBool( "ns_communities_enabled" ) )
+	{
+		SetConVarBool( "communities_enabled", true)
+		SetConVarString( "communities_hostname", "R2-pc.stryder.respawn.com")
+	}	
+	else
+	{
+		SetConVarBool( "communities_enabled", false)
+		SetConVarString( "communities_hostname", "")
+	}
+	SetConVarString( "serverFilter", "" )
 	uiGlobal.launching = eLaunching.MULTIPLAYER
 	LaunchGame()
 }
@@ -652,8 +665,8 @@ void function UpdateTrialLabel()
 	//bool isTrialVersion
 	//bool lastIsTrialVersion = Script_IsRunningTrialVersion()
 
-	Hud_SetColor( file.trialLabel, 101, 109, 207, 255 )
-	Hud_SetText( file.trialLabel, "+ NORTHSTAR" )
+	Hud_SetColor( file.trialLabel, 0, 206, 209, 255 )
+	Hud_SetText( file.trialLabel, "ION" )
 	Hud_SetVisible( file.trialLabel, true )
 
 	//while ( GetTopNonDialogMenu() == file.menu )

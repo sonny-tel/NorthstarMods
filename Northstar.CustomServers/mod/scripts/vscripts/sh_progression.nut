@@ -169,7 +169,7 @@ void function UpdateCachedLoadouts_Threaded()
 	// below here is just making all the menu models update properly and such
 
 	#if UI
-	entity UIPlayer = GetUIPlayer()
+  entity UIPlayer = GetUIPlayer()
 	
 	if ( !IsValid( UIPlayer ) )
 		return

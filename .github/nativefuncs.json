@@ -191,6 +191,12 @@
 			"helpText":"Returns whether or not a given path leads to a folder.",
 			"returnTypeString":"bool",
 			"argTypes":"string path"
+		},
+		{
+			"name": "NSIsVanilla",
+			"helpText": "Checks if the game is currently in vanilla compat mode",
+			"returnTypeString": "bool",
+			"argTypes": ""
 		}
 	],
 	"CLIENT":[
@@ -343,7 +349,13 @@
 			"helpText":"Returns whether or not a given path leads to a folder.",
 			"returnTypeString":"bool",
 			"argTypes":"string path"
-    }
+    	},
+		{
+			"name": "NSIsVanilla",
+			"helpText": "Checks if the game is currently in vanilla compat mode",
+			"returnTypeString": "bool",
+			"argTypes": ""
+		}
 	],
 	"UI":[
 		{
@@ -641,12 +653,18 @@
 			"helpText":"Returns whether or not a given path leads to a folder.",
 			"returnTypeString":"bool",
 			"argTypes":"string path"
-    },
+    	},
 		{
 			"name":"NSGetMasterServerAuthResult",
 			"helpText":"",
 			"returnTypeString":"MasterServerAuthResult",
 			"argTypes":""
+		},
+		{
+			"name": "NSIsVanilla",
+			"helpText": "Checks if the game is currently in vanilla compat mode",
+			"returnTypeString": "bool",
+			"argTypes": ""
 		}
 	]
 }

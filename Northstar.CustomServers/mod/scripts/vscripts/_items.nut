@@ -1307,7 +1307,7 @@ void function InitItems()
 		#endif
 
 		#if DEV && ( SERVER || CLIENT )
-			PrecacheWeapon( "weapon_cubemap" )
+			// PrecacheWeapon( "weapon_cubemap" )
 		#endif
 
 		#if CLIENT
@@ -5899,19 +5899,25 @@ bool function IsItemLockedForEntitlement( entity player, string ref, string pare
 {
 	string fullRef = GetFullRef( ref, parentRef )
 
-	foreach ( int entitlementId in file.entitlementUnlocks[fullRef].entitlementIds )
+	if( GetItemType( ref ) == eItemTypes.CALLSIGN_ICON || GetItemType( ref ) == eItemTypes.CALLING_CARD )
 	{
-		//printt( "entitlement check", fullRef, entitlementId )
-		#if SERVER
-			if ( player.HasEntitlement( entitlementId ) )
-				return false
-		#else
-			if ( LocalPlayerHasEntitlement( entitlementId ) )
-				return false
-		#endif
+		foreach ( int entitlementId in file.entitlementUnlocks[fullRef].entitlementIds )
+		{
+
+			printt( "entitlement check", fullRef, entitlementId )
+			#if SERVER
+				if ( player.HasEntitlement( entitlementId ) )
+					return false
+			#else
+				if ( LocalPlayerHasEntitlement( entitlementId ) )
+					return false
+			#endif
+		}
+
+		return true
 	}
 
-	return true
+	return false
 }
 
 
@@ -10094,7 +10100,10 @@ void function InitUnlockAsEntitlement( string itemRef, string parentRef, int ent
 		unlock = file.entitlementUnlocks[fullRef]
 	}
 
-	unlock.entitlementIds.append( 1 ) // Using `1` here instead of the huge DLC check I did previously. Having the `1` seems to keep all paid cosmetics unlocked with progression enabled.
+	if( !NSIsVanilla() )
+		unlock.entitlementIds.append( 1 ) // Using `1` here instead of the huge DLC check I did previously. Having the `1` seems to keep all paid cosmetics unlocked with progression enabled.
+	else
+		unlock.entitlementIds.append( entitlementId )
 }
 
 array<int> function GetEntitlementIds( string itemRef, string parentRef = "" )

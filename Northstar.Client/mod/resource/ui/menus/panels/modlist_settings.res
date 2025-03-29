@@ -56,6 +56,7 @@ resource/ui/menus/panels/modlist_setting.res
 		rui		ui/basic_image.rpak
 		wide	30
 		tall	30
+        xpos 5
 		visible	0
 
 		pin_to_sibling			BtnMod

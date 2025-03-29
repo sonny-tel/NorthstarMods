@@ -50,6 +50,46 @@
 		{
 			"Name": "modemenu_mode_filter",
 			"DefaultValue": "-1"
+    },
+    {
+      "Name": "ns_communities_enabled",
+			"DefaultValue": "1",
+			"Flags": "ARCHIVE_PLAYERPROFILE"
+		},
+		{
+			"Name": "damage_indicators_mode",
+			"DefaultValue": "0",
+			"Flags": "ARCHIVE_PLAYERPROFILE"
+		},
+		{
+			"Name": "core_flyouts_enabled",
+			"DefaultValue": "0",
+			"Flags": "ARCHIVE_PLAYERPROFILE"
+		},
+		{
+			"Name": "use_no_medal_icons",
+			"DefaultValue": "0",
+			"Flags": "ARCHIVE_PLAYERPROFILE"
+		},
+		{
+			"Name": "force_dof_disable",
+			"DefaultValue": "0",
+			"Flags": "ARCHIVE_PLAYERPROFILE"
+		},
+		{
+			"Name": "minimal_oob_warning",
+			"DefaultValue": "0",
+			"Flags": "ARCHIVE_PLAYERPROFILE"
+		},
+		{
+			"Name": "show_speedometer",
+			"DefaultValue": "0",
+			"Flags": "ARCHIVE_PLAYERPROFILE"
+		},
+		{
+			"Name": "show_healthbars",
+			"DefaultValue": "0",
+			"Flags": "ARCHIVE_PLAYERPROFILE"
 		}
 	],
 	"Scripts": [
@@ -146,6 +186,49 @@
 			"RunOn": "UI",
 			"UICallback": {
 				"After": "AtlasAuthDialog"
+			}
+		},
+		{
+			"Path": "ui/menu_extras.nut",
+			"RunOn": "UI",
+			"UICallback": {
+				"Before": "AddExtrasMenu"
+			}
+		},
+		{
+			"Path": "ui/menu_dialog_textentry.nut",
+			"RunOn": "UI",
+			"UICallback": {
+				"Before": "AddDialogTextEntry"
+			}
+		},
+		{
+			"Path": "ui/menu_playerlist.nut",
+			"RunOn": "UI",
+			"UICallback" : {
+				"Before": "AddPlayerlistMenu"
+			}
+		},
+		{
+			"Path": "client/cl_playerlist.gnut",
+			"RunOn": "(CLIENT && MP)"
+		},
+		{
+			"Path": "client/rui/cl_damage_indicators.gnut",
+			"RunOn": "CLIENT"
+		},
+		{
+			"Path": "ui/menu_demopicker.nut",
+			"RunOn": "UI",
+			"UICallback": {
+				"Before": "AddDemopickerMenu"
+			}
+		},
+		{
+			"Path": "client/cl_dof_override.gnut",
+			"RunOn": "CLIENT",
+			"ClientCallback": {
+				"After": "DoMapspawnDofUpdate"
 			}
 		}
 	],
