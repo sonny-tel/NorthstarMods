@@ -52,6 +52,24 @@ struct {
 
 	// Sorted list of modes we want to show with categories included
 	array<string> sortedModes
+
+	array<string> vanillaModes = [
+		"aitdm",
+		"tdm",
+		"cp",
+		"at",
+		"ctf",
+		"lts",
+		"ps",
+		"speedball",
+		"mfd",
+		"ttdm",
+		"fd_easy",
+		"fd_normal",
+		"fd_hard",
+		"fd_master",
+		"fd_insane"
+	]
 } file
 
 const int MODES_PER_PAGE = 15
@@ -196,7 +214,14 @@ void function BuildModesArray()
 {
 	file.modes.clear()
 
-	foreach( string mode in GetPrivateMatchModes() )
+	array<string> modes
+
+	if( NSIsVanilla() )
+		modes = file.vanillaModes
+	else
+		modes = GetPrivateMatchModes()
+
+	foreach( string mode in modes )
 	{
 		ListEntry_t entry
 		entry.mode = mode
@@ -301,7 +326,7 @@ void function BuildSortedModesArray()
 			int iCategory = entry.category
 			if( entry.mode in file.categoryOverrides )
 				iCategory = file.categoryOverrides[entry.mode]
-			
+
 			if( GetCategoryStringFromEnum( iCategory ) != category )
 				continue
 
@@ -521,7 +546,7 @@ void function UpdateVisibleModes()
 			Hud_SetEnabled( button, true )
 			SetButtonRuiText( button, mode )
 
-			if( blockedModes.contains( file.sortedModes[ modeIndex ] ) )
+			if( blockedModes.contains( file.sortedModes[ modeIndex ] ) && !NSIsVanilla() )
 				Hud_SetLocked( button, true )
 
 			if ( PrivateMatch_IsValidMapModeCombo( PrivateMatch_GetSelectedMap(), mode ) )

@@ -53,9 +53,7 @@ void function InitMainMenu()
 		AddMenuFooterOption( menu, BUTTON_A, "#A_BUTTON_SELECT", "" )
 	#endif // PC_PROG
 
-	#if VANILLA
 	AddMenuFooterOption( menu, BUTTON_X, "#X_BUTTON_INBOX_ACCEPT", "#INBOX_ACCEPT", OpenDataCenterDialog, IsDataCenterFooterValid, UpdateDataCenterFooter )
-	#endif
 
 #if DEV
 	if ( DevStartPoints() )
@@ -305,7 +303,7 @@ void function LaunchMP()
 	{
 		SetConVarBool( "communities_enabled", true)
 		SetConVarString( "communities_hostname", "R2-pc.stryder.respawn.com")
-	}	
+	}
 	else
 	{
 		SetConVarBool( "communities_enabled", false)
