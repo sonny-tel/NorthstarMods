@@ -791,6 +791,7 @@ void function UpdateTeamSwitchButton_Threaded( var button )
 {
 	while ( true )
 	{
+		Hud_SetVisible( button, !NSIsVanilla() )
 		Hud_SetLocked( button, !GetConVarBool( "ns_allow_team_change" ) )
 		wait 0.5
 	}
