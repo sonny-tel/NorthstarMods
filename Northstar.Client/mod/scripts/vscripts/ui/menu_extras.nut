@@ -1,7 +1,7 @@
 global function AddExtrasMenu
 global function InitExtrasMenu
 
-struct 
+struct
 {
     var menu
 	table<var,string> buttonDescriptions
@@ -50,7 +50,7 @@ void function InitExtrasMenu()
 	SetupButton( Hud_GetChild( menu, "SwchEnableDemos"), "Enable Demos", "Sets whether demos are enabled." )
 	SetupButton( Hud_GetChild( menu, "SwchDemoAutorecord"), "Automatically Record Demos", "Enables automatic recording of game matches as Demos." )
 	SetupButton( Hud_GetChild( menu, "SwchDemoWriteLocalFile"), "Write Demo Files", "Sets whether demos are written to disk." )
-	
+
 
 	SetupButton( Hud_GetChild( menu, "SwchBloom"), "Bloom", "Sets whether bloom is enabled." )
 	SetupButton( Hud_GetChild( menu, "SwchDOF"), "Depth-of-field", "Sets whether DOF is enabled, can be set to only work in Lobby." )
@@ -96,7 +96,7 @@ void function OnPlayDemoButton_Activate( var button )
     AddDialogButton( dialogData, "#OK", OnPlayDemoDialog )
     AddDialogButton( dialogData, "#CANCEL" )
 
-    OpenTextEntryDialog( dialogData )   
+    OpenTextEntryDialog( dialogData )
 }
 
 void function OnPlayDemoDialog()
@@ -144,7 +144,7 @@ void function OnExtrasMenu_Open()
 
 	if( !IsFullyConnected() )
 		Hud_SetEnabled( Hud_GetChild( file.menu, "BtnPlayerList" ), false )
-	else 
+	else
 		Hud_SetEnabled( Hud_GetChild( file.menu, "BtnPlayerList" ), true )
 }
 
@@ -155,8 +155,5 @@ void function OnExtrasMenu_Close()
 
 void function OnExtrasMenu_NavigateBack()
 {
-	if ( uiGlobal.videoSettingsChanged )
-		NavigateBackApplyVideoSettingsDialog()
-	else
-		CloseActiveMenu()
+	CloseActiveMenu()
 }
