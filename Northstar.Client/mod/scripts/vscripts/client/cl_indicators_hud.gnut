@@ -105,8 +105,8 @@ bool function ShouldShowDeathIcon( entity localPlayer, entity otherPlayer )
 	if ( localPlayer == otherPlayer )
 		return false
 
-	// if ( localPlayer.GetTeam() != otherPlayer.GetTeam() && !PlayerHasPassive( localPlayer, ePassives.PAS_ENEMY_DEATH_ICONS ) )
-	// 	return false
+	if ( localPlayer.GetTeam() != otherPlayer.GetTeam() && !PlayerHasPassive( localPlayer, ePassives.PAS_ENEMY_DEATH_ICONS ) )
+		return false
 
 	return true
 }
