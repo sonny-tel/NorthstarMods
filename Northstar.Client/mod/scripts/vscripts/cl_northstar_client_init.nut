@@ -23,10 +23,12 @@ global struct GameStateStruct {
     int serverGameState
     int fd_waveNumber
     int fd_totalWaves
+    bool is_vanilla
 }
 
 global struct UIPresenceStruct {
     int gameState
+    bool is_vanilla
 }
 
 global struct ModInfo
