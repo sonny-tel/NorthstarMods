@@ -22,7 +22,7 @@ GameStateStruct function DiscordRPC_GenerateGameState( GameStateStruct gs )
     gs.mapDisplayname = Localize(GetMapDisplayName(GetMapName()))
 
     gs.playlist = GetCurrentPlaylistName()
-    gs.playlistDisplayname = Localize( GetCurrentPlaylistVarString( "name", GetCurrentPlaylistName() ) ) 
+    gs.playlistDisplayname = Localize( GetCurrentPlaylistVarString( "name", GetCurrentPlaylistName() ) )
 
     int reservedCount = GetTotalPendingPlayersReserved()
     int connectingCount = GetTotalPendingPlayersConnecting()
@@ -32,6 +32,7 @@ GameStateStruct function DiscordRPC_GenerateGameState( GameStateStruct gs )
 
     gs.currentPlayers = allKnownPlayersCount
     gs.maxPlayers = GetCurrentPlaylistVarInt( "max_players", 16 )
+    gs.is_vanilla = NSIsVanilla()
 
     if ( IsValid( GetLocalClientPlayer() ) )
 		gs.ownScore = GameRules_GetTeamScore( GetLocalClientPlayer().GetTeam() )

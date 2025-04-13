@@ -12,5 +12,7 @@ UIPresenceStruct function DiscordRPC_GenerateUIPresence( UIPresenceStruct uis )
 	else
 		uis.gameState = eDiscordGameState.INGAME;
 
+	uis.is_vanilla = NSIsVanilla()
+
 	return uis
 }
