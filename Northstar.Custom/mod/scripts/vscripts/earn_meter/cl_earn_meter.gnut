@@ -310,8 +310,11 @@ void function EarnMeter_Update()
 				}
 				else
 				{
-					RuiSetImage( file.earnMeterRui, "goalBuildingIcon", GetWeaponInfoFileKeyFieldAsset_WithMods_Global( coreName, coreMods, "hud_icon" ) )
-					RuiSetImage( file.earnMeterRui, "goalReadyIcon", GetWeaponInfoFileKeyFieldAsset_WithMods_Global( coreName, coreMods, "hud_icon" ) )
+					if ( IsConnected() )
+					{
+						RuiSetImage( file.earnMeterRui, "goalBuildingIcon", GetWeaponInfoFileKeyFieldAsset_WithMods_Global( coreName, coreMods, "hud_icon" ) )
+						RuiSetImage( file.earnMeterRui, "goalReadyIcon", GetWeaponInfoFileKeyFieldAsset_WithMods_Global( coreName, coreMods, "hud_icon" ) )
+					}
 				}
 			}
 			else
@@ -355,8 +358,11 @@ void function EarnMeter_Update()
 			}
 			else
 			{
-				RuiSetImage( file.earnMeterRui, "goalBuildingIcon", GetWeaponInfoFileKeyFieldAsset_WithMods_Global( coreName, coreMods, "hud_icon" ) )
-				RuiSetImage( file.earnMeterRui, "goalReadyIcon", GetWeaponInfoFileKeyFieldAsset_WithMods_Global( coreName, coreMods, "hud_icon" ) )
+				if ( IsConnected() )
+				{
+					RuiSetImage( file.earnMeterRui, "goalBuildingIcon", GetWeaponInfoFileKeyFieldAsset_WithMods_Global( coreName, coreMods, "hud_icon" ) )
+					RuiSetImage( file.earnMeterRui, "goalReadyIcon", GetWeaponInfoFileKeyFieldAsset_WithMods_Global( coreName, coreMods, "hud_icon" ) )
+				}
 			}
 			#endif
 
