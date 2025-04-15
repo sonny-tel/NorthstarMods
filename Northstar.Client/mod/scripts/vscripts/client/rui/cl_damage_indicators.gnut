@@ -26,6 +26,7 @@ struct OutgoingDamageData
 	float lastHitTime
 	bool isLastHitCrit
 	vector msgPos
+	vector msgColor
 }
 
 struct 
@@ -176,14 +177,14 @@ void function TitanPlayerTookDamage( float damage, vector pos, int damageType, i
     }
 }
 
-void function CreateStackingDamageFlyout( entity s, float damage, bool isCrit, vector msgPos )
+void function CreateStackingDamageFlyout( entity s, float damage, bool isCrit, vector msgPos, vector color )
 {
 	var rui = RuiCreate( $"ui/cockpit_console_text_top_left.rpak", aspectRatioFixTopo, RUI_DRAW_HUD, 0)
 	RuiSetInt( rui, "maxLines", 1 );
 	RuiSetInt( rui, "lineNum", 0 );
-	RuiSetFloat2( rui, "msgPos", WorldToScreenPos(msgPos) - <0, 0.01, 0> )
+	RuiSetFloat2( rui, "msgPos", WorldToScreenPos(msgPos) - <0, 0.1, 0 >)
 	RuiSetString( rui, "msgText",  RecursiveCommas(damage.tointeger()) )
-	RuiSetFloat3( rui, "msgColor", isCrit ? <0.9, 0.55, 0.3> : <0.9, 0.9, 0.9> )
+	RuiSetFloat3( rui, "msgColor", color )
 	RuiSetFloat( rui, "msgFontSize", 36.0)
 	RuiSetFloat( rui, "msgAlpha", 0.9 )
 	RuiSetFloat( rui, "thicken", 0.0 )
@@ -194,6 +195,7 @@ void function CreateStackingDamageFlyout( entity s, float damage, bool isCrit, v
 	data.accumelatedHits = 1
 	data.msgPos = msgPos
 	data.lastHitTime = Time()
+	data.msgColor = color
 	damageIndicators[s] <- data
 
 	while (Time() - data.lastHitTime <= OUTGOING_DAMAGE_TEXT_STACKING_STAY_TIME + OUTGOING_DAMAGE_TEXT_STACKING_FADE_TIME)
@@ -202,7 +204,7 @@ void function CreateStackingDamageFlyout( entity s, float damage, bool isCrit, v
 		RuiSetFloat2( rui, "msgPos", WorldToScreenPos(data.msgPos) - <0.0, 0.01, 0> )
 		RuiSetFloat( rui, "msgAlpha", GraphCapped( Time() - data.lastHitTime, OUTGOING_DAMAGE_TEXT_STACKING_STAY_TIME, 
 			OUTGOING_DAMAGE_TEXT_STACKING_STAY_TIME + OUTGOING_DAMAGE_TEXT_STACKING_FADE_TIME, 0.9, 0.0 ) )
-		RuiSetFloat3( rui, "msgColor", data.isLastHitCrit ? <0.9, 0.55, 0.3> : <0.9, 0.9, 0.9> )
+		RuiSetFloat3( rui, "msgColor", data.msgColor )
 		WaitFrame()
 	}
 	RuiDestroyIfAlive(rui)
@@ -312,16 +314,40 @@ string function RecursiveCommas(int n, bool recursed = false)
 }
 void function PlayerDidDamageText( float damage, vector damagePosition, entity victim, bool isCrit, bool isIneffective )
 {
-    if( !GetLocalClientPlayer().IsTitan() )
-        return
+	bool victimIsAmpedWall = victim.GetModelName() == $"models/fx/pilot_shield_wall_amped.mdl"
+	bool victimIsParticleWall = victim.GetSignifierName() == "vortex_sphere"
+	bool shouldReturn = true
 
-	if ( !victim.IsTitan() )
+	entity player = GetLocalViewPlayer()
+
+	vector color = isCrit ? <0.8, 0.1, 0.1> : <0.9, 0.9, 0.9>
+	vector offset
+
+	if ( player.IsTitan() )
+		shouldReturn = false
+
+	if ( victim.IsTitan() )
+	    shouldReturn = false
+
+	if ( victimIsParticleWall && player.IsTitan() )
+	{
+		color = <0.3, 0.3, 0.3>
+		shouldReturn = false
+	}
+
+	if ( victimIsAmpedWall )
+	{
+		color = <0.3, 0.3, 0.3>
+		shouldReturn = false
+	}
+
+	if ( shouldReturn )
 		return
 
     if( GetConVarInt( "damage_indicators_mode" ) >= 2 )
     {
 	    float damageScale = 1.0
-	    msgPos = victim.GetOrigin() + <0,0,victim.GetBoundingMaxs().z>
+	    msgPos = victim.GetOrigin() + < 0 ,0,victim.GetBoundingMaxs().z>
 	    damageScale *= CalculateDivisorForEntity(victim)
 
 	    thread AddSmallDamageTextFlyout( damage * damageScale, isCrit, msgPos )
@@ -333,10 +359,11 @@ void function PlayerDidDamageText( float damage, vector damagePosition, entity v
 	    	data.damage += damage * damageScale
 	    	data.isLastHitCrit = isCrit
 	    	data.msgPos = msgPos
+			data.msgColor = color
 	    }
 	    else 
 	    {
-	    	thread CreateStackingDamageFlyout( victim, damage * damageScale, isCrit, msgPos )
+	    	thread CreateStackingDamageFlyout( victim, damage * damageScale, isCrit, msgPos, color )
 	    }
     }
 }
