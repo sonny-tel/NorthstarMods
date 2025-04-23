@@ -1007,7 +1007,7 @@ void function UpdateHUDCoreIcon_Threaded()
 		var coreIconElem = HudElement( "TitanCoreIcon", panel )
 		asset coreIcon = StringToAsset( item )
 
-		if ( IsValid( cockpit ) )
+		if ( IsValid( cockpit )  && IsConnected() )
 		{
 			coreIconElem.SetVisible( true )
 			coreIconElem.SetImage( coreIcon )
@@ -1017,7 +1017,9 @@ void function UpdateHUDCoreIcon_Threaded()
 
 		file.coreIconQueue.pop()
 	}
-
+	
+	var panel = cockpit.e.mainVGUI.GetPanel()
+	var coreIconElem = HudElement( "TitanCoreIcon", panel )
 	coreIconElem.SetVisible( false )
 	file.coreIconActive = false
 }
