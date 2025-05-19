@@ -995,6 +995,14 @@ void function UpdateHUDCoreIcon_Threaded()
 	file.coreIconActive = true
 
 	entity player = GetLocalViewPlayer()
+
+	player.EndSignal( "OnDeath" )
+	player.EndSignal( "OnDestroy" )
+	player.EndSignal( "Disconnected" )
+
+	if ( !IsValid( player ) )
+		return
+
 	entity cockpit = player.GetCockpit()
 
 	if ( !IsValid( cockpit ) )
@@ -1002,16 +1010,16 @@ void function UpdateHUDCoreIcon_Threaded()
 
 	while( file.coreIconQueue.len() > 0 )
 	{
+		if ( !IsValid( cockpit ) && !IsConnected() )
+			continue
+
 		string item = "vgui/titan_icons/" + file.coreIconQueue.top() + "_icon"
 		var panel = cockpit.e.mainVGUI.GetPanel()
 		var coreIconElem = HudElement( "TitanCoreIcon", panel )
 		asset coreIcon = StringToAsset( item )
 
-		if ( IsValid( cockpit )  && IsConnected() )
-		{
-			coreIconElem.SetVisible( true )
-			coreIconElem.SetImage( coreIcon )
-		}
+		coreIconElem.SetVisible( true )
+		coreIconElem.SetImage( coreIcon )
 
 		wait 3.5
 
