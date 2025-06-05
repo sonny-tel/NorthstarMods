@@ -996,17 +996,19 @@ void function UpdateHUDCoreIcon_Threaded()
 
 	entity player = GetLocalViewPlayer()
 
+	if ( !IsValid( player ) )
+		return
+
 	player.EndSignal( "OnDeath" )
 	player.EndSignal( "OnDestroy" )
 	player.EndSignal( "Disconnected" )
-
-	if ( !IsValid( player ) )
-		return
 
 	entity cockpit = player.GetCockpit()
 
 	if ( !IsValid( cockpit ) )
 		return
+
+	cockpit.EndSignal( "OnDestroy" )
 
 	while( file.coreIconQueue.len() > 0 )
 	{
