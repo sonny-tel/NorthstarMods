@@ -1,8 +1,8 @@
 WeaponData
 {
+#if NORTHSTAR
 	Mods
 	{
-#if NORTHSTAR
 		sns
 		{
 			explosion_damage "50"

@@ -168,6 +168,9 @@ void function OnShowMainMenuPanel()
 	#endif // PS4_PROG
 
 	UpdateSPButtons()
+
+	NSRebuildKeyvaluesOnMainMenu()
+
 	// dont try and update the launch multiplayer button, because it doesn't exist
 	thread UpdatePlayButton( file.mpButton )
 	thread UpdatePlayButton( file.fdButton )

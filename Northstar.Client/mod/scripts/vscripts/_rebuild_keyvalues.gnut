@@ -1,0 +1,19 @@
+global function NSRegisterKeyvalueConnectCallbacks
+global function NSRebuildKeyvaluesOnMainMenu
+
+global function RebuildKeyvaluesOnConnect
+
+void function NSRegisterKeyvalueConnectCallbacks()
+{
+	AddConnectToServerCallback( RebuildKeyvaluesOnConnect )
+}
+
+void function NSRebuildKeyvaluesOnMainMenu()
+{
+	ClientCommand( "reload_kv; weapon_reparse" )
+}
+
+void function RebuildKeyvaluesOnConnect( ServerInfo serverInfo )
+{
+	ClientCommand( "reload_kv; weapon_reparse" )
+}
