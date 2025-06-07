@@ -461,7 +461,7 @@ void function UpdatePlayButton( var button )
 				Hud_SetLocked( file.fdButton, true )
 			}
 
-			if ( button == file.fdButton && NSWasAuthSuccessful() || GetConVarBool( "ns_auth_allow_insecure" ) )
+			if ( button == file.fdButton && ( NSGetMasterServerAuthResult().success && NSIsMasterServerAuthenticated() ) || GetConVarBool( "ns_auth_allow_insecure" ) )
 			{
 				message = ""
 				Hud_SetLocked( file.fdButton, false )

@@ -1,0 +1,13 @@
+WeaponData
+{
+	Mods
+	{
+#if NORTHSTAR
+        one_in_the_chamber
+		{
+            		damage_near_value "9999"
+            		damage_far_value "9999"
+		}
+	}
+#endif
+}
