@@ -81,7 +81,6 @@ void function InitMainMenuPanel()
 	headerIndex++
 	buttonIndex = 0
 	var multiplayerHeader = AddComboButtonHeader( comboStruct, headerIndex, "#MULTIPLAYER_ALLCAPS" )
-	// "Launch Multiplayer" button removed because we don't support vanilla yet :clueless:
 	file.mpButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MULTIPLAYER_LAUNCH" )
 	Hud_AddEventHandler( file.mpButton, UIE_CLICK, OnPlayMPButton_Activate )
 	file.fdButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_LAUNCH_NORTHSTAR" )
@@ -433,10 +432,45 @@ void function UpdatePlayButton( var button )
 				file.mpButtonActivateFunc = LaunchMP
 			}
 
+			if ( button == file.fdButton && GetConVarInt( "ns_has_agreed_to_send_token" ) != NS_AGREED_TO_SEND_TOKEN && !GetConVarBool( "ns_auth_allow_insecure" ) )
+			{
+				message = "#AUTHENTICATIONAGREEMENT_NO"
+				Hud_SetLocked( file.fdButton, true )
+			}
+
+			if ( button == file.fdButton && !NSIsMasterServerAuthenticated() && !GetConVarBool( "ns_auth_allow_insecure" ) )
+			{
+				message = "#DIALOG_AUTHENTICATING_MASTERSERVER"
+				Hud_SetLocked( file.fdButton, true )
+			}
+
+			if ( button == file.fdButton && ( !NSGetMasterServerAuthResult().success && NSIsMasterServerAuthenticated() ) && !GetConVarBool( "ns_auth_allow_insecure" ) )
+			{
+				MasterServerAuthResult res = NSGetMasterServerAuthResult()
+				message = Localize( "#AUTHENTICATION_FAILED_HEADER" ) + ": "
+
+				// if we got a special error message from Atlas, display it
+				if ( res.errorMessage != "" )
+					message += res.errorMessage
+				else
+					message += Localize( "#AUTHENTICATION_FAILED_BODY" )
+
+				if ( res.errorCode != "" )
+					message += format( " %s", Localize( "#AUTHENTICATION_FAILED_ERROR_CODE", res.errorCode ) )
+
+				Hud_SetLocked( file.fdButton, true )
+			}
+
+			if ( button == file.fdButton && NSWasAuthSuccessful() || GetConVarBool( "ns_auth_allow_insecure" ) )
+			{
+				message = ""
+				Hud_SetLocked( file.fdButton, false )
+			}
+
 			isLocked = file.mpButtonActivateFunc == null ? true : false
-			Hud_SetLocked( button, isLocked )
-			thread TryUnlockNorthstarButton()
-			#endif
+			if( button != file.fdButton )
+				Hud_SetLocked( button, isLocked )
+		#endif
 
 		if ( Script_IsRunningTrialVersion() && !IsTrialPeriodActive() && file.mpButtonActivateFunc != LaunchGamePurchase )
 		{
@@ -504,7 +538,7 @@ void function TryUnlockNorthstarButton()
 	// unlock "Launch Northstar" button until you're authed with masterserver, are allowing insecure auth, or 7.5 seconds have passed
 	float time = Time()
 
-	while ( GetConVarInt( "ns_has_agreed_to_send_token" ) != NS_AGREED_TO_SEND_TOKEN || time + 10.0 > Time() )
+	while ( GetConVarInt( "ns_has_agreed_to_send_token" ) != NS_AGREED_TO_SEND_TOKEN )
 	{
 		if ( ( NSIsMasterServerAuthenticated() && IsStryderAuthenticated() ) || GetConVarBool( "ns_auth_allow_insecure" ) )
 			break
