@@ -227,6 +227,13 @@
 			"ClientCallback": {
 				"After": "DoMapspawnDofUpdate"
 			}
+		},
+		{
+			"Path": "_rebuild_keyvalues.gnut",
+			"RunOn": "UI",
+			"UICallback": {
+				"Before": "NSRegisterKeyvalueConnectCallbacks"
+			}
 		}
 	],
 	"Localisation": [
