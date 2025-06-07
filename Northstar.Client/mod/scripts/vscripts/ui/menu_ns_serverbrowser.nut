@@ -1117,13 +1117,14 @@ void function OnServerSelected_Threaded( var button )
 	else
 	{
 		TriggerConnectToServerCallbacks()
-        DialogData dialogData
-        dialogData.header = "Join Server?"
-        dialogData.message = "You're about to connect to\n" + server.name + "\n\nAre you sure?"
-	    AddDialogButton( dialogData, "#YES", DoAuthToServer )
-        AddDialogButton( dialogData, "#NO" )
+        // DialogData dialogData
+        // dialogData.header = "Join Server?"
+        // dialogData.message = "You're about to connect to\n" + server.name + "\n\nAre you sure?"
+	    // AddDialogButton( dialogData, "#YES", DoAuthToServer )
+        // AddDialogButton( dialogData, "#NO" )
 
-        OpenDialog( dialogData )
+        // OpenDialog( dialogData )
+		DoAuthToServer()
 	}
 }
 
