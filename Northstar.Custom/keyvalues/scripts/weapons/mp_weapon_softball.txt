@@ -1,6 +1,6 @@
 WeaponData
 {
-#if NORTHSTAR
+///if NORTHSTAR
 	Mods
 	{
 		sns
@@ -12,5 +12,5 @@ WeaponData
 			projectile_launch_speed "7500"
 		}
 	}
-#endif
+///endif
 }

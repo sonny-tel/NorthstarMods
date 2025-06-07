@@ -1,6 +1,6 @@
 WeaponData
 {
-#if NORTHSTAR
+///if NORTHSTAR
 	Mods
 	{
         one_in_the_chamber
@@ -9,5 +9,5 @@ WeaponData
             		damage_far_value "9999"
 		}
 	}
-#endif
+///endif
 }
