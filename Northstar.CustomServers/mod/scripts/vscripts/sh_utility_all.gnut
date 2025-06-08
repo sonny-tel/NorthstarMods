@@ -1630,3 +1630,8 @@ void function FindAndRemove( array<entity> arr, entity target )
 		arr.remove( findIndex )
 	}
 }
+
+void function SaveRecordedAnimation( var recording, string filename )
+{
+	printt( "SaveRecordedAnimation STUB: " + filename )
+}
