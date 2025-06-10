@@ -79,7 +79,7 @@ void function FWOnRegisteringNetworkVars()
 	if ( GAMETYPE != FORT_WAR )
 		return
 	
-	NSRemote_RegisterFunction( "ServerCallback_FW_NotifyNeedsEnterEnemyArea" )
+	Remote_RegisterFunction( "ServerCallback_FW_NotifyNeedsEnterEnemyArea" )
 	
 	RegisterNetworkedVariable( "turretSite1", SNDC_GLOBAL, SNVT_ENTITY )
 	RegisterNetworkedVariable( "turretSite2", SNDC_GLOBAL, SNVT_ENTITY )

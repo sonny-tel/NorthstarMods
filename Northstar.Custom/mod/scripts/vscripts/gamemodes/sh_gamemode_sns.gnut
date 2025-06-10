@@ -55,6 +55,6 @@ void function SNSRegisterNetworkVars()
 	if ( GAMETYPE != GAMEMODE_SNS )
 		return
 
-	NSRemote_RegisterFunction( "ServerCallback_AnnounceBankrupt" )
-	NSRemote_RegisterFunction( "ServerCallback_AnnounceKillLeaderBankrupt" )
+	Remote_RegisterFunction( "ServerCallback_AnnounceBankrupt" )
+	Remote_RegisterFunction( "ServerCallback_AnnounceKillLeaderBankrupt" )
 }

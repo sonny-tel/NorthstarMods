@@ -39,6 +39,6 @@ void function HiddenRegisterNetworkVars()
 	if ( GAMETYPE != GAMEMODE_HIDDEN )
 		return
 
-	NSRemote_RegisterFunction( "ServerCallback_YouAreHidden" )
-	NSRemote_RegisterFunction( "ServerCallback_AnnounceHidden" )
+	Remote_RegisterFunction( "ServerCallback_YouAreHidden" )
+	Remote_RegisterFunction( "ServerCallback_AnnounceHidden" )
 }
