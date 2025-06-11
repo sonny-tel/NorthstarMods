@@ -765,6 +765,11 @@ void function LobbyMenuUpdate( var menu )
 			Hud_SetLocked( file.findGameButton, !IsPartyLeader() || inPendingOpenInvite )
 			Hud_SetLocked( file.inviteRoomButton, IsOpenInviteVisible() || GetPartySize() > 1 || inPendingOpenInvite )
 			Hud_SetLocked( file.inviteFriendsButton, inPendingOpenInvite )
+		} else
+		{
+			Hud_SetLocked( file.findGameButton, false )
+			Hud_SetLocked( file.inviteRoomButton, false )
+			Hud_SetLocked( file.inviteFriendsButton, false )
 		}
 
 		bool canGenUp = false
