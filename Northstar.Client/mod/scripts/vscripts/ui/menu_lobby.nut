@@ -1192,7 +1192,7 @@ void function UpdateAnnouncementDialog()
 				uiGlobal.announcementVersionSeen = player.GetPersistentVarAsInt( "announcementVersionSeen" )
 
 			int announcementVersion = GetConVarInt( "announcementVersion" )
-			if ( announcementVersion > uiGlobal.announcementVersionSeen )
+			if ( announcementVersion > uiGlobal.announcementVersionSeen && !NSIsVanilla() )
 			{
 				OpenAnnouncementDialog()
 			}
