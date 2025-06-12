@@ -32,6 +32,11 @@ UIPresenceStruct function DiscordRPC_GenerateUIPresence( UIPresenceStruct uis )
 			SetJoinSecret( true )
 	}
 
+	if ( GetPartySize() > 1 )
+		uis.in_party = true
+	else
+		uis.in_party = false
+
 	uis.is_vanilla = NSIsVanilla()
 
 	return uis

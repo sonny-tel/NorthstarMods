@@ -29,6 +29,7 @@ global struct GameStateStruct {
 global struct UIPresenceStruct {
     int gameState
     bool is_vanilla
+    bool in_party
 }
 
 global struct ModInfo
