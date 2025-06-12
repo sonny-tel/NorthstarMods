@@ -1001,7 +1001,6 @@ void function UpdateHUDCoreIcon_Threaded()
 
 	player.EndSignal( "OnDeath" )
 	player.EndSignal( "OnDestroy" )
-	player.EndSignal( "Disconnected" )
 
 	entity cockpit = player.GetCockpit()
 
@@ -1020,10 +1019,13 @@ void function UpdateHUDCoreIcon_Threaded()
 		var coreIconElem = HudElement( "TitanCoreIcon", panel )
 		asset coreIcon = StringToAsset( item )
 
-		coreIconElem.SetVisible( true )
-		coreIconElem.SetImage( coreIcon )
+		if ( player.IsTitan() )
+		{
+			coreIconElem.SetVisible( true )
+			coreIconElem.SetImage( coreIcon )
+		}
 
-		wait 3.5
+		wait 1.5
 
 		file.coreIconQueue.pop()
 	}
