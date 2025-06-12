@@ -26,7 +26,7 @@ UIPresenceStruct function DiscordRPC_GenerateUIPresence( UIPresenceStruct uis )
 	else
 	{
 		uis.gameState = eDiscordGameState.INGAME;
-		if ( partySub == ")
+		if ( partySub == "")
 			ClientCommand( "createparty" )
 		else 
 			SetJoinSecret( true )
