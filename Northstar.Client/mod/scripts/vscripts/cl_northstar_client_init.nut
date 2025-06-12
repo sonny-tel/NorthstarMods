@@ -30,6 +30,8 @@ global struct UIPresenceStruct {
     int gameState
     bool is_vanilla
     bool in_party
+    int party_size
+    int party_max_players
 }
 
 global struct ModInfo

@@ -38,6 +38,27 @@ UIPresenceStruct function DiscordRPC_GenerateUIPresence( UIPresenceStruct uis )
 		uis.in_party = false
 
 	uis.is_vanilla = NSIsVanilla()
+	uis.party_size = GetPartySize()
+	
+	string playlists = GetNextAutoMatchmakingPlaylist()
+	int smallestMaxplayers = 0
+	array<string> playlistNames = split( playlists, "," )
+
+	foreach( playlistName in playlistNames )
+	{
+		int maxPlayers = GetGamemodeVarOrUseValue( "max_players", playlistName, "16" ).tointeger()
+
+		if ( smallestMaxplayers == 0 )
+			smallestMaxplayers = maxPlayers
+
+		if ( maxPlayers < smallestMaxplayers )
+			smallestMaxplayers = maxPlayers
+	}
+
+	if ( playlists == "private_match" )
+		uis.party_max_players = smallestMaxplayers
+	else
+		uis.party_max_players = smallestMaxplayers / 2
 
 	return uis
 }
