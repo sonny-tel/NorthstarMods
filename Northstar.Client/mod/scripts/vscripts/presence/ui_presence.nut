@@ -23,7 +23,7 @@ UIPresenceStruct function DiscordRPC_GenerateUIPresence( UIPresenceStruct uis )
 		else 
 			SetJoinSecret( true )
 	}
-	else
+	else if ( IsMultiplayer() )
 	{
 		uis.gameState = eDiscordGameState.INGAME;
 		if ( partySub == "")
@@ -41,24 +41,25 @@ UIPresenceStruct function DiscordRPC_GenerateUIPresence( UIPresenceStruct uis )
 	uis.party_size = GetPartySize()
 	
 	string playlists = GetNextAutoMatchmakingPlaylist()
-	int smallestMaxplayers = 0
-	array<string> playlistNames = split( playlists, "," )
-
-	foreach( playlistName in playlistNames )
+	if( IsFullyConnected() && IsMultiplayer() )
 	{
-		int maxPlayers = GetGamemodeVarOrUseValue( "max_players", playlistName, "16" ).tointeger()
+		int smallestMaxplayers = GetGamemodeVarOrUseValue( "private_match", "max_players", "16" ).tointeger()
+		array<string> playlistNames = split( playlists, "," )
 
-		if ( smallestMaxplayers == 0 )
-			smallestMaxplayers = maxPlayers
+		foreach( playlistName in playlistNames )
+		{
+			int maxPlayers = GetGamemodeVarOrUseValue( playlistName, "max_players", "16" ).tointeger()
 
-		if ( maxPlayers < smallestMaxplayers )
-			smallestMaxplayers = maxPlayers
-	}
+			if ( maxPlayers < smallestMaxplayers )
+				smallestMaxplayers = maxPlayers
+		}
 
-	if ( playlists == "private_match" )
-		uis.party_max_players = smallestMaxplayers
-	else
-		uis.party_max_players = smallestMaxplayers / 2
+		if ( playlists.len() > 0 )
+			uis.party_max_players = smallestMaxplayers / 2
+		else
+			uis.party_max_players = GetCurrentPlaylistVarInt( "max_players", 16 )
+	} else
+		uis.party_max_players = GetCurrentPlaylistVarInt( "max_players", 16 )
 
 	return uis
 }
