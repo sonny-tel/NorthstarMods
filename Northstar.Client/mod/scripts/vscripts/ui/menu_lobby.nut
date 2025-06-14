@@ -593,9 +593,6 @@ void function OnLobbyMenu_Open()
 
 	DoNSButtonState()
 
-	if(!IsPrivateMatch())
-		SetConVarBool( "ns_skip_vanilla_integrity_check", false )
-
 	thread UpdateCachedNewItems()
 	if ( file.putPlayerInMatchmakingAfterDelay )
 	{

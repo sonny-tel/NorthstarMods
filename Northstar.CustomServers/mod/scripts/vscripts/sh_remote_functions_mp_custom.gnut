@@ -19,9 +19,3 @@ void function AddCallback_OnRegisteringCustomNetworkVars( void functionref() cal
 {
 	file.onRegisteringCustomNetworkVarsCallbacks.append( callback )
 }
-
-void function NSRemote_RegisterFunction( string name )
-{
-    if( !NSIsVanilla() || GetConVarBool( "ns_skip_vanilla_integrity_check" ) )
-        Remote_RegisterFunction( name );
-}

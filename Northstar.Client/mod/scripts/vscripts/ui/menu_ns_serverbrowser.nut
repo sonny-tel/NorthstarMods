@@ -1143,9 +1143,6 @@ void function OnPasswordTextEntry()
 
 void function DoAuthToServer()
 {
-	// no Ion servers so just do this
-	SetConVarBool( "ns_skip_vanilla_integrity_check", true )
-
 	thread ThreadedAuthAndConnectToServer( "", file.modsChanged != 0 )
 }
 
