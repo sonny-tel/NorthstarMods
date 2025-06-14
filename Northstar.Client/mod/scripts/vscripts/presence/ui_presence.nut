@@ -17,19 +17,26 @@ UIPresenceStruct function DiscordRPC_GenerateUIPresence( UIPresenceStruct uis )
 	}
 	else if ( IsLobby() || uiGlobal.loadedLevel == "mp_lobby" )
 	{
+		if ( NSIsVanilla() )
+		{
+			if ( partySub == "")
+				ClientCommand( "createparty" )
+			else 
+				SetJoinSecret( true )
+		}
 		uis.gameState = eDiscordGameState.LOBBY;
-		if ( partySub == "" )
-			ClientCommand( "createparty" )
-		else 
-			SetJoinSecret( true )
 	}
 	else if ( IsMultiplayer() )
 	{
+		if ( NSIsVanilla() )
+		{
+			if ( partySub == "")
+				ClientCommand( "createparty" )
+			else 
+				SetJoinSecret( true )
+		}
 		uis.gameState = eDiscordGameState.INGAME;
-		if ( partySub == "")
-			ClientCommand( "createparty" )
-		else 
-			SetJoinSecret( true )
+
 	}
 
 	if ( GetPartySize() > 1 )
