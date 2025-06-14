@@ -277,6 +277,14 @@ array<string> function GetPrivateMatchMapsForMode( string modeName )
 		for ( int i = 0; i < numMaps; i++ )
 			maps.append( GetPlaylistGamemodeByIndexMapByIndex( modeName, 0, i ) )
 	}
+
+	if( NSIsVanilla() )
+	{
+		if( IsFDMode(modeName ) )
+		{
+			maps.append( "mp_colony02" )
+		}
+	}
 		
 	return maps
 }
