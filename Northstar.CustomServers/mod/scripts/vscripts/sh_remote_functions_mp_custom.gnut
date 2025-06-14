@@ -1,7 +1,6 @@
 untyped
 global function InitCustomNetworkVars
 global function AddCallback_OnRegisteringCustomNetworkVars
-global function NSRemote_RegisterFunction
 
 struct {
 	array<void functionref()> onRegisteringCustomNetworkVarsCallbacks
