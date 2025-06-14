@@ -230,9 +230,12 @@
 		},
 		{
 			"Path": "_rebuild_keyvalues.gnut",
-			"RunOn": "UI",
+			"RunOn": "(CLIENT || UI)",
 			"UICallback": {
 				"Before": "NSRegisterKeyvalueConnectCallbacks"
+			},
+			"ClientCallback": {
+				"After": "NSRebuildKeyvalues"
 			}
 		}
 	],

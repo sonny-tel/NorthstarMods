@@ -1,19 +1,36 @@
 global function NSRegisterKeyvalueConnectCallbacks
-global function NSRebuildKeyvaluesOnMainMenu
-
+global function NSRebuildKeyvalues
 global function RebuildKeyvaluesOnConnect
 
 void function NSRegisterKeyvalueConnectCallbacks()
 {
+#if UI
 	AddConnectToServerCallback( RebuildKeyvaluesOnConnect )
-}
-
-void function NSRebuildKeyvaluesOnMainMenu()
-{
-	ClientCommand( "reload_kv; weapon_reparse" )
+#endif
 }
 
 void function RebuildKeyvaluesOnConnect( ServerInfo serverInfo )
 {
+	NSRebuildKeyvalues()
+}
+
+void function NSRebuildKeyvalues()
+{
+	thread NSRebuildKeyvalues_Threaded()
+}
+
+void function NSRebuildKeyvalues_Threaded()
+{
+#if UI
+	while( !IsFullyConnected() )
+		WaitFrame()
+
 	ClientCommand( "reload_kv; weapon_reparse" )
+
+#elseif CLIENT
+	while( !IsValid( GetLocalClientPlayer() ) )
+		WaitFrame()
+
+	GetLocalClientPlayer().ClientCommand( "reload_kv; weapon_reparse" )
+#endif
 }
