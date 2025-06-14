@@ -1420,6 +1420,9 @@ function UpdateLobbyType()
 
 	WaitFrameOrUntilLevelLoaded()
 
+	if ( GetLobbyTypeScript() == 0 )
+		ClientCommand( "createparty" )
+
 	while ( true )
 	{
 		lobbyType = GetLobbyTypeScript()
@@ -1437,6 +1440,7 @@ function UpdateLobbyType()
 			switch ( lobbyType )
 			{
 				case eLobbyType.SOLO:
+					ClientCommand( "createparty" )
 					animation = "SoloLobby"
 					break
 

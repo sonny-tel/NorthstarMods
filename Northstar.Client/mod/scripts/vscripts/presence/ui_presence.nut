@@ -19,9 +19,7 @@ UIPresenceStruct function DiscordRPC_GenerateUIPresence( UIPresenceStruct uis )
 	{
 		if ( NSIsVanilla() )
 		{
-			if ( partySub == "")
-				ClientCommand( "createparty" )
-			else 
+			if ( partySub != "" )
 				SetJoinSecret( true )
 		}
 		uis.gameState = eDiscordGameState.LOBBY;
@@ -30,9 +28,7 @@ UIPresenceStruct function DiscordRPC_GenerateUIPresence( UIPresenceStruct uis )
 	{
 		if ( NSIsVanilla() )
 		{
-			if ( partySub == "")
-				ClientCommand( "createparty" )
-			else 
+			if ( partySub != "" )
 				SetJoinSecret( true )
 		}
 		uis.gameState = eDiscordGameState.INGAME;

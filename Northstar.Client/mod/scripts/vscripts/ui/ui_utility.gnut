@@ -203,6 +203,9 @@ function WaitFrameOrUntilLevelLoaded()
 
 bool function IsPlayerAlone()
 {
+	if( GetPartySize() <= 1 )
+		return true
+
 	int myTeam = GetTeam()
 	if ( GetTeamSize( myTeam ) <= 1 )
 		return true
@@ -333,6 +336,9 @@ int function GetLobbyTypeScript()
 		}
 		else
 		{
+			if( IsPlayerAlone() )
+				return eLobbyType.SOLO
+
 			return eLobbyType.PARTY_MEMBER
 		}
 	}
