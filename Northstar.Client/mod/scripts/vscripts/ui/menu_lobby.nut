@@ -1453,10 +1453,14 @@ function UpdateLobbyType()
 					break
 
 				case eLobbyType.MATCH:
+					if ( GetConVarString( "match_partySub" ) == "" )
+						ClientCommand( "createparty" )
 					animation = "MatchLobby"
 					break
 
 				case eLobbyType.PRIVATE_MATCH:
+					if ( GetConVarString( "match_partySub" ) == "" )
+						ClientCommand( "createparty" )
 					animation = "PrivateMatchLobby"
 					break
 			}
