@@ -1,5 +1,6 @@
 global function NSRegisterKeyvalueConnectCallbacks
 global function NSRebuildKeyvalues
+global function NSReparseWeapons
 global function RebuildKeyvaluesOnConnect
 
 void function NSRegisterKeyvalueConnectCallbacks()
@@ -16,21 +17,33 @@ void function RebuildKeyvaluesOnConnect( ServerInfo serverInfo )
 
 void function NSRebuildKeyvalues()
 {
-	thread NSRebuildKeyvalues_Threaded()
+	thread NSRebuildKeyvalues_Internal( false )
 }
 
-void function NSRebuildKeyvalues_Threaded()
+void function NSReparseWeapons()
+{
+	thread NSRebuildKeyvalues_Internal( true )
+}
+
+void function NSRebuildKeyvalues_Internal( bool weaponsOnly )
 {
 #if UI
 	while( !IsFullyConnected() )
 		WaitFrame()
 
-	ClientCommand( "reload_kv; weapon_reparse" )
+
+	if( weaponsOnly )
+		ClientCommand( "weapon_reparse" )
+	else
+		ClientCommand( "reload_kv; weapon_reparse" )
 
 #elseif CLIENT
 	while( !IsValid( GetLocalClientPlayer() ) )
 		WaitFrame()
 
-	GetLocalClientPlayer().ClientCommand( "reload_kv; weapon_reparse" )
+	if( weaponsOnly )
+		GetLocalClientPlayer().ClientCommand( "weapon_reparse" )
+	else
+		GetLocalClientPlayer().ClientCommand( "reload_kv; weapon_reparse" )
 #endif
 }

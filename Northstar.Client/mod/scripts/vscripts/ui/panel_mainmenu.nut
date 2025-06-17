@@ -169,7 +169,7 @@ void function OnShowMainMenuPanel()
 
 	UpdateSPButtons()
 
-	NSRebuildKeyvalues()
+	NSReparseWeapons()
 
 	// dont try and update the launch multiplayer button, because it doesn't exist
 	thread UpdatePlayButton( file.mpButton )
