@@ -75,9 +75,6 @@ void function OnMainMenu_Open()
 
 	NS_SetVersionLabel()
 
-	// HACK: I dont even remember why I set this
-	SetConVarInt( "mp_allowed", 1 )
-
 	UpdatePromoData() // On script restarts this gives us the last data until the new request is complete
 	RequestMainMenuPromos() // This will be ignored if there was a recent request. "infoblock_requestInterval"
 

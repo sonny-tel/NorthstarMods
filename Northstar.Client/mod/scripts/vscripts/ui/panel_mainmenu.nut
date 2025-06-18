@@ -236,13 +236,6 @@ void function UpdatePlayButton( var button )
 
 	while ( GetTopNonDialogMenu() == file.menu )
 	{
-		if ( !Hud_IsFocused( button ) )
-		{
-			RuiSetBool( file.serviceStatus, "isVisible", false )
-			WaitFrame()
-			continue
-		}
-
 		#if DURANGO_PROG
 			isFullyInstalled = IsGameFullyInstalled()
 			isOnline = Console_IsOnline()
@@ -408,14 +401,14 @@ void function UpdatePlayButton( var button )
 				message = "#ORIGIN_IS_OFFLINE"
 				file.mpButtonActivateFunc = null
 			}
-			else if ( !isStryderAuthenticated )
+			else if ( button == file.mpButton && !isStryderAuthenticated )
 			{
 				message = "#CONTACTING_RESPAWN_SERVERS"
 				file.mpButtonActivateFunc = null
 			}
-			else if ( button == file.fdButton && GetConVarInt( "ns_has_agreed_to_send_token" ) != NS_AGREED_TO_SEND_TOKEN )
+			else if ( button == file.mpButton && !isOriginConnected )
 			{
-				message = "#AUTHENTICATIONAGREEMENT_NO"
+				message = "#CONTACTING_RESPAWN_SERVERS"
 				file.mpButtonActivateFunc = null
 			}
 			else if ( button == file.mpButton && !isMPAllowed )
@@ -464,7 +457,6 @@ void function UpdatePlayButton( var button )
 
 			if ( button == file.fdButton && ( NSGetMasterServerAuthResult().success && NSIsMasterServerAuthenticated() ) || GetConVarBool( "ns_auth_allow_insecure" ) )
 			{
-				message = ""
 				Hud_SetLocked( file.fdButton, false )
 			}
 
@@ -818,9 +810,7 @@ void function TrackInstallProgress()
 
 bool function IsStryderAuthenticated()
 {
-	// We don't actually need to wait for Stryder response, because we don't care about it anyway
-	return true
-	//return GetConVarInt( "mp_allowed" ) != -1
+	return GetConVarInt( "mp_allowed" ) != -1
 }
 
 bool function IsStryderAllowingMP()

@@ -244,6 +244,13 @@
 			"ClientCallback": {
 				"After": "DoMapspawnDofUpdate"
 			}
+		},
+		{
+			"Path": "client/cl_reparseweapons.gnut",
+			"RunOn": "CLIENT",
+			"ClientCallback": {
+				"After": "Cl_WeaponReparse"
+			}
 		}
 	],
 	"Localisation": [
