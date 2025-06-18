@@ -7,10 +7,10 @@ void function Cl_WeaponReparse()
 
 void function Cl_WeaponReparse_Threaded()
 {
-    entity player = GetLocalClientPlayer()
-    
-    while( !IsValid( player ))
+    while( !IsValid( GetLocalClientPlayer() ))
         WaitFrame()
+
+    entity player = GetLocalClientPlayer()
 
     player.ClientCommand("weapon_reparse")
 }
