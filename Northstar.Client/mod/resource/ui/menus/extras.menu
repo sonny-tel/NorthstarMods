@@ -440,7 +440,7 @@ resource/ui/menus/video.menu
 				"#SETTING_OFF"  1
 				"#SETTING_ON"  	0
 			}
-			navUp					SwchDemoWriteLocalFile
+			navUp					SwchDemoAutorecord
 			navDown					SwchDOF
 			xpos					-22
 			// list is populated by code
@@ -523,7 +523,7 @@ resource/ui/menus/video.menu
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
 			navUp					SldSunScale
-			navDown					BtnPlayerList
+			navDown					SwchHideMOTD
 			minValue				0
 			maxValue				5
 			stepSize				0.01
@@ -602,8 +602,8 @@ resource/ui/menus/video.menu
 				"#SETTING_ENABLED"  0
 				"#SETTING_DISABLED" 1
 			}
-			navUp					SwchDemoWriteLocalFile
-			navDown					SwchDOF
+			navUp					SldSkyScale
+			navDown					SwchHideVersion
 			xpos					-22
 		}
 
@@ -621,8 +621,8 @@ resource/ui/menus/video.menu
 			pin_to_sibling			SwchHideMOTD
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
-			navUp					BtnPlayDemo
-			navDown					SwchBloom
+			navUp					SwchHideMOTD
+			navDown					SwchHideSubtext
 		}
 
 		SwchHideSubtext
@@ -639,8 +639,8 @@ resource/ui/menus/video.menu
 			pin_to_sibling			SwchHideVersion
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
-			navUp					BtnPlayDemo
-			navDown					SwchBloom
+			navUp					SwchHideVersion
+			navDown					SwchHideSpotlight
 		}
 		SwchHideSpotlight
 		{
@@ -656,8 +656,8 @@ resource/ui/menus/video.menu
 			pin_to_sibling			SwchHideSubtext
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
-			navUp					BtnPlayDemo
-			navDown					SwchBloom
+			navUp					SwchHideSubtext
+			navDown					BtnPlayerList
 		}
 	}
 }

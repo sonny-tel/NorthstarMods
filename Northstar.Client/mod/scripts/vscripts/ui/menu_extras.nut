@@ -25,6 +25,13 @@ void function InitExtrasMenu()
 	SetupButton( button, "Player List", "View current players in server, including the lobby." )
 	Hud_AddEventHandler( button, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "PlayerlistMenu" ) ) )
 
+	button = Hud_GetChild( menu, "SwchCheats" )
+	SetupButton( button, "Cheats", "Toggles sv_cheats")
+
+	button = Hud_GetChild( menu, "SwchDeveloper" )
+	SetupButton( button, "Developer", "Sets developer level, you'll need to run uiscript_reset" )
+
+
 	button = Hud_GetChild( menu, "SwchCommunitiesEnabled" )
 	SetupButton( button, "Enable Communities/Networks", "Sets whether networks and community features will be used. They are always disabled in Northstar.")
 
@@ -57,6 +64,10 @@ void function InitExtrasMenu()
 	SetupButton( Hud_GetChild( Hud_GetChild( menu, "SldSkyScale" ), "BtnDropButton" ), "Sky Scale", "Sets size of the Sky lighting particle." )
 	AddButtonEventHandler( Hud_GetChild( menu, "TextEntrySkyScale" ), UIE_CHANGE, TextEntrySkyScale_Changed )
 
+	SetupButton( Hud_GetChild( menu, "SwchHideMOTD"), "Main Menu Promotions", "Toggle whether menu promos are visible" )
+	SetupButton( Hud_GetChild( menu, "SwchHideVersion"), "Version", "Toggle whether the version text is visible" )
+	SetupButton( Hud_GetChild( menu, "SwchHideSubtext"), "Subtitle", "Toggle whether the menu subtitle text is visible" )
+	SetupButton( Hud_GetChild( menu, "SwchHideSpotlight"), "Spotlight", "Toggle whether the menu spotlight is visible" )
 
     AddMenuFooterOption( menu, BUTTON_A, "#A_BUTTON_SELECT" )
 	AddMenuFooterOption( menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
