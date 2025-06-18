@@ -2,5 +2,15 @@ global function Cl_WeaponReparse
 
 void function Cl_WeaponReparse()
 {
-    GetLocalClientPlayer().ClientCommand("weapon_reparse")
+    thread Cl_WeaponReparse_Threaded()
+}
+
+void function Cl_WeaponReparse_Threaded()
+{
+    entity player = GetLocalClientPlayer()
+    
+    while( !IsValid( player ))
+        WaitFrame()
+
+    player.ClientCommand("weapon_reparse")
 }
