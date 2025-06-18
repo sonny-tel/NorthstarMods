@@ -110,6 +110,10 @@
 			"Name": "hide_spotlight",
 			"DefaultValue": "0",
 			"Flags": "ARCHIVE_PLAYERPROFILE"
+		},
+		{
+			"Name": "previous_mp_allowed",
+			"DefaultValue": "-1",
 		}
 	],
 	"Scripts": [

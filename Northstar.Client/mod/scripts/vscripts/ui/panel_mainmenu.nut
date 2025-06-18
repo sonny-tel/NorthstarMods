@@ -810,12 +810,40 @@ void function TrackInstallProgress()
 
 bool function IsStryderAuthenticated()
 {
-	return GetConVarInt( "mp_allowed" ) != -1
+	bool res = GetConVarInt( "mp_allowed" ) != -1
+
+	if( res )
+	{
+		SetConVarInt( "previous_mp_allowed", GetConVarInt( "mp_allowed" ) )
+		return true
+	}
+
+	if( GetConVarInt( "previous_mp_allowed" ) != -1 )
+	{
+		SetConVarInt( "mp_allowed", 1 )
+		return true
+	}
+
+	return false
 }
 
 bool function IsStryderAllowingMP()
 {
-	return GetConVarInt( "mp_allowed" ) == 1
+	bool res = GetConVarInt( "mp_allowed" ) == 1
+
+	if( res )
+	{
+		SetConVarInt( "previous_mp_allowed", GetConVarInt( "mp_allowed" ) )
+		return true
+	}
+
+	if ( GetConVarInt( "previous_mp_allowed" ) == 1 )
+	{
+		SetConVarInt( "mp_allowed", 1 )
+		return true
+	}
+
+	return false
 }
 
 #if PS4_PROG
