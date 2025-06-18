@@ -47,10 +47,7 @@ void function InitExtrasMenu()
 
 	SetupButton( Hud_GetChild( menu, "BtnPlayDemo"), "Play Demo", "Play a demo file." )
 	Hud_AddEventHandler( Hud_GetChild( menu, "BtnPlayDemo"), UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "DemopickerMenu" ) ) )
-	SetupButton( Hud_GetChild( menu, "SwchEnableDemos"), "Enable Demos", "Sets whether demos are enabled." )
 	SetupButton( Hud_GetChild( menu, "SwchDemoAutorecord"), "Automatically Record Demos", "Enables automatic recording of game matches as Demos." )
-	SetupButton( Hud_GetChild( menu, "SwchDemoWriteLocalFile"), "Write Demo Files", "Sets whether demos are written to disk." )
-
 
 	SetupButton( Hud_GetChild( menu, "SwchBloom"), "Bloom", "Sets whether bloom is enabled." )
 	SetupButton( Hud_GetChild( menu, "SwchDOF"), "Depth-of-field", "Sets whether DOF is enabled, can be set to only work in Lobby." )

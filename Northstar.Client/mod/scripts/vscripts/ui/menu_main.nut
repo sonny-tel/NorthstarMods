@@ -73,6 +73,8 @@ void function OnMainMenu_Open()
 	Signal( uiGlobal.signalDummy, "EndOnMainMenu_Open" )
 	EndSignal( uiGlobal.signalDummy, "EndOnMainMenu_Open" )
 
+	NS_SetVersionLabel()
+
 	// HACK: I dont even remember why I set this
 	SetConVarInt( "mp_allowed", 1 )
 
@@ -664,7 +666,7 @@ void function UpdateTrialLabel()
 
 	Hud_SetColor( file.trialLabel, 0, 206, 209, 255 )
 	Hud_SetText( file.trialLabel, "ION" )
-	Hud_SetVisible( file.trialLabel, true )
+	Hud_SetVisible( file.trialLabel, !GetConVarBool( "hide_subtext" ) )
 
 	//while ( GetTopNonDialogMenu() == file.menu )
 	//{

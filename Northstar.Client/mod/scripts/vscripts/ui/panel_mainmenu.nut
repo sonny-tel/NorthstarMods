@@ -134,7 +134,6 @@ void function InitMainMenuPanel()
 	//AddPanelFooterOption( file.panel, BUTTON_BACK, "", "", ClosePostGameMenu )
 
 	thread TrackInstallProgress()
-	UpdateCustomMainMenuPromos()
 }
 
 void function OnShowMainMenuPanel()
@@ -142,6 +141,7 @@ void function OnShowMainMenuPanel()
 	Signal( uiGlobal.signalDummy, "EndShowMainMenuPanel" )
 	EndSignal( uiGlobal.signalDummy, "EndShowMainMenuPanel" )
 
+	UpdateCustomMainMenuPromos()
 
 	foreach ( button in file.menuButtons )
 	{
@@ -889,18 +889,16 @@ void function UpdateCustomMainMenuPromosThreaded()
 
 void function UpdateWhatsNewData()
 {
-	// file.promoData.newInfo_ImageIndex
-	//RuiSetString( file.whatsNew, "line1Text", "`2%$rui/menu/main_menu/whats_new_bulletpoint%`0 Updated Live Fire Maps!\n`2%$rui/menu/main_menu/whats_new_bulletpoint%`0 Prime Titans`0 in the Store\n`2%$rui/menu/main_menu/whats_new_bulletpoint% DOUBLE XP`0 weekend!" )//file.promoData.newInfo_Title1 )
-	// RuiSetString( file.whatsNew, "line1Text", expect string( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.newInfoTitle1 ) ) )
-	// RuiSetString( file.whatsNew, "line2Text", expect string( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.newInfoTitle2 ) ) )
-	// RuiSetString( file.whatsNew, "line3Text", expect string( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.newInfoTitle3 ) ) )
+	RuiSetString( file.whatsNew, "line1Text", "`2%$rui/menu/main_menu/whats_new_bulletpoint%`0 Updated Live Fire Maps!\n`2%$rui/menu/main_menu/whats_new_bulletpoint%`0 Prime Titans`0 in the Store\n`2%$rui/menu/main_menu/whats_new_bulletpoint% DOUBLE XP`0 weekend!" )//file.promoData.newInfo_Title1 )
+	RuiSetString( file.whatsNew, "line1Text", expect string( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.newInfoTitle1 ) ) )
+	RuiSetString( file.whatsNew, "line2Text", expect string( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.newInfoTitle2 ) ) )
+	RuiSetString( file.whatsNew, "line3Text", expect string( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.newInfoTitle3 ) ) )
 
-	bool isVisible = true
-	// if ( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.newInfoTitle1 ) == "" && NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.newInfoTitle2 ) == "" && NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.newInfoTitle3 ) == "" )
-	// 	isVisible = false
+	bool isVisible = !GetConVarBool( "hide_spotlight" )
+	if ( NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.newInfoTitle1 ) == "" && NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.newInfoTitle2 ) == "" && NSGetCustomMainMenuPromoData( eMainMenuPromoDataProperty.newInfoTitle3 ) == "" )
+		isVisible = false
 
-
-	RuiSetBool( file.whatsNew, "isVisible", false )
+	RuiSetBool( file.whatsNew, "isVisible", isVisible )
 }
 
 void function UpdateSpotlightData()
@@ -924,7 +922,7 @@ void function SetSpotlightButtonData( var button, string link, int imageIndex, s
 		RuiSetString( rui, "detailsText", details )
 
 	button.s.link = link
-	Hud_SetVisible( file.spotlightPanel, true )
+	Hud_SetVisible( file.spotlightPanel, !GetConVarBool( "hide_motd" ) )
 }
 
 void function SpotlightButton_Activate( var button )

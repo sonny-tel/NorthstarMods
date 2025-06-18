@@ -90,6 +90,26 @@
 			"Name": "show_healthbars",
 			"DefaultValue": "0",
 			"Flags": "ARCHIVE_PLAYERPROFILE"
+		},
+		{
+			"Name": "hide_motd",
+			"DefaultValue": "0",
+			"Flags": "ARCHIVE_PLAYERPROFILE"
+		},
+		{
+			"Name": "hide_version",
+			"DefaultValue": "0",
+			"Flags": "ARCHIVE_PLAYERPROFILE"
+		},
+		{
+			"Name": "hide_subtext",
+			"DefaultValue": "0",
+			"Flags": "ARCHIVE_PLAYERPROFILE"
+		},
+		{
+			"Name": "hide_spotlight",
+			"DefaultValue": "0",
+			"Flags": "ARCHIVE_PLAYERPROFILE"
 		}
 	],
 	"Scripts": [
@@ -112,9 +132,6 @@
 		{
 			"Path": "ui/menu_ns_setversionlabel.nut",
 			"RunOn": "UI",
-			"UICallback": {
-				"After": "NS_SetVersionLabel"
-			}
 		},
 		{
 			"Path": "presence/ui_presence.nut",

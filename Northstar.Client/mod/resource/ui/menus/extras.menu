@@ -71,12 +71,50 @@ resource/ui/menus/video.menu
 			tabPosition				1
 		}
 
+		SwchCheats
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			style					DialogListButton
+			pin_to_sibling			BtnPlayerList
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			ypos 23
+			ConVar					"sv_cheats"
+			list
+			{
+				"#SETTING_OFF"	0
+				"#SETTING_ON"	1
+			}
+			navUp					BtnPlayerList
+			navDown					SwchDeveloper
+		}
+
+		SwchDeveloper
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			style					DialogListButton
+			pin_to_sibling			SwchCheats
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			ypos 3
+			ConVar					"developer"
+			list
+			{
+				"#SETTING_OFF"	0
+				"#SETTING_ON"	1
+			}
+			navUp					SwchCheats
+			navDown					SwchCommunitiesEnabled
+		}
+
 		ImgCommunitiesSubheaderBackground
 		{
 			ControlName				ImagePanel
 			InheritProperties		SubheaderBackground
 			xpos					96
-			ypos					225
+			ypos					314
 		}
 		LblCommunitiesSubheaderText
 		{
@@ -104,9 +142,10 @@ resource/ui/menus/video.menu
 				"#SETTING_OFF"	0
 				"#SETTING_ON"	1
 			}
-			navUp					BtnPlayerList
+			navUp					SwchDeveloper
 			navDown					SwchFilterByRegion
 		}
+
 		SwchFilterByRegion // mat_setvideomode 1280 720 1 0
 		{
 			ControlName				RuiButton
@@ -197,7 +236,7 @@ resource/ui/menus/video.menu
 			ControlName				ImagePanel
 			InheritProperties		SubheaderBackground
 			xpos					96
-			ypos					440
+			ypos					529
 		}
 		LblHudSubheaderText
 		{
@@ -328,7 +367,7 @@ resource/ui/menus/video.menu
 			ControlName				ImagePanel
 			InheritProperties		SubheaderBackground
 			xpos					96
-			ypos					740
+			ypos					829
 		}
 		LblDemoSubheaderText
 		{
@@ -350,25 +389,7 @@ resource/ui/menus/video.menu
 			pin_to_sibling_corner	BOTTOM_LEFT
 			xpos					-22
 			navUp					SwchSpeedometer
-			navDown					SwchEnableDemos
-		}
-		SwchEnableDemos
-		{
-			ControlName				RuiButton
-			InheritProperties		SwitchButton
-			style					DialogListButton
-			pin_to_sibling			BtnPlayDemo
-			pin_corner_to_sibling	TOP_LEFT
-			pin_to_sibling_corner	BOTTOM_LEFT
-			ConVar					"demo_enabledemos"
-			list
-			{
-				"#SETTING_OFF"  0
-				"#SETTING_ON"  	1
-			}
-			navUp					BtnPlayDemo
 			navDown					SwchDemoAutorecord
-			BtnDropButton
 		}
 		SwchDemoAutorecord
 		{
@@ -381,31 +402,12 @@ resource/ui/menus/video.menu
 				"#SETTING_OFF"  0
 				"#SETTING_ON"  	1
 			}
-			pin_to_sibling			SwchEnableDemos
+			pin_to_sibling			BtnPlayDemo
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
-			navUp					SwchEnableDemos
-			navDown					SwchDemoWriteLocalFile
-		}
-		SwchDemoWriteLocalFile
-		{
-			ControlName				RuiButton
-			InheritProperties		SwitchButton
-			style					DialogListButton
-			pin_to_sibling			SwchDemoAutorecord
-			pin_corner_to_sibling	TOP_LEFT
-			pin_to_sibling_corner	BOTTOM_LEFT
-			ConVar					"demo_writeLocalFile"
-			list
-			{
-				"#SETTING_OFF"  0
-				"#SETTING_ON"  	1
-			}
-			navUp					SwchDemoAutorecord
+			navUp					BtnPlayDemo
 			navDown					SwchBloom
-			// list is populated by code
 		}
-
 		// Mouse/Keyboard subheader
 		ImgVideoSubheaderBackground	[!$GAMECONSOLE]
 		{
@@ -567,6 +569,95 @@ resource/ui/menus/video.menu
 		{
 			ControlName				CNestedPanel
 			InheritProperties       FooterButtons
+		}
+
+		ImgInterfaceSubheaderBackground
+		{
+			ControlName				ImagePanel
+			InheritProperties		SubheaderBackground
+			xpos					950
+			ypos					650
+		}
+		LblInterfaceSubheaderText [!$GAMECONSOLE]
+		{
+			ControlName				Label
+			InheritProperties		SubheaderText
+			pin_to_sibling			ImgInterfaceSubheaderBackground
+			pin_corner_to_sibling	LEFT
+			pin_to_sibling_corner	LEFT
+			labelText				"INTERFACE"
+		}
+
+		SwchHideMOTD
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			style					DialogListButton
+			pin_to_sibling			ImgInterfaceSubheaderBackground
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			ConVar					"hide_motd"
+			list
+			{
+				"#SETTING_ENABLED"  0
+				"#SETTING_DISABLED" 1
+			}
+			navUp					SwchDemoWriteLocalFile
+			navDown					SwchDOF
+			xpos					-22
+		}
+
+		SwchHideVersion
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			style					DialogListButton
+			ConVar					"hide_version"
+			list
+			{
+				"#SETTING_ENABLED"  0
+				"#SETTING_DISABLED" 1
+			}
+			pin_to_sibling			SwchHideMOTD
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnPlayDemo
+			navDown					SwchBloom
+		}
+
+		SwchHideSubtext
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			style					DialogListButton
+			ConVar					"hide_subtext"
+			list
+			{
+				"#SETTING_ENABLED"  0
+				"#SETTING_DISABLED" 1
+			}
+			pin_to_sibling			SwchHideVersion
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnPlayDemo
+			navDown					SwchBloom
+		}
+		SwchHideSpotlight
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			style					DialogListButton
+			ConVar					"hide_spotlight"
+			list
+			{
+				"#SETTING_ENABLED"  0
+				"#SETTING_DISABLED" 1
+			}
+			pin_to_sibling			SwchHideSubtext
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnPlayDemo
+			navDown					SwchBloom
 		}
 	}
 }
