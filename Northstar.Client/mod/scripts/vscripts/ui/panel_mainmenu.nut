@@ -23,7 +23,8 @@ struct
 	var buttonData
 	array<var> menuButtons
 	var activeProfile
-	var serviceStatus
+	var serviceStatusMP
+	var serviceStatusNS
 
 	MainMenuPromos& promoData
 	var whatsNew
@@ -56,7 +57,8 @@ void function InitMainMenuPanel()
 	AddEventHandlerToButtonClass( file.menu, "SpotlightButtonClass", UIE_CLICK, SpotlightButton_Activate )
 
 	file.activeProfile = Hud_GetChild( file.panel, "ActiveProfile" )
-	file.serviceStatus = Hud_GetRui( Hud_GetChild( file.panel, "ServiceStatus" ) )
+	file.serviceStatusMP = Hud_GetRui( Hud_GetChild( file.panel, "ServiceStatusMP" ) )
+	file.serviceStatusNS = Hud_GetRui( Hud_GetChild( file.panel, "ServiceStatusNS" ) )
 	file.whatsNew = Hud_GetRui( Hud_GetChild( file.panel, "WhatsNew" ) )
 
 	ComboStruct comboStruct = ComboButtons_Create( file.panel )
@@ -232,10 +234,22 @@ void function UpdatePlayButton( var button )
 	bool isLocked
 	string buttonText
 	string message
+	string nsMessage
 	bool isMessageVisible
+	bool isNSMessageVisible
 
 	while ( GetTopNonDialogMenu() == file.menu )
 	{
+		if ( !Hud_IsFocused( button ) )
+		{
+			if ( button == file.mpButton )
+				RuiSetBool( file.serviceStatusMP, "isVisible", false )
+			else if ( button == file.fdButton )
+				RuiSetBool( file.serviceStatusNS, "isVisible", false )
+			WaitFrame()
+			continue
+		}
+
 		#if DURANGO_PROG
 			isFullyInstalled = IsGameFullyInstalled()
 			isOnline = Console_IsOnline()
@@ -395,6 +409,7 @@ void function UpdatePlayButton( var button )
 
 			buttonText = "#MULTIPLAYER_LAUNCH"
 			message = ""
+			nsMessage = ""
 
 			if ( !isOriginConnected )
 			{
@@ -428,29 +443,35 @@ void function UpdatePlayButton( var button )
 
 			if ( button == file.fdButton && GetConVarInt( "ns_has_agreed_to_send_token" ) != NS_AGREED_TO_SEND_TOKEN && !GetConVarBool( "ns_auth_allow_insecure" ) )
 			{
-				message = "#AUTHENTICATIONAGREEMENT_NO"
-				Hud_SetLocked( file.fdButton, true )
+				if( !GetConVarBool( "ns_auth_allow_insecure" ) )
+				{
+					nsMessage = "#AUTHENTICATIONAGREEMENT_NO"
+					Hud_SetLocked( file.fdButton, true )
+				}
 			}
 
-			if ( button == file.fdButton && !NSIsMasterServerAuthenticated() && !GetConVarBool( "ns_auth_allow_insecure" ) )
+			if ( button == file.fdButton && !NSIsMasterServerAuthenticated() && GetConVarInt( "ns_has_agreed_to_send_token" ) == NS_AGREED_TO_SEND_TOKEN )
 			{
-				message = "#DIALOG_AUTHENTICATING_MASTERSERVER"
-				Hud_SetLocked( file.fdButton, true )
+				if( !GetConVarBool( "ns_auth_allow_insecure" ) )
+				{
+					nsMessage = "#DIALOG_AUTHENTICATING_MASTERSERVER"
+					Hud_SetLocked( file.fdButton, true )
+				}
 			}
 
 			if ( button == file.fdButton && ( !NSGetMasterServerAuthResult().success && NSIsMasterServerAuthenticated() ) && !GetConVarBool( "ns_auth_allow_insecure" ) )
 			{
 				MasterServerAuthResult res = NSGetMasterServerAuthResult()
-				message = Localize( "#AUTHENTICATION_FAILED_HEADER" ) + ": "
+				nsMessage = Localize( "#AUTHENTICATION_FAILED_HEADER" ) + ": "
 
 				// if we got a special error message from Atlas, display it
 				if ( res.errorMessage != "" )
-					message += res.errorMessage
+					nsMessage += res.errorMessage
 				else
-					message += Localize( "#AUTHENTICATION_FAILED_BODY" )
+					nsMessage += Localize( "#AUTHENTICATION_FAILED_BODY" )
 
 				if ( res.errorCode != "" )
-					message += format( " %s", Localize( "#AUTHENTICATION_FAILED_ERROR_CODE", res.errorCode ) )
+					nsMessage += format( " %s", Localize( "#AUTHENTICATION_FAILED_ERROR_CODE", res.errorCode ) )
 
 				Hud_SetLocked( file.fdButton, true )
 			}
@@ -484,10 +505,20 @@ void function UpdatePlayButton( var button )
 		else if ( message == "" )
 			message = GetConVarString( "rspn_motd" )
 
-		RuiSetString( file.serviceStatus, "messageText", message )
 
 		isMessageVisible = message != "" ? true : false
-		RuiSetBool( file.serviceStatus, "isVisible", isMessageVisible )
+		if ( button == file.mpButton )
+		{
+			RuiSetBool( file.serviceStatusMP, "isVisible", isMessageVisible )
+			RuiSetString( file.serviceStatusMP, "messageText", message )
+		}
+
+		isNSMessageVisible = nsMessage != "" ? true : false
+		if ( button == file.fdButton )
+		{
+			RuiSetBool( file.serviceStatusNS, "isVisible", isNSMessageVisible )
+			RuiSetString( file.serviceStatusNS, "messageText", nsMessage )
+		}
 
 		WaitFrame()
 		//wait 2
