@@ -19,7 +19,7 @@ UIPresenceStruct function DiscordRPC_GenerateUIPresence( UIPresenceStruct uis )
 	{
 		if ( NSIsVanilla() )
 		{
-			if ( partySub != "" )
+			if ( partySub != "" && !Demo_IsPlayingBack() )
 				SetJoinSecret( true )
 		}
 		uis.gameState = eDiscordGameState.LOBBY;
@@ -28,7 +28,7 @@ UIPresenceStruct function DiscordRPC_GenerateUIPresence( UIPresenceStruct uis )
 	{
 		if ( NSIsVanilla() )
 		{
-			if ( partySub != "" )
+			if ( partySub != "" && !Demo_IsPlayingBack() )
 				SetJoinSecret( true )
 		}
 		uis.gameState = eDiscordGameState.INGAME;
@@ -42,7 +42,7 @@ UIPresenceStruct function DiscordRPC_GenerateUIPresence( UIPresenceStruct uis )
 
 	uis.is_vanilla = NSIsVanilla()
 	uis.party_size = GetPartySize()
-	
+
 	string playlists = GetNextAutoMatchmakingPlaylist()
 	if( IsFullyConnected() && IsMultiplayer() )
 	{
