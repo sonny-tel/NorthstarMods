@@ -243,6 +243,13 @@
 			}
 		},
 		{
+			"Path": "ui/menu_friendslist.nut",
+			"RunOn": "UI",
+			"UICallback": {
+				"Before": "AddFriendslistMenu"
+			}
+		},
+		{
 			"Path": "client/cl_dof_override.gnut",
 			"RunOn": "CLIENT",
 			"ClientCallback": {

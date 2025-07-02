@@ -43,6 +43,8 @@ global function OnStoreButton_Activate
 global function OnStoreBundlesButton_Activate
 global function OnStoreNewReleasesButton_Activate
 
+global function CreatePartyAndInviteFriends
+
 const string MATCHMAKING_AUDIO_CONNECTING = "menu_campaignsummary_titanunlocked"
 
 struct
@@ -509,6 +511,12 @@ void function InviteFriendsIfAllowed( var button )
 	if ( IsValid( player ) && Player_NextAvailableMatchmakingTime( player ) > 0 )
 	{
 		DisplayMatchmakingPenaltyDialog( player )
+		return
+	}
+
+	if( NSGetFriendSubscriptionMap().len() > 0 )
+	{
+		AdvanceMenu( GetMenu( "FriendslistMenu" ) )
 		return
 	}
 
