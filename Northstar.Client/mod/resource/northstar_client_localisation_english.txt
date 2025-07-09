@@ -428,5 +428,7 @@ Press Yes if you agree to this. This choice can be changed in the mods menu at a
 
 		"MENU_TITLE_EXTRAS"					"Extras"
 		"MENU_TITLE_PLAYERLIST"				"Player List"
+		"MENU_TITLE_FRIENDS_LIST"			"FRIENDS"
+		"MENU_TITLE_COMBO_FRIENDS"			"Friends (%s1 online)"
 	}
 }

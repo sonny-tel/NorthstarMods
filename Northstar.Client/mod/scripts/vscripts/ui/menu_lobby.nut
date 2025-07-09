@@ -263,7 +263,10 @@ void function SetupComboButtonTest( var menu )
 	file.inviteRoomButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_INVITE_ROOM" )
 	Hud_AddEventHandler( file.inviteRoomButton, UIE_CLICK, DoRoomInviteIfAllowed )
 
-	file.inviteFriendsButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_TITLE_INVITE_FRIENDS" )
+	string friendsText = "#MENU_TITLE_INVITE_FRIENDS"
+	if ( NSGetFriendSubscriptionMap().len() > 0 )
+	 	friendsText = Localize( "#MENU_TITLE_COMBO_FRIENDS", NSGetFriendSubscriptionMap().len() )
+	file.inviteFriendsButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, friendsText )
 	Hud_AddEventHandler( file.inviteFriendsButton, UIE_CLICK, InviteFriendsIfAllowed )
 
 	// server browser
@@ -712,7 +715,12 @@ void function DoNSButtonState()
 	{
 		ComboButton_SetText( file.findGameButton, "#MENU_TITLE_FIND_GAME" )
 		ComboButton_SetText( file.inviteRoomButton, "#MENU_TITLE_INVITE_ROOM" )
-		ComboButton_SetText( file.inviteFriendsButton, "#MENU_TITLE_INVITE_FRIENDS" )
+		
+		string friendsText = "#MENU_TITLE_INVITE_FRIENDS"
+		if ( NSGetFriendSubscriptionMap().len() > 0 )
+	 		friendsText = Localize( "#MENU_TITLE_COMBO_FRIENDS", NSGetFriendSubscriptionMap().len() )
+
+		ComboButton_SetText( file.inviteFriendsButton, friendsText )
 		Hud_SetVisible( file.inviteFriendsButton, true )
 
 		Hud_SetLocked( file.inboxButton, false )
