@@ -264,7 +264,7 @@ void function SetupComboButtonTest( var menu )
 	Hud_AddEventHandler( file.inviteRoomButton, UIE_CLICK, DoRoomInviteIfAllowed )
 
 	string friendsText = "#MENU_TITLE_INVITE_FRIENDS"
-	if ( NSGetFriendSubscriptionMap().len() > 0 )
+	if ( NSGetFriendSubscriptionMap().len() > 0 && !( GetPartySize() > 1 ) )
 	 	friendsText = Localize( "#MENU_TITLE_COMBO_FRIENDS", NSGetFriendSubscriptionMap().len() )
 	file.inviteFriendsButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, friendsText )
 	Hud_AddEventHandler( file.inviteFriendsButton, UIE_CLICK, InviteFriendsIfAllowed )
@@ -517,7 +517,7 @@ void function InviteFriendsIfAllowed( var button )
 		return
 	}
 
-	if( NSGetFriendSubscriptionMap().len() > 0 )
+	if( NSGetFriendSubscriptionMap().len() > 0 && !( GetPartySize() > 1 ) )
 	{
 		AdvanceMenu( GetMenu( "FriendslistMenu" ) )
 		return
@@ -717,7 +717,7 @@ void function DoNSButtonState()
 		ComboButton_SetText( file.inviteRoomButton, "#MENU_TITLE_INVITE_ROOM" )
 
 		string friendsText = "#MENU_TITLE_INVITE_FRIENDS"
-		if ( NSGetFriendSubscriptionMap().len() > 0 )
+		if ( NSGetFriendSubscriptionMap().len() > 0 && !( GetPartySize() > 1 ) )
 	 		friendsText = Localize( "#MENU_TITLE_COMBO_FRIENDS", NSGetFriendSubscriptionMap().len() )
 
 		ComboButton_SetText( file.inviteFriendsButton, friendsText )
@@ -780,7 +780,7 @@ void function LobbyMenuUpdate( var menu )
 			Hud_SetLocked( file.inviteFriendsButton, inPendingOpenInvite )
 
 			string friendsText = "#MENU_TITLE_INVITE_FRIENDS"
-			if ( NSGetFriendSubscriptionMap().len() > 0 )
+			if ( NSGetFriendSubscriptionMap().len() > 0 && !( GetPartySize() > 1 ) )
 	 			friendsText = Localize( "#MENU_TITLE_COMBO_FRIENDS", NSGetFriendSubscriptionMap().len() )
 
 			ComboButton_SetText( file.inviteFriendsButton, friendsText )
