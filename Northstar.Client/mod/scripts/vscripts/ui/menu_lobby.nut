@@ -715,7 +715,7 @@ void function DoNSButtonState()
 	{
 		ComboButton_SetText( file.findGameButton, "#MENU_TITLE_FIND_GAME" )
 		ComboButton_SetText( file.inviteRoomButton, "#MENU_TITLE_INVITE_ROOM" )
-		
+
 		string friendsText = "#MENU_TITLE_INVITE_FRIENDS"
 		if ( NSGetFriendSubscriptionMap().len() > 0 )
 	 		friendsText = Localize( "#MENU_TITLE_COMBO_FRIENDS", NSGetFriendSubscriptionMap().len() )
@@ -778,6 +778,12 @@ void function LobbyMenuUpdate( var menu )
 			Hud_SetLocked( file.findGameButton, !IsPartyLeader() || inPendingOpenInvite )
 			Hud_SetLocked( file.inviteRoomButton, IsOpenInviteVisible() || GetPartySize() > 1 || inPendingOpenInvite )
 			Hud_SetLocked( file.inviteFriendsButton, inPendingOpenInvite )
+
+			string friendsText = "#MENU_TITLE_INVITE_FRIENDS"
+			if ( NSGetFriendSubscriptionMap().len() > 0 )
+	 			friendsText = Localize( "#MENU_TITLE_COMBO_FRIENDS", NSGetFriendSubscriptionMap().len() )
+
+			ComboButton_SetText( file.inviteFriendsButton, friendsText )
 		} else
 		{
 			Hud_SetLocked( file.findGameButton, false )
