@@ -207,9 +207,10 @@ void function InitPrivateMatchMenu()
 	AddMenuFooterOption( menu, BUTTON_A, "#A_BUTTON_SELECT", "" )
 	AddMenuFooterOption( menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
 	AddMenuFooterOption( menu, BUTTON_Y, "#Y_BUTTON_SWITCH_TEAMS", "#SWITCH_TEAMS", PCSwitchTeamsButton_Activate, CanSwitchTeams )
+	AddMenuFooterOption( menu, BUTTON_X, PrependControllerPrompts(BUTTON_X, "#MENU_TITLE_MODS"), "#MENU_TITLE_MODS", OpenModsMenu, NotCanMute )
+	AddMenuFooterOption( menu, BUTTON_SHOULDER_RIGHT, "#BUTTON_VIEW_PLAYER_PROFILE", "#MOUSE1_VIEW_PROFILE", null, CanMute )
 	AddMenuFooterOption( menu, BUTTON_X, "#X_BUTTON_MUTE", "#MOUSE2_MUTE", null, CanMute )
-	AddMenuFooterOption( menu, BUTTON_SHOULDER_RIGHT, "#RB_TRIGGER_TOGGLE_SPECTATE", "#SPECTATE_TEAM", PCToggleSpectateButton_Activate, CanSwitchTeams )
-	//AddMenuFooterOption( menu, BUTTON_TRIGGER_LEFT, PrependControllerPrompts(BUTTON_TRIGGER_LEFT, "#MENU_TITLE_MODS"), "#MENU_TITLE_MODS", OpenModsMenu )
+	AddMenuFooterOption( menu, BUTTON_SHOULDER_RIGHT, "#RB_TRIGGER_TOGGLE_SPECTATE", "#SPECTATE_TEAM", PCToggleSpectateButton_Activate, CanSwitchTeamsToggleSpec, UpdateSpectatorButton )
 
 	AddMenuVarChangeHandler( "focus", UpdateFooterOptions )
 	AddMenuVarChangeHandler( "isFullyConnected", UpdateFooterOptions )
@@ -358,6 +359,66 @@ bool function MatchResultsExist()
 	return true // TODO
 }
 
+	// AddMenuFooterOption( menu, BUTTON_SHOULDER_RIGHT, "#RB_TRIGGER_TOGGLE_SPECTATE", "#SPECTATE_TEAM", PCToggleSpectateButton_Activate, CanSwitchTeamsToggleSpec, UpdateSpectatorButton )
+
+
+void function UpdateSpectatorButton( InputDef data )
+{
+	EndSignal( uiGlobal.signalDummy, "EndFooterUpdateFuncs" )
+
+	int index = int( Hud_GetScriptID( data.vguiElem ) )
+	bool isSpectator
+
+	while ( data.conditionCheckFunc() )
+	{
+		isSpectator = ( IsPrivateMatch() || GetConVarBool( "ns_allow_spectators" ) ) && GetPersistentVarAsInt( "privateMatchState" ) == 1
+
+		if ( isSpectator )
+		{
+			if ( IsControllerModeActive() )
+				SetFooterText( file.menu, index, "#RB_TRIGGER_SPECTATE_ENABLED" )
+			else
+				SetFooterText( file.menu, index, "#SPECTATE_ENABLED" )
+		} 
+		else
+		{
+			if ( IsControllerModeActive() )
+				SetFooterText( file.menu, index, "#RB_TRIGGER_SPECTATE_DISABLED" )
+			else
+				SetFooterText( file.menu, index, "#SPECTATE_DISABLED" )
+		}
+
+		WaitFrame()
+	}
+}
+
+bool function CanSwitchTeamsToggleSpec()
+{
+	if ( CanMute() )
+		return false
+
+	int myTeam = GetTeam()
+	int otherTeam
+
+	if ( myTeam == TEAM_IMC )
+		otherTeam = TEAM_MILITIA
+	else if ( myTeam == TEAM_MILITIA )
+		otherTeam = TEAM_IMC
+	else
+		return false
+
+	int myTeamSize = GetTeamSize( myTeam )
+	int otherTeamSize = GetTeamSize( otherTeam )
+
+	if ( otherTeamSize + myTeamSize <= 1 )
+		return false
+
+	if ( !NSIsVanilla() && !GetConVarBool( "ns_allow_spectators" ) )
+		return false
+
+	return CanSwitchTeams()
+}
+
 bool function CanSwitchTeams()
 {
 	return ( GetMenuVarBool( "isPrivateMatch" ) && ( level.ui.privatematch_starting != ePrivateMatchStartState.STARTING ) )
@@ -366,6 +427,11 @@ bool function CanSwitchTeams()
 bool function CanMute()
 {
 	return IsPlayerListFocused()
+}
+
+bool function NotCanMute()
+{
+	return !CanMute()
 }
 
 void function OnLobbyMenu_Open()

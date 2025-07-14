@@ -97,6 +97,13 @@ void function InitModMenu()
 
 	// Footers
 	AddMenuFooterOption( file.menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
+    AddMenuFooterOption(
+        file.menu,
+        BUTTON_Y,
+        PrependControllerPrompts( BUTTON_Y, "#MENU_TITLE_MATCH_SETTINGS" ),
+        "#MENU_TITLE_MATCH_SETTINGS",
+        OnModSettingsButtonPressed
+    )
 	AddMenuFooterOption(
 		file.menu,
 		BUTTON_X,
@@ -113,13 +120,6 @@ void function InitModMenu()
 		OnAuthenticationAgreementButtonPressed,
         ShouldShowFooterButtons
 	)
-    AddMenuFooterOption(
-        file.menu,
-        BUTTON_Y,
-        PrependControllerPrompts( BUTTON_Y, "#MENU_TITLE_MATCH_SETTINGS" ),
-        "#MENU_TITLE_MATCH_SETTINGS",
-        OnModSettingsButtonPressed
-    )
 
 	// Nuke weird rui on filter switch
 	RuiSetString( Hud_GetRui( Hud_GetChild( file.menu, "SwtBtnShowFilter")), "buttonText", "")

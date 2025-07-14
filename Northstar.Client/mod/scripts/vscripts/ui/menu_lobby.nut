@@ -184,9 +184,9 @@ void function InitLobbyMenu()
 
 	AddMenuFooterOption( menu, BUTTON_A, "#A_BUTTON_SELECT", "", null, ChatroomIsVisibleAndNotFocused )
 	AddMenuFooterOption( menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
+    AddMenuFooterOption( menu, BUTTON_Y, PrependControllerPrompts(BUTTON_Y, "#MENU_TITLE_MODS"), "#MENU_TITLE_MODS", OpenModsMenu )
 	AddMenuFooterOption( menu, BUTTON_BACK, "#BACK_BUTTON_POSTGAME_REPORT", "#POSTGAME_REPORT", OpenPostGameMenu, IsPostGameMenuValid )
 	AddMenuFooterOption( menu, BUTTON_TRIGGER_RIGHT, "#R_TRIGGER_CHAT", "", null, IsVoiceChatPushToTalk )
-    AddMenuFooterOption( menu, BUTTON_Y, PrependControllerPrompts(BUTTON_Y, "#MENU_TITLE_MODS"), "#MENU_TITLE_MODS", OpenModsMenu )
 	//AddMenuFooterOption( menu, BUTTON_SHOULDER_RIGHT, PrependControllerPrompts(BUTTON_SHOULDER_RIGHT, "sans"), "sans", OpenSans )
 	InitChatroom( menu )
 

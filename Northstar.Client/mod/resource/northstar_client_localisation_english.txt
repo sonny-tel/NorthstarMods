@@ -385,8 +385,8 @@ Press Yes if you agree to this. This choice can be changed in the mods menu at a
 		"NO_MODS"						"No settings available! Install more mods at ^5588FF00northstar.thunderstore.io^0."
 
 		// Toggleable progression
-		"ENABLE_PROGRESSION"			"Enable Progression"
-		"DISABLE_PROGRESSION"			"Disable Progression"
+		"ENABLE_PROGRESSION"			"Progression: Disabled"
+		"DISABLE_PROGRESSION"			"Progression: Enabled"
 		"Y_BUTTON_TOGGLE_PROGRESSION"	"%[Y_BUTTON|]% Toggle Progression"
 
 		"PROGRESSION_TOGGLE_ENABLED_HEADER" "Disable Progression?"
@@ -430,5 +430,8 @@ Press Yes if you agree to this. This choice can be changed in the mods menu at a
 		"MENU_TITLE_PLAYERLIST"				"Player List"
 		"MENU_TITLE_FRIENDS_LIST"			"FRIENDS"
 		"MENU_TITLE_COMBO_FRIENDS"			"Friends (%s1 online)"
+
+		"SPECTATE_ENABLED"					"Spectator: Enabled"
+		"SPECTATE_DISABLED"					"Spectator: Disabled"
 	}
 }
