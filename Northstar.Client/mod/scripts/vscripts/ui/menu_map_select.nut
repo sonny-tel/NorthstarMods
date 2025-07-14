@@ -8,7 +8,7 @@ global function InitMapsMenu
 
 const int BUTTONS_PER_PAGE = 4
 const int SLIDER_PANEL_OFFSET = 1250
-const int SLIDER_OFFSET_X = 12
+const int SLIDER_OFFSET_X = 112
 const float SLIDER_MIN_Y = -22.0
 const float SLIDER_MAX_Y = 622.0 
 
@@ -56,12 +56,11 @@ void function InitMapsMenu()
 
 	AddMenuFooterOption( file.menu, BUTTON_A, "#A_BUTTON_SELECT" )
 	AddMenuFooterOption( file.menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
-	
+	AddMenuFooterOption( file.menu, BUTTON_X, "#X_BUTTON_CLEAR_FILTERS", "#CLEAR_FILTERS", OnBtnFiltersClear_Activate )
+
 	AddButtonEventHandler( Hud_GetChild( file.menu, "BtnMapGridUpArrow"), UIE_CLICK, OnUpArrowSelected )
 	AddButtonEventHandler( Hud_GetChild( file.menu, "BtnMapGridDownArrow"), UIE_CLICK, OnDownArrowSelected )
-	
-	AddButtonEventHandler( Hud_GetChild( file.menu, "BtnFiltersClear"), UIE_CLICK, OnBtnFiltersClear_Activate )
-	
+		
 	AddButtonEventHandler( Hud_GetChild( file.menu, "SwtBtnHideLocked"), UIE_CHANGE, OnFiltersChanged )
 	AddButtonEventHandler( Hud_GetChild( file.menu, "BtnMapsSearch"), UIE_CHANGE, OnFiltersChanged )
 	

@@ -597,6 +597,10 @@ function UpdatePrivateMatchButtons()
 
 		Hud_SetLocked( file.matchSettingsButton, settingsLocked )
 	}
+
+	if ( !NSIsVanilla() )
+		Hud_SetLocked( file.inviteFriendsButton, true )
+
 }
 
 function UpdateStoreButtons()

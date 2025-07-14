@@ -323,7 +323,7 @@ Press Yes if you agree to this. This choice can be changed in the mods menu at a
 		"MOD_REQUIRED_WARNING" " : This mod may get (un)loaded when joining a server"
 
 		// Maps menu
-		"HIDE_LOCKED" "Hide locked"
+		"HIDE_LOCKED" "Hide Locked:"
 
 		// In-game chat
 		"HUD_CHAT_WHISPER_PREFIX" "[WHISPER]"
