@@ -298,6 +298,22 @@ int function SortModesAlphabetize( string a, string b )
 	return 0
 }
 
+int function SortCategoriesAlphabetize( string a, string b )
+{
+	// was considering sorting custom further down if not vanilla but it seems to get pushed down for whatever reason
+
+	a = Localize( GetGameModeDisplayName( a ) )
+	b = Localize( GetGameModeDisplayName( b ) )
+
+	if ( a > b )
+		return 1
+
+	if ( a < b )
+		return -1
+
+	return 0
+}
+
 void function BuildSortedModesArray()
 {
 	file.sortedModes.clear()
@@ -312,7 +328,7 @@ void function BuildSortedModesArray()
 		categories.append( GetCategoryStringFromEnum( i ) )
 	}
 
-	categories.sort( SortStringAlphabetize )
+	categories.sort( SortCategoriesAlphabetize )
 
 	// Build final list of mixed modes and categories
 	foreach( string category in categories )

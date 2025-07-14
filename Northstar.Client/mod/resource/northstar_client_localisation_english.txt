@@ -347,8 +347,8 @@ Press Yes if you agree to this. This choice can be changed in the mods menu at a
 		"UNSUPPORTED_VERSION" 			"The version you are using is no longer supported"
 
 		// Mode menu
-		"MODE_MENU_PVPVE"		"PvPvE"
-		"MODE_MENU_PVE"			"PvE"
+		"MODE_MENU_PVPVE"		"AI"
+		"MODE_MENU_PVE"			"Coop"
 		"MODE_MENU_PVP"			"PvP"
 		"MODE_MENU_FFA"			"FFA"
 		"MODE_MENU_TITAN_ONLY"	"Titan Only"
