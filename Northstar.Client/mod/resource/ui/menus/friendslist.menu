@@ -22,16 +22,12 @@ resource/ui/menus/friendslist.menu
             InheritProperties       MenuVignette
         }
 
-        RuiMenuTitle
-        {
-            ControlName				RuiPanel
-			xpos					107
-			ypos					75
-            wide					1600
-            tall					65
-            visible 				1
-            rui						"ui/invite_to_network_label.rpak"
-        }
+		MenuTitle
+		{
+			ControlName				Label
+			InheritProperties		MenuTitle
+			labelText				"#MENU_TITLE_FRIENDS_LIST"
+		}
 
 		ImgTopBar
 		{

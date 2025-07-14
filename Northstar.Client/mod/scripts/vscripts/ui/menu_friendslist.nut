@@ -8,6 +8,7 @@ struct
 	var menu
 	GridMenuData gridData
 	FriendsData& friendsData
+	table< string, string> subscriptionMap
 	int selectedElemNum
 } file
 
@@ -46,7 +47,7 @@ void function InitFriendslistMenu()
 	AddMenuEventHandler( menu, eUIEvent.MENU_OPEN, OnFriendslistMenu_Open )
 
 	AddMenuFooterOption( menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
-	AddMenuFooterOption( menu, BUTTON_A, "#A_BUTTON_INVITE", "#MENU_TITLE_INVITE_FRIENDS", InviteFriendsIGO, IsFriendNotFocused )
+	AddMenuFooterOption( menu, BUTTON_A, "#A_BUTTON_INVITE", "#MENU_TITLE_INVITE_FRIENDS", InviteFriendsIGO )
 }
 
 void function OnFriendslistMenu_Open()
@@ -56,9 +57,6 @@ void function OnFriendslistMenu_Open()
 
 	UI_SetPresentationType( ePresentationType.NO_MODELS )
 
-	var ruiMenuTitle = Hud_GetRui( Hud_GetChild( file.menu, "RuiMenuTitle" ) )
-	RuiSetString( ruiMenuTitle, "labelText", Localize( "JOIN FRIENDS" ) )
-
 	int numFriends = -1
 	int lastNumFriends = -2
 
@@ -66,18 +64,10 @@ void function OnFriendslistMenu_Open()
 
 	while ( GetTopNonDialogMenu() == file.menu )
 	{
-        table< string, string> subscriptionMap = NSGetFriendSubscriptionMap()
 		file.friendsData = GetFriendsData()
+		file.subscriptionMap = NSGetFriendSubscriptionMap()
 
-        for( int i = 0; i < file.friendsData.friends.len(); i++ )
-        {
-            Friend friend = file.friendsData.friends[i]
-
-            if( !( friend.id in subscriptionMap ) )
-                file.friendsData.friends.remove(i)
-        }
-
-		numFriends = subscriptionMap.len()
+		numFriends = file.subscriptionMap.len()
 
 		if ( numFriends != lastNumFriends )
 		{
@@ -123,30 +113,50 @@ bool function IsFriendNotFocused()
 
 bool function FriendButton_Init( var button, int elemNum )
 {
-	Friend friend = file.friendsData.friends[elemNum]
-    table< string, string> subscriptionMap = NSGetFriendSubscriptionMap()
+	array< string > resultArray = []
+	resultArray.resize( file.subscriptionMap.len() )
+	int currentArrayIndex = 0
+	foreach ( key, val in file.subscriptionMap )
+	{
+		resultArray[ currentArrayIndex ] = key
+		++currentArrayIndex
+	}
+
+	string index = resultArray[elemNum]
+	string name = ""
+
+	foreach ( friend in file.friendsData.friends )
+	{
+		if ( friend.id == index )
+		{
+			name = friend.name
+			break
+		}
+	}
+
+	string subscription = file.subscriptionMap[index]
 
 	var rui = Hud_GetRui( button )
-	RuiSetString( rui, "buttonText", friend.name )
+	RuiSetString( rui, "buttonText", name )
 
 	return true
 }
 
 void function ConfirmFriendInvite_Final()
 {
-	Friend friend = file.friendsData.friends[file.selectedElemNum]
-	string name = friend.name
-	string id = friend.id
-
-    table< string, string> subscriptionMap = NSGetFriendSubscriptionMap()
-
-	printt( "Friend Name:", name, "id:", id)
-
-	foreach( string id, string matchSub in subscriptionMap )
+	array< string > resultArray = []
+	resultArray.resize( file.subscriptionMap.len() )
+	int currentArrayIndex = 0
+	foreach ( key, val in file.subscriptionMap )
 	{
-		if ( friend.id == id )
-			ClientCommand( "ns_join_room " + matchSub )
+		resultArray[ currentArrayIndex ] = key
+		++currentArrayIndex
 	}
+
+	string index = resultArray[file.selectedElemNum]
+	string subscription = file.subscriptionMap[index]
+
+	ClientCommand( "ns_join_room " + subscription )
 }
 
 void function ConfirmFriendInvite_Thread()
@@ -156,8 +166,26 @@ void function ConfirmFriendInvite_Thread()
 
 	DialogData dialogData
 
-	Friend friend = file.friendsData.friends[file.selectedElemNum]
-	string name = friend.name
+	array< string > resultArray = []
+	resultArray.resize( file.subscriptionMap.len() )
+	int currentArrayIndex = 0
+	foreach ( key, val in file.subscriptionMap )
+	{
+		resultArray[ currentArrayIndex ] = key
+		++currentArrayIndex
+	}
+
+	string index = resultArray[file.selectedElemNum]
+	string name = ""
+
+	foreach ( friend in file.friendsData.friends )
+	{
+		if ( friend.id == index )
+		{
+			name = friend.name
+			break
+		}
+	}
 
 	dialogData.header = Localize( "JOIN PARTY" )
 	dialogData.message = Localize( "Would you like to join " + name + "'s party?" )

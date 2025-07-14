@@ -89,6 +89,8 @@ void function InitModMenu()
 	file.menu = GetMenu( "ModSettings" )
 	// DumpStack(2)
 	AddMenuFooterOption( file.menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
+	AddMenuFooterOption( file.menu, BUTTON_A, "#B_BUTTON_BACK", "#CLEAR_FILTERS", OnClearButtonPressed )
+	AddMenuFooterOption( file.menu, BUTTON_X, "#B_BUTTON_BACK", "#SEARCHBAR_LABEL" )
 
 	/////////////////////////////
 	// BASE NORTHSTAR SETTINGS //
@@ -312,9 +314,9 @@ void function SliderBarUpdate()
 	if ( newPos < maxYPos ) newPos = maxYPos
 	if ( newPos > minYPos ) newPos = minYPos
 
-	Hud_SetPos( sliderButton, 2, newPos )
-	Hud_SetPos( sliderPanel, 2, newPos )
-	Hud_SetPos( movementCapture, 2, newPos )
+	Hud_SetPos( sliderButton, 40, newPos )
+	Hud_SetPos( sliderPanel, 40, newPos )
+	Hud_SetPos( movementCapture, 40, newPos )
 
 	file.scrollOffset = -int( ( ( newPos - minYPos ) / useableSpace ) * ( file.filteredList.len() - BUTTONS_PER_PAGE ) )
 	UpdateList()
@@ -680,9 +682,9 @@ void function UpdateListSliderPosition()
 
 	if ( jump > minYPos ) jump = minYPos
 
-	Hud_SetPos( sliderButton , 2, jump )
-	Hud_SetPos( sliderPanel , 2, jump )
-	Hud_SetPos( movementCapture , 2, jump )
+	Hud_SetPos( sliderButton , 40, jump )
+	Hud_SetPos( sliderPanel , 40, jump )
+	Hud_SetPos( movementCapture , 40, jump )
 }
 
 void function OnModMenuOpened()

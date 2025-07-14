@@ -17,15 +17,23 @@ resource/ui/menus/panels/mode_select_button.res
 	Header
 	{
 		ControlName	Label
-		InheritProperties	RuiSmallButton
-		wide				600
+		InheritProperties		SubheaderText		
 		labelText			"labelText"
-		font				Default_41
-		fgcolor_override 	"255 255 255 255"
-		tall				45
 
 		pin_to_sibling			ControlBox
 		pin_corner_to_sibling 	LEFT
 		pin_to_sibling_corner 	RIGHT
+	}
+
+	BottomLine
+	{
+		"ControlName" "ImagePanel"
+		"InheritProperties" "MenuTopBar"
+		"ypos" "5"
+		"wide" "%50"
+		//"tall"	"0"
+		"pin_to_sibling" "Header"
+		"pin_corner_to_sibling" "BOTTOM_LEFT"
+		"pin_to_sibling_corner" "BOTTOM_LEFT"
 	}
 }

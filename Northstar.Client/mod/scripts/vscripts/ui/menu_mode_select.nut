@@ -524,6 +524,7 @@ void function UpdateVisibleModes()
 		var panel = buttons[i]
 		var button = Hud_GetChild( panel, "BtnMode" )
 		var header = Hud_GetChild( panel, "Header" )
+		var menuline = Hud_GetChild( panel, "BottomLine" )
 
 		int modeIndex = i + file.scrollOffset
 		string mode = file.sortedModes[ modeIndex ]
@@ -540,9 +541,11 @@ void function UpdateVisibleModes()
 		{
 			Hud_SetText( header, mode )
 			Hud_SetEnabled( button, false )
+			Hud_SetVisible( menuline, true )
 		}
 		else
 		{
+			Hud_SetVisible( menuline, false )
 			Hud_SetEnabled( button, true )
 			SetButtonRuiText( button, mode )
 

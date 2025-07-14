@@ -61,7 +61,7 @@ resource/ui/menus/mode_select.menu
 		NextModeImageFrame
 		{
 			ControlName				RuiPanel
-			xpos 					740
+			xpos 					780
 			ypos					160
 			wide					860
 			tall					520
@@ -150,12 +150,12 @@ resource/ui/menus/mode_select.menu
 		FiltersPanel
 		{
 			ControlName				RuiPanel
-			xpos 					740
+			xpos 					780
 			ypos					682
 			wide					860
 			tall					156
 			zpos					-1
-
+			visible					0
 			rui						"ui/control_options_description.rpak"
 		}
 
