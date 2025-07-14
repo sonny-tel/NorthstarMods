@@ -2,32 +2,8 @@ untyped
 global function InitModesMenu
 global function NSSetModeCategory
 
-global enum eModeMenuModeCategory
-{
-	UNKNOWN = 0,
-	PVPVE   = 1,
-	PVE     = 2,
-	PVP     = 3,
-	FFA     = 4,
-	TITAN   = 5,
-	OTHER   = 6,
-	CUSTOM  = 7
-
-	SIZE
-}
-
-// List of blocked modes due to them being unfinished
-const array<string> blockedModes =
-[
-	"fd_easy",
-	"fd_normal",
-	"fd_hard",
-	"fd_master",
-	"fd_insane"
-]
-
 struct ListEntry_t {
-	string mode
+	CustomMatchSettingContainer matchSetting
 	int category
 }
 
@@ -48,35 +24,35 @@ struct {
 	table<string,int> categoryOverrides
 
 	// List of all modes we know
-	array<ListEntry_t> modes
+	array<ListEntry_t> matchSettings
 
 	// Sorted list of modes we want to show with categories included
-	array<string> sortedModes
+	array<string> sortedMatchSettings
 
-	array<string> vanillaModes = [
-		"aitdm",
-		"tdm",
-		"cp",
-		"at",
-		"ctf",
-		"lts",
-		"ps",
-		"speedball",
-		"mfd",
-		"ttdm",
-		"fd_easy",
-		"fd_normal",
-		"fd_hard",
-		"fd_master",
-		"fd_insane"
-	]
+	// array<string> vanillaModes = [
+	// 	"aitdm",
+	// 	"tdm",
+	// 	"cp",
+	// 	"at",
+	// 	"ctf",
+	// 	"lts",
+	// 	"ps",
+	// 	"speedball",
+	// 	"mfd",
+	// 	"ttdm",
+	// 	"fd_easy",
+	// 	"fd_normal",
+	// 	"fd_hard",
+	// 	"fd_master",
+	// 	"fd_insane"
+	// ]
 } file
 
-const int MODES_PER_PAGE = 15
+const int SETTINGS_PER_PAGE = 15
 
 void function InitModesMenu()
 {
-	file.menu = GetMenu( "ModesMenu" )
+	file.menu = GetMenu( "NSMatchSettingsMenu" )
 
 	AddMouseMovementCaptureHandler( Hud_GetChild( file.menu, "MouseMovementCapture"), UpdateMouseDeltaBuffer )
 
@@ -104,8 +80,8 @@ void function InitModesMenu()
 		Hud_DialogList_AddListItem( Hud_GetChild( file.menu, "SwtModeLabel" ) , GetCategoryStringFromEnum(i), string(i) )
 	}
 
+	AddMenuFooterOption( file.menu, BUTTON_A, "#X_BUTTON_CLEAR_FILTERS", "#CLEAR_FILTERS", OnBtnFiltersClear_Activate )
 	AddMenuFooterOption( file.menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
-	AddMenuFooterOption( file.menu, BUTTON_X, "#X_BUTTON_CLEAR_FILTERS", "#CLEAR_FILTERS", OnBtnFiltersClear_Activate )
 }
 
 void function NSSetModeCategory( string mode, int category )
@@ -394,9 +370,9 @@ void function SliderBarUpdate()
 	if ( newPos < maxYPos ) newPos = maxYPos
 	if ( newPos > minYPos ) newPos = minYPos
 
-	Hud_SetPos( sliderButton , 342, newPos )
-	Hud_SetPos( sliderPanel , 342, newPos )
-	Hud_SetPos( movementCapture , 342, newPos )
+	Hud_SetPos( sliderButton , 2, newPos )
+	Hud_SetPos( sliderPanel , 2, newPos )
+	Hud_SetPos( movementCapture , 2, newPos )
 
 	file.scrollOffset = -int( ( ( newPos - minYPos ) / useableSpace ) * ( file.sortedModes.len() - MODES_PER_PAGE ) )
 	UpdateVisibleModes()
@@ -439,9 +415,9 @@ void function UpdateListSliderPosition( int modes )
 
 	if ( jump > minYPos ) jump = minYPos
 
-	Hud_SetPos( sliderButton, 342, jump )
-	Hud_SetPos( sliderPanel, 342, jump )
-	Hud_SetPos( movementCapture, 342, jump )
+	Hud_SetPos( sliderButton, 2, jump )
+	Hud_SetPos( sliderPanel, 2, jump )
+	Hud_SetPos( movementCapture, 2, jump )
 }
 
 void function OnScrollDown( var button )

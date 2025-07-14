@@ -8,7 +8,13 @@ global struct CustomMatchSettingContainer
 	string defaultValue
 	string localizedName
 	bool isEnumSetting
-	
+
+	// slider settings
+	bool isSlider
+	float min
+	float max
+	float step
+
 	// enum setting
 	array< string > enumNames
 	array< string > enumValues

@@ -356,7 +356,7 @@ Press Yes if you agree to this. This choice can be changed in the mods menu at a
 		"MODE_MENU_CUSTOM"		"Custom"
 		"MODE_MENU_ALL"			"All"
 		"MODE_MENU_UNKNOWN"		"Unknown"
-		"MODE_MENU_SWITCH"		"Filter"
+		"MODE_MENU_SWITCH"		"Filter:"
 
 		"AUTHENTICATION_FAILED_HEADER"		"Authentication Failed"
 		"AUTHENTICATION_FAILED_BODY"		"Failed to authenticate with Atlas!"

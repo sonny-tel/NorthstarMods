@@ -61,12 +61,12 @@ resource/ui/menus/mode_select.menu
 		NextModeImageFrame
 		{
 			ControlName				RuiPanel
-			xpos 					780
+			xpos 					1080
 			ypos					160
-			wide					860
+			wide					480
 			tall					520
 			labelText				""
-			visible				    1
+			visible				    0
 			bgcolor_override        "0 0 0 0"
 			paintbackground         1
 			rui "ui/control_options_description.rpak"
@@ -112,7 +112,7 @@ resource/ui/menus/mode_select.menu
 			pin_to_sibling_corner	BOTTOM_LEFT
 			ypos					-10
 			xpos					-10
-			wide                    840
+			wide                    820
 			auto_tall_tocontents	1
 			visible					1
 			labelText				"Foo"
@@ -131,7 +131,7 @@ resource/ui/menus/mode_select.menu
 			pin_to_sibling_corner	BOTTOM_LEFT
 			xpos					0
 			ypos					10
-			wide					840
+			wide					440
 			wrap					1
 			auto_tall_tocontents	1
 			visible					1
@@ -143,90 +143,6 @@ resource/ui/menus/mode_select.menu
 			fgcolor_override		"255 255 255 255"
 		}
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//	FILTERS PANEL
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-		FiltersPanel
-		{
-			ControlName				RuiPanel
-			xpos 					780
-			ypos					682
-			wide					860
-			tall					156
-			zpos					-1
-			visible					0
-			rui						"ui/control_options_description.rpak"
-		}
-
-		BtnModeLabel
-		{
-			ControlName			RuiButton
-			InheritProperties	RuiSmallButton
-			labelText			"#SEARCHBAR_LABEL"
-			textAlignment		west
-			classname			FilterPanelChild
-
-			wide 500
-			xpos -18
-			ypos -16
-
-			pin_to_sibling FiltersPanel
-			pin_corner_to_sibling TOP_LEFT
-			pin_to_sibling_corner TOP_LEFT
-		}
-
-		BtnModeSearch
-		{
-			ControlName TextEntry
-			classname FilterPanelChild
-			zpos 100 // This works around input weirdness when the control is constructed by code instead of VGUI blackbox.
-			xpos -400
-			ypos -5
-			wide 390
-			tall 30
-			textHidden 0
-			editable 1
-			font Default_21
-			allowRightClickMenu 0
-			allowSpecialCharacters 0
-			unicode 1
-
-			pin_to_sibling BtnModeLabel
-			pin_corner_to_sibling TOP_LEFT
-			pin_to_sibling_corner TOP_RIGHT
-		}
-
-		SwtModeLabel
-		{
-			ControlName RuiButton
-			InheritProperties SwitchButton
-			labelText "#MODE_MENU_FILTER"
-			ConVar "modemenu_mode_filter"
-			classname FilterPanelChild
-			wide 500
-			ypos 2
-
-			pin_to_sibling BtnModeLabel
-			pin_corner_to_sibling TOP_LEFT
-			pin_to_sibling_corner BOTTOM_LEFT
-		}
-
-		BtnModeFiltersClear
-		{
-			ControlName			RuiButton
-			InheritProperties	RuiSmallButton
-			labelText			"#CLEAR_FILTERS"
-			textAlignment		west
-			classname			FilterPanelChild
-
-			wide 100
-			ypos 2
-
-			pin_to_sibling SwtModeLabel
-			pin_corner_to_sibling TOP_LEFT
-			pin_to_sibling_corner BOTTOM_LEFT
-		}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //	PANELS LIST
@@ -467,7 +383,7 @@ resource/ui/menus/mode_select.menu
 			//labelText "A"
 			wide 40
 			tall 40
-			xpos 2
+			xpos 342
 			ypos 2
 
 			image "vgui/hud/white"
@@ -483,7 +399,7 @@ resource/ui/menus/mode_select.menu
 			ControlName RuiPanel
 			wide 40
 			tall 40
-			xpos 2
+			xpos 342
 			ypos 2
 
 			rui "ui/control_options_description.rpak"
@@ -503,7 +419,7 @@ resource/ui/menus/mode_select.menu
 			//labelText "V"
 			wide 40
 			tall 40
-			xpos 2
+			xpos 342
 			ypos -639
 
 			image "vgui/hud/white"
@@ -519,7 +435,7 @@ resource/ui/menus/mode_select.menu
 			ControlName RuiPanel
 			wide 40
 			tall 40
-			xpos 2
+			xpos 342
 			ypos -639
 
 			rui "ui/control_options_description.rpak"
@@ -539,7 +455,7 @@ resource/ui/menus/mode_select.menu
 			//labelText "V"
 			wide 40
 			tall 599
-			xpos 2
+			xpos 342
 			ypos -42
 			zpos 0
 
@@ -556,7 +472,7 @@ resource/ui/menus/mode_select.menu
 			ControlName RuiPanel
 			wide 40
 			tall 599
-			xpos 2
+			xpos 342
 			ypos -42
 
 			rui "ui/control_options_description.rpak"
@@ -577,7 +493,7 @@ resource/ui/menus/mode_select.menu
 				ControlName CMouseMovementCapturePanel
 				wide 40
 				tall 562
-				xpos 2
+				xpos 342
 				ypos -42
 				zpos 1
 
@@ -603,6 +519,59 @@ resource/ui/menus/mode_select.menu
 			tall					36
 			visible					1
 			controlSettingsFile		"resource/ui/menus/panels/footer_buttons.res"
+		}
+
+		SwtModeLabel
+		{
+			ControlName RuiButton
+			InheritProperties SwitchButton
+			labelText "#MODE_MENU_FILTER"
+			ConVar "modemenu_mode_filter"
+			classname FilterPanelChild
+			wide 250
+
+			xpos -600
+
+			"pin_to_sibling"				"FooterButtons"
+			"pin_corner_to_sibling" 		"TOP_RIGHT"
+			"pin_to_sibling_corner"			"TOP_RIGHT"		
+		}
+
+		BtnModeLabel
+		{
+			ControlName			RuiButton
+			InheritProperties	RuiSmallButton
+			labelText			"#SEARCHBAR_LABEL"
+			textAlignment		west
+			classname			FilterPanelChild
+			xpos 				20
+
+			wide 500
+
+			pin_to_sibling SwtModeLabel
+			pin_corner_to_sibling TOP_LEFT
+			pin_to_sibling_corner TOP_RIGHT
+		}
+
+		BtnModeSearch
+		{
+			ControlName TextEntry
+			classname FilterPanelChild
+			zpos 100 // This works around input weirdness when the control is constructed by code instead of VGUI blackbox.
+			xpos -400
+			ypos -5
+			wide 390
+			tall 30
+			textHidden 0
+			editable 1
+			font Default_21
+			allowRightClickMenu 0
+			allowSpecialCharacters 0
+			unicode 1
+
+			pin_to_sibling BtnModeLabel
+			pin_corner_to_sibling TOP_LEFT
+			pin_to_sibling_corner TOP_RIGHT
 		}
 	}
 }
