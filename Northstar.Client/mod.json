@@ -50,45 +50,10 @@
 		{
 			"Name": "modemenu_mode_filter",
 			"DefaultValue": "-1"
-    },
-    {
-      "Name": "ns_communities_enabled",
+    	},
+    	{
+      		"Name": "ns_communities_enabled",
 			"DefaultValue": "1",
-			"Flags": "ARCHIVE_PLAYERPROFILE"
-		},
-		{
-			"Name": "damage_indicators_mode",
-			"DefaultValue": "0",
-			"Flags": "ARCHIVE_PLAYERPROFILE"
-		},
-		{
-			"Name": "core_flyouts_enabled",
-			"DefaultValue": "0",
-			"Flags": "ARCHIVE_PLAYERPROFILE"
-		},
-		{
-			"Name": "use_no_medal_icons",
-			"DefaultValue": "0",
-			"Flags": "ARCHIVE_PLAYERPROFILE"
-		},
-		{
-			"Name": "force_dof_disable",
-			"DefaultValue": "0",
-			"Flags": "ARCHIVE_PLAYERPROFILE"
-		},
-		{
-			"Name": "minimal_oob_warning",
-			"DefaultValue": "0",
-			"Flags": "ARCHIVE_PLAYERPROFILE"
-		},
-		{
-			"Name": "show_speedometer",
-			"DefaultValue": "0",
-			"Flags": "ARCHIVE_PLAYERPROFILE"
-		},
-		{
-			"Name": "show_healthbars",
-			"DefaultValue": "0",
 			"Flags": "ARCHIVE_PLAYERPROFILE"
 		},
 		{
@@ -207,13 +172,6 @@
 			"RunOn": "UI"
 		},
 		{
-			"Path": "ui/menu_extras.nut",
-			"RunOn": "UI",
-			"UICallback": {
-				"Before": "AddExtrasMenu"
-			}
-		},
-		{
 			"Path": "ui/menu_dialog_textentry.nut",
 			"RunOn": "UI",
 			"UICallback": {
@@ -232,10 +190,6 @@
 			"RunOn": "(CLIENT && MP)"
 		},
 		{
-			"Path": "client/rui/cl_damage_indicators.gnut",
-			"RunOn": "CLIENT"
-		},
-		{
 			"Path": "ui/menu_demopicker.nut",
 			"RunOn": "UI",
 			"UICallback": {
@@ -247,13 +201,6 @@
 			"RunOn": "UI",
 			"UICallback": {
 				"Before": "AddFriendslistMenu"
-			}
-		},
-		{
-			"Path": "client/cl_dof_override.gnut",
-			"RunOn": "CLIENT",
-			"ClientCallback": {
-				"After": "DoMapspawnDofUpdate"
 			}
 		},
 		{

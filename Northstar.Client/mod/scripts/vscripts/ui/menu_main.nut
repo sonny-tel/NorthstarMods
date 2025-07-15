@@ -54,6 +54,7 @@ void function InitMainMenu()
 	#endif // PC_PROG
 
 	AddMenuFooterOption( menu, BUTTON_X, "#X_BUTTON_INBOX_ACCEPT", "#INBOX_ACCEPT", OpenDataCenterDialog, IsDataCenterFooterValid, UpdateDataCenterFooter )
+	AddMenuFooterOption( menu, BUTTON_SHOULDER_LEFT, "#MENU_DEMOS", "#MENU_DEMOS", OpenDemoPickerMenu, HasDemos )
 
 #if DEV
 	if ( DevStartPoints() )
@@ -130,6 +131,16 @@ void function OnMainMenu_Open()
 
 		WaitFrame()
 	}
+}
+
+bool function HasDemos()
+{
+	return !( Demo_GetDemoFiles().len() == 0 )
+}
+
+void function OpenDemoPickerMenu( var button )
+{
+	AdvanceMenu( GetMenu( "DemopickerMenu" ) )
 }
 
 void function NorthstarMasterServerAuthDialog()
