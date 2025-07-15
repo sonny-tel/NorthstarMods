@@ -1,0 +1,9 @@
+global function NSClientSaveCompatMode
+
+void function NSClientSaveCompatMode()
+{
+    bool isVanilla = NSIsVanilla()
+
+    if( !IsLobby() )
+        SetConVarBool( "previous_match_compat_mode", isVanilla )
+}

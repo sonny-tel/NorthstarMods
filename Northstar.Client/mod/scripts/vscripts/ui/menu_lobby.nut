@@ -938,7 +938,9 @@ function GameStartTime_Changed()
 
 function ShowGameSummary_Changed()
 {
-	if ( level.ui.showGameSummary )
+	bool compatOk = GetConVarInt( "previous_match_compat_mode" ) == NSIsVanilla().tointeger() || ( GetConVarInt( "previous_match_compat_mode" ) == -1 ) 
+
+	if ( level.ui.showGameSummary && compatOk )
 		uiGlobal.EOGOpenInLobby = true
 }
 

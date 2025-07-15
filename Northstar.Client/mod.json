@@ -79,6 +79,11 @@
 		{
 			"Name": "previous_mp_allowed",
 			"DefaultValue": "-1",
+		},
+		{
+			"Name": "previous_match_compat_mode",
+			"DefaultValue": "-1",
+			"Flags": "ARCHIVE"
 		}
 	],
 	"Scripts": [
@@ -215,6 +220,13 @@
 			"RunOn": "UI",
 			"UICallback":{
 				"Before": "NSClientModSettings"
+			}
+		},
+		{
+			"Path": "client/cl_ns_compat.gnut",
+			"RunOn": "(CLIENT && MP)",
+			"ClientCallback": {
+				"After": "NSClientSaveCompatMode"
 			}
 		}
 	],
