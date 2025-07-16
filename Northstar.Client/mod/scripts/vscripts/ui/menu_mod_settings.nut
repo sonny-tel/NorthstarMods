@@ -252,7 +252,7 @@ void functionref() function ResetAllConVarsForModEventHandler( string catName )
 				if( c.isEnumSetting )
 				{
 					var enumButton = Hud_GetChild( file.modPanels[ index - file.scrollOffset ], "EnumSelectButton" )
-					Hud_SetDialogListSelectionValue( enumButton, string( GetConVarInt( c.conVar ) ) )
+					Hud_SetDialogListSelectionIndex( enumButton, GetConVarInt( c.conVar ) )
 				}
 			}
 		}
@@ -270,6 +270,12 @@ void functionref() function ResetConVarEventHandler( int modIndex )
 			Hud_SetText( Hud_GetChild( file.modPanels[ modIndex - file.scrollOffset ], "TextEntrySetting" ), c.isEnumSetting ? c.values[ GetConVarInt( c.conVar ) ] : GetConVarString( c.conVar ) )
 			if( c.sliderEnabled )
 				MS_Slider_SetValue( file.sliders[ modIndex - file.scrollOffset ], GetConVarFloat( c.conVar ) )
+
+			if( c.isEnumSetting )
+			{
+				var enumButton = Hud_GetChild( file.modPanels[ modIndex - file.scrollOffset ], "EnumSelectButton" )
+				Hud_SetDialogListSelectionIndex( enumButton, GetConVarInt( c.conVar ) )
+			}
 		}
 	}
 }
