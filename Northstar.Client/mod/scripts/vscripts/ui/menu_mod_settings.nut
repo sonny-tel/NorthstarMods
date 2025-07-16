@@ -92,6 +92,9 @@ void function InitModMenu()
 	AddMenuFooterOption( file.menu, BUTTON_A, "#B_BUTTON_BACK", "#CLEAR_FILTERS", OnClearButtonPressed )
 	AddMenuFooterOption( file.menu, BUTTON_X, "#B_BUTTON_BACK", "#SEARCHBAR_LABEL" )
 
+	AddButtonEventHandler( Hud_GetChild( file.menu, "DummyTop" ), UIE_GET_FOCUS, OnHitDummyTop )
+	AddButtonEventHandler( Hud_GetChild( file.menu, "DummyBottom" ), UIE_GET_FOCUS, OnHitDummyBottom )
+
 	file.previousSwitchUpdate = {}
 
 	/////////////////////////////
@@ -126,15 +129,14 @@ void function InitModMenu()
 		// reset to default nav
 		var child = Hud_GetChild( panel, "BtnMod" )
 
-
-		child.SetNavUp( Hud_GetChild( file.modPanels[ int( PureModulo( i - 1, len ) ) ], "BtnMod" ) )
-		child.SetNavDown( Hud_GetChild( file.modPanels[ int( PureModulo( i + 1, len ) ) ], "BtnMod" ) )
+		// child.SetNavUp( Hud_GetChild( file.modPanels[ int( PureModulo( i - 1, len ) ) ], "BtnMod" ) )
+		// child.SetNavDown( Hud_GetChild( file.modPanels[ int( PureModulo( i + 1, len ) ) ], "BtnMod" ) )
 
 		// Enum button nav
 		child = Hud_GetChild( panel, "EnumSelectButton" )
 
-		child.SetNavUp( Hud_GetChild( file.modPanels[ int( PureModulo( i - 1, len ) ) ], "EnumSelectButton" ) )
-		child.SetNavDown( Hud_GetChild( file.modPanels[ int( PureModulo( i + 1, len ) ) ], "EnumSelectButton" ) )
+		// child.SetNavUp( Hud_GetChild( file.modPanels[ int( PureModulo( i - 1, len ) ) ], "EnumSelectButton" ) )
+		// child.SetNavDown( Hud_GetChild( file.modPanels[ int( PureModulo( i + 1, len ) ) ], "EnumSelectButton" ) )
 		Hud_AddEventHandler( child, UIE_CHANGE, UpdateEnumSetting )
 
 		// reset button nav
@@ -149,8 +151,8 @@ void function InitModMenu()
 			Hud_SetColor( Hud_GetChild( panel, "ResetModImage" ), 180, 180, 180, 180 )
 		})
 
-		child.SetNavUp( Hud_GetChild( file.modPanels[ int( PureModulo( i - 1, len ) ) ], "ResetModToDefault" ) )
-		child.SetNavDown( Hud_GetChild( file.modPanels[ int( PureModulo( i + 1, len ) ) ], "ResetModToDefault" ) )
+		// child.SetNavUp( Hud_GetChild( file.modPanels[ int( PureModulo( i - 1, len ) ) ], "ResetModToDefault" ) )
+		// child.SetNavDown( Hud_GetChild( file.modPanels[ int( PureModulo( i + 1, len ) ) ], "ResetModToDefault" ) )
 
 		Hud_AddEventHandler( child, UIE_CLICK, ResetConVar )
 		file.resetModButtons.append(child)
@@ -160,13 +162,13 @@ void function InitModMenu()
 
 		Hud_AddEventHandler( child, UIE_LOSE_FOCUS, SendTextPanelChanges )
 
-		child.SetNavUp( Hud_GetChild( file.modPanels[ int( PureModulo( i - 1, len ) ) ], "TextEntrySetting" ) )
-		child.SetNavDown( Hud_GetChild( file.modPanels[ int( PureModulo( i + 1, len ) ) ], "TextEntrySetting" ) )
+		// child.SetNavUp( Hud_GetChild( file.modPanels[ int( PureModulo( i - 1, len ) ) ], "TextEntrySetting" ) )
+		// child.SetNavDown( Hud_GetChild( file.modPanels[ int( PureModulo( i + 1, len ) ) ], "TextEntrySetting" ) )
 
 		child = Hud_GetChild( panel, "Slider" )
 
-		child.SetNavUp( Hud_GetChild( file.modPanels[ int( PureModulo( i - 1, len ) ) ], "Slider" ) )
-		child.SetNavDown( Hud_GetChild( file.modPanels[ int( PureModulo( i + 1, len ) ) ], "Slider" ) )
+		// child.SetNavUp( Hud_GetChild( file.modPanels[ int( PureModulo( i - 1, len ) ) ], "Slider" ) )
+		// child.SetNavDown( Hud_GetChild( file.modPanels[ int( PureModulo( i + 1, len ) ) ], "Slider" ) )
 
 		file.sliders.append( MS_Slider_Setup( child ) )
 
@@ -356,7 +358,7 @@ void function UpdateListSliderHeight()
 
 void function UpdateList()
 {
-	Hud_SetFocused( Hud_GetChild( file.menu, "BtnModsSearch" ) )
+	// Hud_SetFocused( Hud_GetChild( file.menu, "BtnModsSearch" ) )
 	file.updatingList = true
 
 	array<ConVarData> filteredList = []
@@ -447,6 +449,7 @@ void function UpdateList()
 	file.filteredList = filteredList
 
 	int j = int( min( file.filteredList.len() + file.scrollOffset, BUTTONS_PER_PAGE ) )
+	int len = file.modPanels.len()
 
 	for ( int i = 0; i < BUTTONS_PER_PAGE; i++ )
 	{
@@ -456,6 +459,42 @@ void function UpdateList()
 		if ( i < j )
 			SetModMenuNameText( file.modPanels[i] )
 	}
+
+	for ( int i = 0; i < file.modPanels.len(); i++ )
+	{
+    	bool isTopButton = (i == 0);
+    	bool isBottomButton = (i == j - 1);
+
+		var slider = Hud_GetChild( file.modPanels[i], "Slider" )
+		var enumButton = Hud_GetChild( file.modPanels[i], "EnumSelectButton" )
+		var customButton = Hud_GetChild( file.modPanels[i], "OpenCustomMenu" )
+
+		string visibleElement = Hud_IsVisible( slider ) ? "Slider" : Hud_IsVisible( enumButton ) ? "EnumSelectButton" : Hud_IsVisible( customButton ) ? "OpenCustomMenu" : "TextEntrySetting"
+
+		var previousSlider = Hud_GetChild( file.modPanels[ int( PureModulo( i - 1, len ) ) ], "Slider" )
+		var previousEnumButton = Hud_GetChild( file.modPanels[ int( PureModulo( i - 1, len ) ) ], "EnumSelectButton" )
+		var previousCustomButton = Hud_GetChild( file.modPanels[ int( PureModulo( i - 1, len ) ) ], "OpenCustomMenu" )
+
+		var previousVisibleElement = Hud_IsVisible( previousSlider ) ? "Slider" : Hud_IsVisible( previousEnumButton ) ? "EnumSelectButton" : Hud_IsVisible( previousCustomButton ) ? "OpenCustomMenu" : "TextEntrySetting"
+
+		var nextSlider = Hud_GetChild( file.modPanels[ int( PureModulo( i + 1, len ) ) ], "Slider" )
+		var nextEnumButton = Hud_GetChild( file.modPanels[ int( PureModulo( i + 1, len ) ) ], "EnumSelectButton" )
+		var nextCustomButton = Hud_GetChild( file.modPanels[ int( PureModulo( i + 1, len ) ) ], "OpenCustomMenu" )
+
+		var nextVisibleElement = Hud_IsVisible( nextSlider ) ? "Slider" : Hud_IsVisible( nextEnumButton ) ? "EnumSelectButton" : Hud_IsVisible( nextCustomButton ) ? "OpenCustomMenu" : "TextEntrySetting"
+
+		var current = Hud_GetChild( file.modPanels[i], visibleElement )
+		if ( isTopButton )
+			current.SetNavUp( Hud_GetChild( file.menu, "DummyTop" ) )
+		else
+			current.SetNavUp( Hud_GetChild( file.modPanels[ int( PureModulo( i - 1, len ) ) ], previousVisibleElement ) )
+		
+		if ( isBottomButton )
+			current.SetNavDown( Hud_GetChild( file.menu, "DummyBottom" ) )
+		else
+			current.SetNavDown( Hud_GetChild( file.modPanels[ int( PureModulo( i + 1, len ) ) ], nextVisibleElement ) )
+	}
+
 	file.updatingList = false
 
 	if ( file.conVarList.len() <= 0 )
@@ -739,6 +778,25 @@ void function OnModMenuOpened()
 		OnFiltersChange()
 		file.isOpen = true
 	}
+
+    var firstVisibleElement = null;
+    var firstVisiblePanel = null;
+	
+    for( int i = 0; i < file.modPanels.len(); i++ )
+    {
+        var firstSlider = Hud_GetChild( file.modPanels[ i ], "Slider" );
+        var firstEnumButton = Hud_GetChild( file.modPanels[ i ], "EnumSelectButton" );
+        var firstCustomButton = Hud_GetChild( file.modPanels[ i ], "OpenCustomMenu" );
+
+        firstVisibleElement = Hud_IsVisible( firstSlider ) ? "Slider" : Hud_IsVisible( firstEnumButton ) ? "EnumSelectButton" : Hud_IsVisible( firstCustomButton ) ? "OpenCustomMenu" : null;
+        firstVisiblePanel = file.modPanels[ i ];
+
+        if ( firstVisibleElement != null && Hud_IsVisible(firstVisiblePanel) && Hud_IsEnabled(firstVisiblePanel) )
+            break;
+    }
+
+    Hud_SetFocused( Hud_GetChild(firstVisiblePanel, firstVisibleElement ) );
+
 }
 
 void function OnClick( var button )
@@ -1129,4 +1187,105 @@ string function SanitizeDisplayName( string displayName )
 		else result += p.slice( i, p.len() )
 	}
 	return result
+}
+
+void function OnHitDummyTop( var button )
+{
+    file.scrollOffset -= 1
+
+    if ( file.scrollOffset < 0 )
+    {
+        // was at top already
+        file.scrollOffset = 0;
+        // Find first visible/enabled panel
+        var firstVisibleElement = null;
+        var firstVisiblePanel = null;
+        for( int i = 0; i < file.modPanels.len(); i++ )
+        {
+            var firstSlider = Hud_GetChild( file.modPanels[ i ], "Slider" );
+            var firstEnumButton = Hud_GetChild( file.modPanels[ i ], "EnumSelectButton" );
+            var firstCustomButton = Hud_GetChild( file.modPanels[ i ], "OpenCustomMenu" );
+
+            firstVisibleElement = Hud_IsVisible( firstSlider ) ? "Slider" : Hud_IsVisible( firstEnumButton ) ? "EnumSelectButton" : Hud_IsVisible( firstCustomButton ) ? "OpenCustomMenu" : null;
+            firstVisiblePanel = file.modPanels[ i ];
+
+            if ( firstVisibleElement != null && Hud_IsVisible(firstVisiblePanel) && Hud_IsEnabled(firstVisiblePanel) )
+                break;
+        }
+        Hud_SetFocused( Hud_GetChild(firstVisiblePanel, firstVisibleElement ) );
+    }
+    else 
+    {
+        // only update if list position changed
+        UpdateList();
+        UpdateListSliderPosition();
+
+        // Find first visible/enabled panel AFTER update
+        var firstVisibleElement = null;
+        var firstVisiblePanel = null;
+        for( int i = 0; i < file.modPanels.len(); i++ )
+        {
+            var firstSlider = Hud_GetChild( file.modPanels[ i ], "Slider" );
+            var firstEnumButton = Hud_GetChild( file.modPanels[ i ], "EnumSelectButton" );
+            var firstCustomButton = Hud_GetChild( file.modPanels[ i ], "OpenCustomMenu" );
+
+            firstVisibleElement = Hud_IsVisible( firstSlider ) ? "Slider" : Hud_IsVisible( firstEnumButton ) ? "EnumSelectButton" : Hud_IsVisible( firstCustomButton ) ? "OpenCustomMenu" : null;
+            firstVisiblePanel = file.modPanels[ i ];
+
+            if ( firstVisibleElement != null && Hud_IsVisible(firstVisiblePanel) && Hud_IsEnabled(firstVisiblePanel) )
+                break;
+        }
+        Hud_SetFocused( Hud_GetChild(firstVisiblePanel, firstVisibleElement ) );
+    }
+}
+
+void function OnHitDummyBottom( var button )
+{
+    file.scrollOffset += 1
+
+    int maxOffset = max(0, file.filteredList.len() - BUTTONS_PER_PAGE).tointeger();
+    if ( file.scrollOffset > maxOffset )
+    {
+        // was at bottom already
+        file.scrollOffset = maxOffset;
+        // Find last visible/enabled panel
+        var lastVisibleElement = null;
+        var lastVisiblePanel = null;
+        for( int i = file.modPanels.len() - 1; i >= 0; i-- )
+        {
+            var lastSlider = Hud_GetChild( file.modPanels[ i ], "Slider" );
+            var lastEnumButton = Hud_GetChild( file.modPanels[ i ], "EnumSelectButton" );
+            var lastCustomButton = Hud_GetChild( file.modPanels[ i ], "OpenCustomMenu" );
+
+            lastVisibleElement = Hud_IsVisible( lastSlider ) ? "Slider" : Hud_IsVisible( lastEnumButton ) ? "EnumSelectButton" : Hud_IsVisible( lastCustomButton ) ? "OpenCustomMenu" : null;
+            lastVisiblePanel = file.modPanels[ i ];
+
+            if ( lastVisibleElement != null && Hud_IsVisible(lastVisiblePanel) && Hud_IsEnabled(lastVisiblePanel) )
+                break;
+        }
+        Hud_SetFocused( Hud_GetChild(lastVisiblePanel, lastVisibleElement ) );
+    }
+    else
+    {
+        // only update if list position changed
+        UpdateList();
+        UpdateListSliderPosition();
+
+        // Find last visible/enabled panel AFTER update
+        var lastVisibleElement = null;
+        var lastVisiblePanel = null;
+        for( int i = file.modPanels.len() - 1; i >= 0; i-- )
+        {
+            var lastSlider = Hud_GetChild( file.modPanels[ i ], "Slider" );
+            var lastEnumButton = Hud_GetChild( file.modPanels[ i ], "EnumSelectButton" );
+            var lastCustomButton = Hud_GetChild( file.modPanels[ i ], "OpenCustomMenu" );
+
+            lastVisibleElement = Hud_IsVisible( lastSlider ) ? "Slider" : Hud_IsVisible( lastEnumButton ) ? "EnumSelectButton" : Hud_IsVisible( lastCustomButton ) ? "OpenCustomMenu" : null;
+            lastVisiblePanel = file.modPanels[ i ];
+
+            if ( lastVisibleElement != null && Hud_IsVisible(lastVisiblePanel) && Hud_IsEnabled(lastVisiblePanel) )
+                break;
+        }
+        Hud_SetFocused( Hud_GetChild(lastVisiblePanel, lastVisibleElement ) );
+    }
 }

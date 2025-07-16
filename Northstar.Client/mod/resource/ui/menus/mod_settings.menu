@@ -311,6 +311,23 @@
 			"navUp"						"BtnMod14"
 			"navDown"					"BtnMod1"
 		}
+
+		DummyTop
+		{
+			ControlName RuiButton
+			InheritProperties RuiSmallButton
+			wide 0
+			tall 0
+		}
+		
+		DummyBottom
+		{
+			ControlName				   RuiButton
+			InheritProperties		RuiSmallButton
+			wide 0
+			tall 0
+		}
+
 		// //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		"FilterPanel"
 		{
