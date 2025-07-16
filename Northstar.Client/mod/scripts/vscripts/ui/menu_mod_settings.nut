@@ -545,6 +545,8 @@ void function SetModMenuNameText( var button )
 	for( int i = 0; i < conVar.values.len(); i++ )
 		Hud_DialogList_AddListItem( enumButton, conVar.values[i], string( i ) )
 
+    Hud_ChangeDialogListConVar( enumButton, conVar.conVar )
+
 	if( conVar.isEnumSetting )
 		Hud_SetDialogListSelectionValue( enumButton, string( GetConVarInt( conVar.conVar ) ) )
 
@@ -653,19 +655,22 @@ void function SetModMenuNameText( var button )
 		{
 			Hud_SetVisible( textField, true )
 			Hud_SetSize( label, int( scaleX * ( 375 + 85 ) ), int( scaleY * 40 ) )
+			Hud_SetVisible( resetButton, true )
+			Hud_SetVisible( resetVGUI, true )
 		}
 		else 
 		{
 			Hud_SetSize( label, int( scaleX * ( 375 + 405 ) ), int( scaleY * 40 ) )
 			Hud_SetVisible( textField, false )
+			Hud_SetVisible( resetButton, false )
+			Hud_SetVisible( resetVGUI, false )
 		}
 
 		if ( conVar.isEnumSetting )
 			SetButtonRuiText( enumButton, conVar.displayName )
 
 		Hud_SetVisible( label, false )
-		Hud_SetVisible( resetButton, true )
-		Hud_SetVisible( resetVGUI, true )
+
 	}
 }
 

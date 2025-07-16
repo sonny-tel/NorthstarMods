@@ -98,6 +98,7 @@
 		"pin_to_sibling_corner" "TOP_LEFT"
 		"navLeft" "ResetModToDefault"
 		"navRight" "TextEntrySetting"
+		"ConVar" "hide_version"
 	}
 	"OpenCustomMenu"
 	{
