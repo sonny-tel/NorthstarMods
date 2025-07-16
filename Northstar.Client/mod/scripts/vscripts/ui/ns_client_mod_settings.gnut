@@ -2,7 +2,7 @@ global function NSClientModSettings
 
 void function NSClientModSettings()
 {
-	ModSettings_AddModTitle( "Northstar Client" )
+	ModSettings_AddModTitle( "Northstar" )
 	ModSettings_AddModCategory( "Main Menu" )
 	ModSettings_AddEnumSetting( "hide_motd", "MOTD", [ "#SETTING_ENABLED", "#SETTING_DISABLED" ] )
 	ModSettings_AddEnumSetting( "hide_spotlight", "Spotlight", [ "#SETTING_ENABLED", "#SETTING_DISABLED" ] )
@@ -16,4 +16,33 @@ void function NSClientModSettings()
     ModSettings_AddSliderSetting( "openinvite_duration_default", "Network Invite Duration", 0.0, 120.0, 1.0 )
     ModSettings_AddEnumSetting( "openInvites_filterByLanguage", "Filter Invites by: Language", [ "#SETTING_ENABLED", "#SETTING_DISABLED" ] )
     ModSettings_AddEnumSetting( "openInvites_filterByRegion", "Filter Invites by: Region", [ "#SETTING_ENABLED", "#SETTING_DISABLED" ] )
+    ModSettings_AddModCategory( "Testing" )
+    ModSettings_AddButton( "Open Test Dialog", OpenTestDialog )
+
+    array< ModInfo > modInfo = NSGetModsInformation()
+
+    foreach( ModInfo mod in modInfo )
+    {
+        if( mod.name == "Northstar.Custom" )
+        {
+            if ( mod.enabled )
+            {
+	            ModSettings_AddModCategory( "Event Models" )
+	            ModSettings_AddEnumSetting( "ns_show_event_models", "Show Event Models", [ "#SETTING_OFF", "#SETTING_ON" ], 2 )
+            }
+        }
+    }
+}
+
+void function OpenTestDialog()
+{
+	DialogData dialogData
+	dialogData.header = "Hello"
+	dialogData.message = "Hello"
+
+#if PC_PROG
+	AddDialogButton( dialogData, "#DISMISS" )
+#endif // PC_PROG
+
+	OpenDialog( dialogData )
 }

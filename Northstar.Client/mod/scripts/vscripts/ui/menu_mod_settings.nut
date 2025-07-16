@@ -17,7 +17,6 @@ global function AddModTitle
 global function AddModCategory
 
 const int BUTTONS_PER_PAGE = 15
-const string SETTING_ITEM_TEXT = "                        " // this is long enough to be the same size as the textentry field
 
 enum eEmptySpaceType
 {
@@ -72,6 +71,7 @@ struct {
 	array<MS_Slider> sliders
 	string currentMod = ""
 	string currentCat = ""
+	table<string, string> previousSwitchUpdate
 } file
 
 struct {
@@ -91,6 +91,8 @@ void function InitModMenu()
 	AddMenuFooterOption( file.menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
 	AddMenuFooterOption( file.menu, BUTTON_A, "#B_BUTTON_BACK", "#CLEAR_FILTERS", OnClearButtonPressed )
 	AddMenuFooterOption( file.menu, BUTTON_X, "#B_BUTTON_BACK", "#SEARCHBAR_LABEL" )
+
+	file.previousSwitchUpdate = {}
 
 	/////////////////////////////
 	// BASE NORTHSTAR SETTINGS //
@@ -130,9 +132,6 @@ void function InitModMenu()
 
 		// Enum button nav
 		child = Hud_GetChild( panel, "EnumSelectButton" )
-		Hud_DialogList_AddListItem( child, SETTING_ITEM_TEXT, "main" )
-		Hud_DialogList_AddListItem( child, SETTING_ITEM_TEXT, "next" )
-		Hud_DialogList_AddListItem( child, SETTING_ITEM_TEXT, "prev" )
 
 		child.SetNavUp( Hud_GetChild( file.modPanels[ int( PureModulo( i - 1, len ) ) ], "EnumSelectButton" ) )
 		child.SetNavDown( Hud_GetChild( file.modPanels[ int( PureModulo( i + 1, len ) ) ], "EnumSelectButton" ) )
@@ -249,6 +248,12 @@ void functionref() function ResetAllConVarsForModEventHandler( string catName )
 				Hud_SetText( Hud_GetChild( file.modPanels[ index - file.scrollOffset ], "TextEntrySetting" ), c.isEnumSetting ? c.values[ GetConVarInt( c.conVar ) ] : GetConVarString( c.conVar ) )
 				if( c.sliderEnabled )
 					MS_Slider_SetValue( file.sliders[ index - file.scrollOffset ], GetConVarFloat( c.conVar ) )
+
+				if( c.isEnumSetting )
+				{
+					var enumButton = Hud_GetChild( file.modPanels[ index - file.scrollOffset ], "EnumSelectButton" )
+					Hud_SetDialogListSelectionValue( enumButton, string( GetConVarInt( c.conVar ) ) )
+				}
 			}
 		}
 	}
@@ -522,9 +527,20 @@ void function SetModMenuNameText( var button )
 	var modTitle = Hud_GetChild( panel, "ModTitle" )
 	var customMenuButton = Hud_GetChild( panel, "OpenCustomMenu")
 	var slider = Hud_GetChild( panel, "Slider" )
+	var dropButton = Hud_GetChild( slider, "BtnDropButton" )
+	var header = Hud_GetChild( panel, "Header" )
 	Hud_SetVisible( slider, false )
 	Hud_SetEnabled( slider, true )
+	SetButtonRuiText( dropButton, conVar.displayName )
+	Hud_SetVisible( header, false )
 
+	Hud_DialogList_RemoveListItems( enumButton )
+
+	for( int i = 0; i < conVar.values.len(); i++ )
+		Hud_DialogList_AddListItem( enumButton, conVar.values[i], string( i ) )
+
+	if( conVar.isEnumSetting )
+		Hud_SetDialogListSelectionValue( enumButton, string( GetConVarInt( conVar.conVar ) ) )
 
 	if ( conVar.isEmptySpace )
 	{
@@ -564,14 +580,16 @@ void function SetModMenuNameText( var button )
 	float scaleY = GetScreenSize()[1] / 1080.0
 	if ( conVar.sliderEnabled )
 	{
-		Hud_SetSize( slider, int( 320 * scaleX ), int( 45 * scaleY ) )
+		// Hud_SetSize( slider, int( 320 * scaleX ), int( 45 * scaleY ) )
 		MS_Slider s = file.sliders[ int ( Hud_GetScriptID( button ) ) ]
 		MS_Slider_SetMin( s, conVar.min )
 		MS_Slider_SetMax( s, conVar.max )
 		MS_Slider_SetStepSize( s, conVar.stepSize )
 		MS_Slider_SetValue( s, GetConVarFloat( conVar.conVar ) )
+		Hud_SetVisible( dropButton, true )
+		Hud_SetEnabled( dropButton, true )
 	}
-	else Hud_SetSize( slider, 0, int( 45 * scaleY ) )
+	// else Hud_SetSize( slider, 0, int( 45 * scaleY ) )
 	if ( conVar.isCustomButton )
 	{
 		Hud_SetVisible( label, false )
@@ -597,10 +615,11 @@ void function SetModMenuNameText( var button )
 	}
 	else if ( conVar.isCategoryName )
 	{
-		Hud_SetText( label, conVar.catName )
+		Hud_SetVisible( header, true )
+		Hud_SetText( header, conVar.catName )
+		Hud_SetVisible( label, false )
 		Hud_SetPos( label, 0, 0 )
 		Hud_SetSize( label, int( scaleX * ( 1180 - 420 - 85 ) ), int( scaleY * 40 ) )
-		Hud_SetVisible( label, true )
 		Hud_SetVisible( textField, false )
 		Hud_SetVisible( enumButton, false )
 		Hud_SetVisible( resetButton, true )
@@ -610,8 +629,6 @@ void function SetModMenuNameText( var button )
 	}
 	else {
 		Hud_SetVisible( slider, conVar.sliderEnabled )
-
-		Hud_SetText( label, conVar.displayName )
 		if (conVar.type == "float")
 			Hud_SetText( textField, string( GetConVarFloat(conVar.conVar) ) )
 		else Hud_SetText( textField, conVar.isEnumSetting ? conVar.values[ GetConVarInt( conVar.conVar ) ] : GetConVarString( conVar.conVar ) )
@@ -627,10 +644,20 @@ void function SetModMenuNameText( var button )
 		Hud_SetText( resetButton, "" )
 		Hud_SetSize( resetButton, int( scaleX * 90 ), int( scaleY * 40 ) )
 		if ( conVar.sliderEnabled )
+		{
+			Hud_SetVisible( textField, true )
 			Hud_SetSize( label, int( scaleX * ( 375 + 85 ) ), int( scaleY * 40 ) )
-		else Hud_SetSize( label, int( scaleX * ( 375 + 405 ) ), int( scaleY * 40 ) )
-		Hud_SetVisible( label, true )
-		Hud_SetVisible( textField, true )
+		}
+		else 
+		{
+			Hud_SetSize( label, int( scaleX * ( 375 + 405 ) ), int( scaleY * 40 ) )
+			Hud_SetVisible( textField, false )
+		}
+
+		if ( conVar.isEnumSetting )
+			SetButtonRuiText( enumButton, conVar.displayName )
+
+		Hud_SetVisible( label, false )
 		Hud_SetVisible( resetButton, true )
 		Hud_SetVisible( resetVGUI, true )
 	}
@@ -1053,23 +1080,9 @@ void function UpdateEnumSetting( var button )
 
 	string selectionVal = Hud_GetDialogListSelectionValue( button )
 
-	if ( selectionVal == "main" )
-		return
+	// file.previousSwitchUpdate = { c.conVar, selectionVal }
 
-	int enumVal = GetConVarInt( c.conVar )
-	if ( selectionVal == "next" ) // enum val += 1
-		enumVal = ( enumVal + 1 ) % c.values.len()
-	else // enum val -= 1
-	{
-		enumVal--
-		if ( enumVal == -1 )
-			enumVal = c.values.len() - 1
-	}
-
-	SetConVarInt( c.conVar, enumVal )
-	Hud_SetText( textPanel, c.values[ enumVal ] )
-
-	Hud_SetDialogListSelectionValue( button, "main" )
+	SetConVarString( c.conVar, selectionVal )
 }
 
 void function OnClearButtonPressed( var button )
