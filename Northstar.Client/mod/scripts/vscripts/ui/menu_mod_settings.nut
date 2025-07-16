@@ -135,7 +135,7 @@ void function InitModMenu()
 
 		child.SetNavUp( Hud_GetChild( file.modPanels[ int( PureModulo( i - 1, len ) ) ], "EnumSelectButton" ) )
 		child.SetNavDown( Hud_GetChild( file.modPanels[ int( PureModulo( i + 1, len ) ) ], "EnumSelectButton" ) )
-		Hud_AddEventHandler( child, UIE_CLICK, UpdateEnumSetting )
+		Hud_AddEventHandler( child, UIE_CHANGE, UpdateEnumSetting )
 
 		// reset button nav
 
