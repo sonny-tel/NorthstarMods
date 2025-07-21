@@ -135,7 +135,27 @@ void function OnMainMenu_Open()
 
 bool function HasDemos()
 {
-	return !( Demo_GetDemoFiles().len() == 0 )
+	array< string > demos = Demo_GetDemoFiles()
+
+    //demo_2024-6-9_95-25-41_550_p2452__mp_colony02.dem
+    foreach( string demo in Demo_GetDemoFiles() )
+    {
+		string orig = demo
+		string mapName = "mp_lobby"
+	
+        array<string> toks = split(demo, "_")
+
+		foreach(string map in GetPrivateMatchMaps())
+		{
+			if(orig.find(map))
+				mapName = map
+		}
+
+        if(mapName == "mp_lobby")
+            demos.remove( demos.find( demo ) )
+    }
+
+	return !( demos.len() == 0 )
 }
 
 void function OpenDemoPickerMenu( var button )
