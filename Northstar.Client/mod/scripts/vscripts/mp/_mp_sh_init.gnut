@@ -384,7 +384,7 @@ void function Client_MP_Init()
 	ClTitanCockpitSounds_Init()
 	ClGruntChatter_MP_Init()
 	ClSpectatorModeAudio_Init()
-	ClPilotSpeedometer_Init()
+	// ClPilotSpeedometer_Init()
 
 	if ( !IsLobby() && GetCurrentPlaylistVarInt( "riff_floorislava", eFloorIsLava.Default ) )
 		ClRiffFloorIsLava_Init()
