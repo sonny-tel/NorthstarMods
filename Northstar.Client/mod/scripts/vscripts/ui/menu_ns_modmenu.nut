@@ -167,7 +167,7 @@ void function OnModMenuClosed()
 
 		foreach ( ModInfo enMod in file.enabledMods )
 		{
-			if ( mod.name == enMod.name )
+			if ( mod.name == enMod.name && mod.version == enMod.version )
 			{
 				notFound = false
 				break
@@ -240,7 +240,7 @@ void function OnModButtonPressed( var button )
   }
 	else
 	{
-		NSSetModEnabled( modName, !mod.enabled )
+		NSSetModEnabled( modName, mod.version, !mod.enabled )
 
 		// retrieve state of the mod that just got toggled
 		array<ModInfo> infos = NSGetModInformation( mod.name )
@@ -339,7 +339,7 @@ void function DisableMod()
 {
 	ModInfo mod = file.mods[ int ( Hud_GetScriptID( Hud_GetParent( file.currentButton ) ) ) + file.scrollOffset - 1 ].mod
 	string modName = mod.name
-	NSSetModEnabled( modName, false )
+	NSSetModEnabled( modName, mod.version, false )
 
 	// retrieve state of the mod that just got toggled
 	array<ModInfo> infos = NSGetModInformation( mod.name )
