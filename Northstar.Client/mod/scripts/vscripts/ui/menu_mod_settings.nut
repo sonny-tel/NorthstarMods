@@ -623,8 +623,10 @@ void function SetModMenuNameText( var button )
 
     Hud_ChangeDialogListConVar( enumButton, conVar.conVar )
 
-	if( conVar.isEnumSetting )
-		Hud_SetDialogListSelectionValue( enumButton, string( GetConVarInt( conVar.conVar ) ) )	Hud_SetVisible( colorButton, false )
+	if( conVar.isEnumSetting ) 
+		Hud_SetDialogListSelectionValue( enumButton, string( GetConVarInt( conVar.conVar ) ) )	
+	
+	Hud_SetVisible( colorButton, false )
 	Hud_SetVisible( colorVGUI, false )
 	Hud_SetEnabled( colorButton, false )
 	Hud_SetEnabled( colorVGUI, false )
