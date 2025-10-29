@@ -2027,7 +2027,7 @@ resource/ui/menus/mods_browse.menu
         zpos -2
 
 		scaleImage					1
-        visible 1
+        visible 0
         image "vgui/backgroundbar"
 
 		pin_to_sibling ServerDetailsPanel
@@ -2044,7 +2044,7 @@ resource/ui/menus/mods_browse.menu
 		ypos 170
 
 		image						"vgui/uparrow"
-		visible						1
+		visible						0
 		scaleImage					1
 
 		zpos -1
@@ -2078,7 +2078,7 @@ resource/ui/menus/mods_browse.menu
 		ypos 775
 
 		image						"vgui/downarrow"
-		visible						1
+		visible						0
 		scaleImage					1
 
 		zpos -1
@@ -2114,7 +2114,7 @@ resource/ui/menus/mods_browse.menu
 
 		image "vgui/scrollbar"
 
-		visible 1
+		visible 0
 		scaleImage					1
 		zpos -1
 

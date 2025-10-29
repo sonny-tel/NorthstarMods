@@ -105,22 +105,23 @@
 		"InheritProperties"	"RuiSmallButton"
 		"labelText" "#EDIT"
 		"zpos" "0"
-		"xpos" "10"
 		// ypos -10
-		"wide"		"320"
+		"wide"		"1200"
 		"tall"		"45"
 		"scriptID" "0"
 		"pin_to_sibling" "BtnMod"
 		"pin_corner_to_sibling" "TOP_LEFT"
-		"pin_to_sibling_corner" "TOP_RIGHT"
+		"pin_to_sibling_corner" "TOP_LEFT"
+		"auto_wide_tocontents" "1"
 
 		"navRight" "ResetModToDefault"
 		"navLeft" "TextEntrySetting"
 
+		"textAlignment" "west"
 		"visible" "0"
 		FocusColor "0 0 0 0"
 		textAlignment			center
-		font					Default_23
+		font					Default_31
 		wrap					0
 	}
 	"ColorPickerImage"
@@ -130,6 +131,7 @@
 		"scaleImage" "1"
 		"drawColor" "255 255 255 255" // vanilla label color
 		"visible" "0"
+		"xpos" "-25"
 		"wide"		"320"
 		"tall"		"45"
 		"enabled"	"0"
@@ -138,7 +140,7 @@
 
 		"pin_to_sibling" "ColorPickerButton"
 		"pin_corner_to_sibling" RIGHT
-		"pin_to_sibling_corner" LEFT
+		"pin_to_sibling_corner" RIGHT
 	}
 	"ResetModToDefault"
 	{
@@ -147,8 +149,8 @@
 		"labelText" ""
 		"zpos" "0"
 		"xpos" "10"
-		"wide" "45"
-		"tall" "45"
+		"wide" "40"
+		"tall" "40"
 		"scriptID" "0"
 		"pin_to_sibling" "EnumSelectButton"
 		"pin_corner_to_sibling" "RIGHT"

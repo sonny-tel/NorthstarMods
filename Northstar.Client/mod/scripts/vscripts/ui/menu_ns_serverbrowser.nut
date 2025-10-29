@@ -154,7 +154,7 @@ void function InitServerBrowserMenu()
 {
 	file.menu = GetMenu( "ServerBrowserMenu" )
 
-	AddMouseMovementCaptureHandler( Hud_GetChild(file.menu, "MouseMovementCapture"), UpdateMouseDeltaBuffer )
+	// AddMouseMovementCaptureHandler( Hud_GetChild(file.menu, "MouseMovementCapture"), UpdateMouseDeltaBuffer )
 
 	// Get menu stuff
 	file.serverButtons = GetElementsByClassname( file.menu, "ServerButton" )
