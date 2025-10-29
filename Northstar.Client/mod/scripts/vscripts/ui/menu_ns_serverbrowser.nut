@@ -995,16 +995,20 @@ void function OnServerSelected_Threaded( string password = "" )
 	file.lastSelectedServer = server
     file.modsChanged = 0
 
-	// Ensure user is authenticated to server before eventually downloading mods
 	if ( server.requiresPassword )
 	{
-		if ( password == "" )
-		{
-			OnCloseServerBrowserMenu()
-			AdvanceMenu( GetMenu( "ConnectWithPasswordMenu" ) )
-			return
-		}
+        DialogData dialogData
+        dialogData.header = "Enter Password"
+        dialogData.message = "This server requires a password to join.\n\nEnter the password below."
+        dialogData.image = $"ui/menu/common/dialog_error"
+
+        AddDialogButton( dialogData, "#OK", OnPasswordTextEntry )
+        AddDialogButton( dialogData, "#CANCEL" )
+
+        OpenTextEntryDialog( dialogData )
+		return
 	}
+
 
 	if ( NSIsAuthenticatingWithServer() )
 		return
@@ -1150,21 +1154,6 @@ void function OnServerSelected_Threaded( string password = "" )
 		// If we get here, means that mod version exists locally => we good
 	}
 
-	if ( server.requiresPassword )
-	{
-		//OnCloseServerBrowserMenu()
-		//dvanceMenu( GetMenu( "ConnectWithPasswordMenu" ) )
-        DialogData dialogData
-        dialogData.header = "Enter Password"
-        dialogData.message = "This server requires a password to join.\n\nEnter the password below."
-        dialogData.image = $"ui/menu/common/dialog_error"
-
-        AddDialogButton( dialogData, "#OK", OnPasswordTextEntry )
-        AddDialogButton( dialogData, "#CANCEL" )
-
-        OpenTextEntryDialog( dialogData )
-	}
-	else
 	{
 		TriggerConnectToServerCallbacks()
         // DialogData dialogData
