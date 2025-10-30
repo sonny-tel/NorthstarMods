@@ -1015,6 +1015,13 @@ void function OnServerSelected_Threaded( string password = "" )
 	NSTryAuthWithServer( file.lastSelectedServer.index, password )
 	// ToggleConnectingHUD( true )
 
+    DialogData connectingDialogData
+    connectingDialogData.showSpinner = true
+    connectingDialogData.header = "Connecting"
+    connectingDialogData.message = "Connecting to " + file.lastSelectedServer.name
+    AddDialogButton( connectingDialogData, "#CANCEL", CancelAuthToServer )
+    OpenDialog( connectingDialogData )
+
 	while ( NSIsAuthenticatingWithServer() && !file.cancelConnection )
 	{
 		WaitFrame()
@@ -1197,13 +1204,6 @@ void function ThreadedAuthAndConnectToServer( string password = "", bool modsCha
 
 	NSTryAuthWithServer( file.lastSelectedServer.index, password )
 
-    DialogData connectingDialogData
-    connectingDialogData.showSpinner = true
-    connectingDialogData.header = "Connecting"
-    connectingDialogData.message = "Connecting to " + file.lastSelectedServer.name
-    AddDialogButton( connectingDialogData, "#CANCEL", CancelAuthToServer )
-
-    OpenDialog( connectingDialogData )
 
 	// ToggleConnectingHUD( true )
 
