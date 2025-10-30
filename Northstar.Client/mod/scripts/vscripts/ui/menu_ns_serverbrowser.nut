@@ -340,7 +340,7 @@ void function UpdateListSliderPosition( int servers )
 void function OnScrollDown( var button )
 {
 	if (file.filteredServers.len() <= BUTTONS_PER_PAGE) return
-	file.scrollOffset += 5
+	file.scrollOffset += 1
 	if (file.scrollOffset + BUTTONS_PER_PAGE > file.filteredServers.len()) {
 		file.scrollOffset = file.filteredServers.len() - BUTTONS_PER_PAGE
 	}
@@ -350,7 +350,7 @@ void function OnScrollDown( var button )
 
 void function OnScrollUp( var button )
 {
-	file.scrollOffset -= 5
+	file.scrollOffset -= 1
 	if ( file.scrollOffset < 0 ) {
 		file.scrollOffset = 0
 	}
@@ -410,8 +410,8 @@ void function OnCloseServerBrowserMenu()
 {
 	try
 	{
-		DeregisterButtonPressedCallback( MOUSE_WHEEL_UP , OnScrollUp )
-		DeregisterButtonPressedCallback( MOUSE_WHEEL_DOWN , OnScrollDown )
+		// DeregisterButtonPressedCallback( MOUSE_WHEEL_UP , OnScrollUp )
+		// DeregisterButtonPressedCallback( MOUSE_WHEEL_DOWN , OnScrollDown )
 		DeregisterButtonPressedCallback( KEY_TAB , OnKeyTabPressed )
 		DeregisterButtonPressedCallback( KEY_ENTER, OnEnterPressed )
 		DeregisterButtonPressedCallback( KEY_R, OnKeyRPressed )
@@ -440,11 +440,32 @@ void function OnServerBrowserMenuOpened()
 	thread WaitForServerListRequest()
 
 
-	RegisterButtonPressedCallback( MOUSE_WHEEL_UP , OnScrollUp )
-	RegisterButtonPressedCallback( MOUSE_WHEEL_DOWN , OnScrollDown )
+	// RegisterButtonPressedCallback( MOUSE_WHEEL_UP , OnScrollUp )
+	// RegisterButtonPressedCallback( MOUSE_WHEEL_DOWN , OnScrollDown )
+	AddCallback_InputEvent( InputEventType.IE_AnalogValueChanged, OnAnalogueScroll )
 	RegisterButtonPressedCallback( KEY_TAB , OnKeyTabPressed )
 	RegisterButtonPressedCallback( KEY_ENTER, OnEnterPressed )
 	RegisterButtonPressedCallback( KEY_R, OnKeyRPressed )
+}
+
+void function OnAnalogueScroll( int eventType, int nTick, int nData, int nData2, int nData3 )
+{
+	if ( uiGlobal.activeMenu != file.menu ) 
+		return
+
+	if ( nData == AnalogCode.MOUSE_WHEEL )
+	{
+		int scrollDirection = nData3
+
+		if( scrollDirection > 0 )
+		{
+			OnScrollUp( null )
+		}
+		else if ( scrollDirection < 0 )
+		{
+			OnScrollDown( null )
+		}
+	}
 }
 
 ////////////////////////////

@@ -202,7 +202,7 @@ void function InitModMenu()
 	// Hud_AddEventHandler( Hud_GetChild( file.menu, "BtnModsSearch" ), UIE_LOSE_FOCUS, OnFilterTextPanelChanged )
 	Hud_AddEventHandler( Hud_GetChild( file.menu, "BtnFiltersClear" ), UIE_CLICK, OnClearButtonPressed )
 	// mouse delta
-	AddMouseMovementCaptureHandler( file.menu, UpdateMouseDeltaBuffer )
+	// AddMouseMovementCaptureHandler( file.menu, UpdateMouseDeltaBuffer )
 
 	Hud_AddEventHandler( Hud_GetChild( file.menu, "BtnModsSearch" ), UIE_CHANGE, void function ( var inputField ) : ()
 	{
@@ -833,10 +833,30 @@ void function ColorButtonPressed( var button )
 	// UpdateList()
 }
 
+void function OnAnalogueScroll( int eventType, int nTick, int nData, int nData2, int nData3 )
+{
+	if ( uiGlobal.activeMenu != file.menu ) 
+		return
+
+	if ( nData == AnalogCode.MOUSE_WHEEL )
+	{
+		int scrollDirection = nData3
+
+		if( scrollDirection > 0 )
+		{
+			OnScrollUp( null )
+		}
+		else if ( scrollDirection < 0 )
+		{
+			OnScrollDown( null )
+		}
+	}
+}
+
 void function OnScrollDown( var button )
 {
 	if ( file.filteredList.len() <= BUTTONS_PER_PAGE ) return
-	file.scrollOffset += 5
+	file.scrollOffset += 1
 	if ( file.scrollOffset + BUTTONS_PER_PAGE > file.filteredList.len() )
 	{
 		file.scrollOffset = file.filteredList.len() - BUTTONS_PER_PAGE
@@ -847,7 +867,7 @@ void function OnScrollDown( var button )
 
 void function OnScrollUp( var button )
 {
-	file.scrollOffset -= 5
+	file.scrollOffset -= 1
 	if ( file.scrollOffset < 0 )
 	{
 		file.scrollOffset = 0
@@ -884,8 +904,9 @@ void function OnModMenuOpened()
 		file.scrollOffset = 0
 		file.filterText = ""
 
-		RegisterButtonPressedCallback( MOUSE_WHEEL_UP , OnScrollUp )
-		RegisterButtonPressedCallback( MOUSE_WHEEL_DOWN , OnScrollDown )
+		// RegisterButtonPressedCallback( MOUSE_WHEEL_UP , OnScrollUp )
+		// RegisterButtonPressedCallback( MOUSE_WHEEL_DOWN , OnScrollDown )
+		AddCallback_InputEvent( InputEventType.IE_AnalogValueChanged, OnAnalogueScroll )
 		RegisterButtonPressedCallback( MOUSE_LEFT , OnClick )
 
 		OnFiltersChange()
@@ -942,8 +963,8 @@ void function OnFiltersChange()
 
 void function OnModMenuClosed()
 {
-	DeregisterButtonPressedCallback( MOUSE_WHEEL_UP , OnScrollUp )
-	DeregisterButtonPressedCallback( MOUSE_WHEEL_DOWN , OnScrollDown )
+	// DeregisterButtonPressedCallback( MOUSE_WHEEL_UP , OnScrollUp )
+	// DeregisterButtonPressedCallback( MOUSE_WHEEL_DOWN , OnScrollDown )
 	DeregisterButtonPressedCallback( MOUSE_LEFT , OnClick )
 
 	file.scrollOffset = 0

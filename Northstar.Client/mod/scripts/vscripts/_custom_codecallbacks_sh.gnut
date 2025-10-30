@@ -1,6 +1,8 @@
 global function CInputSystem__ProcessPostEvent
 global function AddCallback_InputEvent
 
+// shamelessly stolen from r5sdk
+
 global enum InputEventType
 {
 	IE_ButtonPressed = 0	// m_nData contains a ButtonCode_t
