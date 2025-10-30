@@ -92,6 +92,10 @@
 			"RunOn": "CLIENT"
 		},
 		{
+			"Path": "_custom_codecallbacks_ui.gnut",
+			"RunOn": "UI"
+		},
+		{
 			"Path": "client/cl_chat.gnut",
 			"RunOn": "CLIENT"
 		},

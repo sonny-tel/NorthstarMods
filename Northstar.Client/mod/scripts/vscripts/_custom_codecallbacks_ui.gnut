@@ -1,0 +1,6 @@
+global function CInputSystem_ProcessPostEvent
+
+void function CInputSystem_ProcessPostEvent(int nType, int nTick, int nData, int nData2, int nData3)
+{
+    printt("CInputSystem_ProcessPostEvent: " + nType + ", " + nTick + ", " + nData + ", " + nData2 + ", " + nData3)
+}
