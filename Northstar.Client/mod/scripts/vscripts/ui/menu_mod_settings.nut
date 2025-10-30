@@ -51,6 +51,7 @@ struct ConVarData {
 	bool forceClamp = false
 
 	bool isCustomButton = false
+	bool isSimpleSetting = false
 	void functionref() onPress
 
 	array<string> values
@@ -802,6 +803,13 @@ void function SetModMenuNameText( var button )
 			Hud_SetColor(colorVGUI, 0, 0, 0, 0)
 
 		}
+
+		if( conVar.isSimpleSetting )
+		{
+			Hud_SetVisible( textField, true )
+			Hud_SetText( label, conVar.displayName )
+			Hud_SetVisible( label, true )
+		}
 	}
 }
 
@@ -1042,6 +1050,7 @@ void function ModSettings_AddSetting( string conVar, string displayName, string 
 	data.modName = file.currentMod
 	data.displayName = displayName
 	data.type = type
+	data.isSimpleSetting = true
 
 	file.conVarList.append( data )
 }
@@ -1065,6 +1074,7 @@ void function ModSettings_AddColorSetting(string conVar, string buttonLabel, voi
 	data.modName = file.currentMod
 	data.catName = file.currentCat
 	data.onPress = onPress
+	data.isSimpleSetting = false
 
 	file.conVarList.append( data )
 }

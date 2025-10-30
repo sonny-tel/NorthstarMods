@@ -1,6 +1,26 @@
 global function CInputSystem_ProcessPostEvent
+global function AddCallback_InputEvent
+
+struct {
+    array< InputEventCallbackStruct > InputEventCallbacks
+} NsCustomCallbacksUI
 
 void function CInputSystem_ProcessPostEvent(int nType, int nTick, int nData, int nData2, int nData3)
 {
-    printt("CInputSystem_ProcessPostEvent: " + nType + ", " + nTick + ", " + nData + ", " + nData2 + ", " + nData3)
+    foreach (callbackFunc in NsCustomCallbacksUI.InputEventCallbacks)
+    {
+        if (callbackFunc.eventType == nType )
+        {
+            callbackFunc.callbackFunc(nType, nTick, nData, nData2, nData3)
+        }
+    }
+}
+
+void function AddCallback_InputEvent(int eventType, void functionref(int, int, int, int, int) callbackFunc)
+{
+    InputEventCallbackStruct callbackStruct
+    callbackStruct.eventType = eventType
+    callbackStruct.callbackFunc = callbackFunc
+    
+    NsCustomCallbacksUI.InputEventCallbacks.append(callbackStruct)
 }
