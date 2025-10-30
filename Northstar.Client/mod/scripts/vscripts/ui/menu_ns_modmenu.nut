@@ -46,11 +46,42 @@ void function AddNorthstarModMenu_MainMenuFooter()
 {
 	string controllerStr = PrependControllerPrompts( BUTTON_Y, "#MENU_TITLE_MODS" )
 	AddMenuFooterOption( GetMenu( "MainMenu" ), BUTTON_Y, controllerStr, "#MENU_TITLE_MODS", AdvanceToModListMenu )
+	AddMenuFooterOption( GetMenu( "MainMenu" ), BUTTON_SHOULDER_LEFT, "#MENU_DEMOS", "#MENU_DEMOS", OpenDemoPickerMenu, HasDemos )
 }
 
 void function AdvanceToModListMenu( var button )
 {
 	AdvanceMenu( GetMenu( "ModListMenu" ) )
+}
+
+bool function HasDemos()
+{
+	array< string > demos = Demo_GetDemoFiles()
+
+    //demo_2024-6-9_95-25-41_550_p2452__mp_colony02.dem
+    foreach( string demo in Demo_GetDemoFiles() )
+    {
+		string orig = demo
+		string mapName = "mp_lobby"
+	
+        array<string> toks = split(demo, "_")
+
+		foreach(string map in GetPrivateMatchMaps())
+		{
+			if(orig.find(map))
+				mapName = map
+		}
+
+        if(mapName == "mp_lobby")
+            demos.remove( demos.find( demo ) )
+    }
+
+	return !( demos.len() == 0 )
+}
+
+void function OpenDemoPickerMenu( var button )
+{
+	AdvanceMenu( GetMenu( "DemopickerMenu" ) )
 }
 
 void function InitModMenu()

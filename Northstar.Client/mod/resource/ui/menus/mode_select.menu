@@ -51,7 +51,7 @@ resource/ui/menus/mode_select.menu
 			labelText				""
 
 			xpos                    96
-			ypos                    140
+			ypos                    180
 		}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -373,6 +373,46 @@ resource/ui/menus/mode_select.menu
 			pin_to_sibling_corner 	BOTTOM_LEFT
 		}
 
+		PageButtonU
+		{
+			ControlName			RuiButton
+			Classname			GridButtonPage
+			InheritProperties	GridPageArrowButtonUp
+			xpos			-240
+			ypos			60
+			wide			128
+			tall			64
+			visible			1
+			scaleImage		1
+			drawColor		"255 255 255 255"
+
+			zpos			300
+
+			pin_to_sibling Panel1
+			pin_corner_to_sibling TOP_LEFT
+			pin_to_sibling_corner TOP_LEFT
+		}
+
+		PageButtonD
+		{
+			ControlName			RuiButton
+			Classname			GridButtonPage
+			InheritProperties	GridPageArrowButtonDown
+			xpos			-240
+			ypos			0
+			wide			128
+			tall			64
+			visible			1
+			scaleImage		1
+			drawColor		"255 255 255 255"
+
+			zpos			300
+
+			pin_to_sibling Panel15
+			pin_corner_to_sibling TOP_LEFT
+			pin_to_sibling_corner BOTTOM_LEFT
+		}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // SLIDER
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -385,6 +425,7 @@ resource/ui/menus/mode_select.menu
 			tall 40
 			xpos 342
 			ypos 2
+			visible 0
 
 			image "vgui/hud/white"
 			drawColor "255 255 255 128"
@@ -404,7 +445,7 @@ resource/ui/menus/mode_select.menu
 
 			rui "ui/control_options_description.rpak"
 
-			visible 1
+			visible 0
 			zpos -1
 
 			pin_to_sibling NextModeImageFrame
@@ -421,6 +462,7 @@ resource/ui/menus/mode_select.menu
 			tall 40
 			xpos 342
 			ypos -639
+			visible 0
 
 			image "vgui/hud/white"
 			drawColor "255 255 255 128"
@@ -440,7 +482,7 @@ resource/ui/menus/mode_select.menu
 
 			rui "ui/control_options_description.rpak"
 
-			visible 1
+			visible 0
 			zpos -1
 
 			pin_to_sibling NextModeImageFrame
@@ -477,7 +519,7 @@ resource/ui/menus/mode_select.menu
 
 			rui "ui/control_options_description.rpak"
 
-			visible 1
+			visible 0
 			zpos -1
 
 			pin_to_sibling NextModeImageFrame

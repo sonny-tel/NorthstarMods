@@ -46,7 +46,7 @@ void function InitMapsMenu()
 {
 	file.menu = GetMenu( "MapsMenu" )
 	
-	AddMouseMovementCaptureHandler( Hud_GetChild(file.menu, "MouseMovementCapture"), UpdateMouseDeltaBuffer )
+	// AddMouseMovementCaptureHandler( Hud_GetChild(file.menu, "MouseMovementCapture"), UpdateMouseDeltaBuffer )
 	
 
 	AddMenuEventHandler( file.menu, eUIEvent.MENU_CLOSE, OnCloseMapsMenu )
@@ -58,8 +58,8 @@ void function InitMapsMenu()
 	AddMenuFooterOption( file.menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
 	AddMenuFooterOption( file.menu, BUTTON_X, "#X_BUTTON_CLEAR_FILTERS", "#CLEAR_FILTERS", OnBtnFiltersClear_Activate )
 
-	AddButtonEventHandler( Hud_GetChild( file.menu, "BtnMapGridUpArrow"), UIE_CLICK, OnUpArrowSelected )
-	AddButtonEventHandler( Hud_GetChild( file.menu, "BtnMapGridDownArrow"), UIE_CLICK, OnDownArrowSelected )
+	AddButtonEventHandler( Hud_GetChild( file.menu, "PageButtonU"), UIE_CLICK, OnUpArrowSelected )
+	AddButtonEventHandler( Hud_GetChild( file.menu, "PageButtonD"), UIE_CLICK, OnDownArrowSelected )
 		
 	AddButtonEventHandler( Hud_GetChild( file.menu, "SwtBtnHideLocked"), UIE_CHANGE, OnFiltersChanged )
 	AddButtonEventHandler( Hud_GetChild( file.menu, "BtnMapsSearch"), UIE_CHANGE, OnFiltersChanged )
@@ -72,7 +72,8 @@ void function InitMapsMenu()
 	
 	AddButtonEventHandler( Hud_GetChild( Hud_GetChild( file.menu , "MapsGridPanel" ), "DummyTop" ), UIE_GET_FOCUS, OnHitDummyTop )
 	AddButtonEventHandler( Hud_GetChild( Hud_GetChild( file.menu , "MapsGridPanel" ), "DummyBottom" ), UIE_GET_FOCUS, OnHitDummyBottom )
-	
+	AddCallback_InputEvent( InputEventType.IE_AnalogValueChanged, OnAnalogueScroll )
+
 	// uhh
 	foreach ( var button in file.gridButtons )
 	{
@@ -90,8 +91,8 @@ void function OnCloseMapsMenu()
 	
 	try
 	{
-		DeregisterButtonPressedCallback(MOUSE_WHEEL_UP , OnScrollUp)
-		DeregisterButtonPressedCallback(MOUSE_WHEEL_DOWN , OnScrollDown)
+		// DeregisterButtonPressedCallback(MOUSE_WHEEL_UP , OnScrollUp)
+		// DeregisterButtonPressedCallback(MOUSE_WHEEL_DOWN , OnScrollDown)
 		//DeregisterButtonPressedCallback(KEY_TAB , OnKeyTabPressed)
 	}
 	catch ( ex ) {}
@@ -103,9 +104,29 @@ void function OnOpenMapsMenu()
 	
 	Hud_SetFocused( file.gridButtons[0] )
 	
-	RegisterButtonPressedCallback(MOUSE_WHEEL_UP , OnScrollUp)
-	RegisterButtonPressedCallback(MOUSE_WHEEL_DOWN , OnScrollDown)
+	// RegisterButtonPressedCallback(MOUSE_WHEEL_UP , OnScrollUp)
+	// RegisterButtonPressedCallback(MOUSE_WHEEL_DOWN , OnScrollDown)
 	//RegisterButtonPressedCallback(KEY_TAB , OnKeyTabPressed)
+}
+
+void function OnAnalogueScroll( int eventType, int nTick, int nData, int nData2, int nData3 )
+{
+	if ( uiGlobal.activeMenu != file.menu ) 
+		return
+
+	if ( nData == AnalogCode.MOUSE_WHEEL )
+	{
+		int scrollDirection = nData3
+
+		if( scrollDirection > 0 )
+		{
+			OnScrollUp( null )
+		}
+		else if ( scrollDirection < 0 )
+		{
+			OnScrollDown( null )
+		}
+	}
 }
 
 void function OnHitDummyTop( var button )
@@ -129,7 +150,7 @@ void function OnHitDummyBottom( var button )
 {
 	if ( file.mapsArrayFiltered.len() <= BUTTONS_PER_PAGE || file.mapsArrayFiltered.len() <= 12 )
 		return
-		
+
 	file.scrollOffset += 1
 	
 	int compensate = 0
@@ -232,10 +253,22 @@ void function UpdateMapsGrid()
 	HideAllMapButtons()
 	
 	array< string > mapsArray = file.mapsArrayFiltered
-	
-	
+
 	int trueOffset = file.scrollOffset * 3
-	
+
+	var pageButtonUp = Hud_GetChild( file.menu, "PageButtonU" )
+	var pageButtonD = Hud_GetChild( file.menu, "PageButtonD" )
+
+	if ( trueOffset <= 0 )
+		Hud_SetVisible( pageButtonUp, false )
+	else
+		Hud_SetVisible( pageButtonUp, true )
+
+	if ( ( trueOffset + BUTTONS_PER_PAGE * 3 ) >= mapsArray.len() )
+		Hud_SetVisible( pageButtonD, false )
+	else
+		Hud_SetVisible( pageButtonD, true )
+
 	foreach ( int _index,  var element in file.gridInfos )
 	{
 		if ( ( _index + trueOffset ) >= mapsArray.len() ) return
@@ -254,6 +287,7 @@ void function UpdateMapsGrid()
 		Hud_SetVisible( file.gridButtons[ _index ], true )
 		MakeMapButtonVisible( element )
 	}
+
 }
 
 void function FilterMapsArray()
@@ -468,7 +502,7 @@ void function OnUpArrowSelected( var button )
 void function OnScrollDown( var button )
 {
 	if ( file.mapsArrayFiltered.len() <= BUTTONS_PER_PAGE || file.mapsArrayFiltered.len() <= 12 ) return
-	file.scrollOffset += 2
+	file.scrollOffset += 1
 	if ((file.scrollOffset + BUTTONS_PER_PAGE) * 3 > file.mapsArrayFiltered.len()) {
 		file.scrollOffset = (file.mapsArrayFiltered.len() - BUTTONS_PER_PAGE * 3) / 3 + 1
 	}
@@ -478,7 +512,7 @@ void function OnScrollDown( var button )
 
 void function OnScrollUp( var button )
 {
-	file.scrollOffset -= 2
+	file.scrollOffset -= 1
 	if (file.scrollOffset < 0) {
 		file.scrollOffset = 0
 	}

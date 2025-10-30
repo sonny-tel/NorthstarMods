@@ -78,16 +78,17 @@ void function InitModesMenu()
 {
 	file.menu = GetMenu( "ModesMenu" )
 
-	AddMouseMovementCaptureHandler( Hud_GetChild( file.menu, "MouseMovementCapture"), UpdateMouseDeltaBuffer )
+	// AddMouseMovementCaptureHandler( Hud_GetChild( file.menu, "MouseMovementCapture"), UpdateMouseDeltaBuffer )
 
 	AddMenuEventHandler( file.menu, eUIEvent.MENU_CLOSE, OnCloseModesMenu )
 	AddMenuEventHandler( file.menu, eUIEvent.MENU_OPEN, OnOpenModesMenu )
-	AddButtonEventHandler( Hud_GetChild( file.menu, "BtnModeListUpArrow"), UIE_CLICK, OnUpArrowSelected )
-	AddButtonEventHandler( Hud_GetChild( file.menu, "BtnModeListDownArrow"), UIE_CLICK, OnDownArrowSelected )
+	AddButtonEventHandler( Hud_GetChild( file.menu, "PageButtonU"), UIE_CLICK, OnUpArrowSelected )
+	AddButtonEventHandler( Hud_GetChild( file.menu, "PageButtonD"), UIE_CLICK, OnDownArrowSelected )
 
 	AddButtonEventHandler( Hud_GetChild( file.menu, "BtnModeLabel"), UIE_CHANGE, FilterAndUpdateList )
 	AddButtonEventHandler( Hud_GetChild( file.menu, "BtnModeSearch"), UIE_CHANGE, FilterAndUpdateList )
 	AddButtonEventHandler( Hud_GetChild( file.menu, "SwtModeLabel"), UIE_CHANGE, FilterAndUpdateList )
+	AddCallback_InputEvent( InputEventType.IE_AnalogValueChanged, OnAnalogueScroll )
 
 	array<var> buttons = GetElementsByClassname( file.menu, "ModeSelectorPanel" )
 	foreach ( var panel in buttons )
@@ -151,8 +152,8 @@ void function FilterAndUpdateList( var n )
 
 void function OnOpenModesMenu()
 {
-	RegisterButtonPressedCallback( MOUSE_WHEEL_UP , OnScrollUp )
-	RegisterButtonPressedCallback( MOUSE_WHEEL_DOWN , OnScrollDown )
+	// RegisterButtonPressedCallback( MOUSE_WHEEL_UP , OnScrollUp )
+	// RegisterButtonPressedCallback( MOUSE_WHEEL_DOWN , OnScrollDown )
 
 	// Reset filters
 	file.searchString = ""
@@ -186,10 +187,30 @@ void function OnCloseModesMenu()
 {
 	try
 	{
-		DeregisterButtonPressedCallback( MOUSE_WHEEL_UP , OnScrollUp )
-		DeregisterButtonPressedCallback( MOUSE_WHEEL_DOWN , OnScrollDown )
+		// DeregisterButtonPressedCallback( MOUSE_WHEEL_UP , OnScrollUp )
+		// DeregisterButtonPressedCallback( MOUSE_WHEEL_DOWN , OnScrollDown )
 	}
 	catch ( ex ) {}
+}
+
+void function OnAnalogueScroll( int eventType, int nTick, int nData, int nData2, int nData3 )
+{
+	if ( uiGlobal.activeMenu != file.menu ) 
+		return
+
+	if ( nData == AnalogCode.MOUSE_WHEEL )
+	{
+		int scrollDirection = nData3
+
+		if( scrollDirection > 0 )
+		{
+			OnScrollUp( null )
+		}
+		else if ( scrollDirection < 0 )
+		{
+			OnScrollDown( null )
+		}
+	}
 }
 
 string function GetCategoryStringFromEnum( int category )
@@ -463,7 +484,7 @@ void function UpdateListSliderPosition( int modes )
 void function OnScrollDown( var button )
 {
 	if (file.sortedModes.len() <= MODES_PER_PAGE) return
-	file.scrollOffset += 5
+	file.scrollOffset += 1
 	if (file.scrollOffset + MODES_PER_PAGE > file.sortedModes.len()) {
 		file.scrollOffset = file.sortedModes.len() - MODES_PER_PAGE
 	}
@@ -473,7 +494,7 @@ void function OnScrollDown( var button )
 
 void function OnScrollUp( var button )
 {
-	file.scrollOffset -= 5
+	file.scrollOffset -= 1
 	if ( file.scrollOffset < 0 ) {
 		file.scrollOffset = 0
 	}
@@ -518,6 +539,19 @@ bool function IsStringCategory( string str )
 
 void function UpdateVisibleModes()
 {
+	var pageButtonUp = Hud_GetChild( file.menu, "PageButtonU" )
+	var pageButtonD = Hud_GetChild( file.menu, "PageButtonD" )
+
+	if ( file.scrollOffset <= 0 )
+		Hud_SetVisible( pageButtonUp, false )
+	else
+		Hud_SetVisible( pageButtonUp, true )
+
+	if ( ( file.scrollOffset + MODES_PER_PAGE ) >= file.sortedModes.len() )
+		Hud_SetVisible( pageButtonD, false )
+	else
+		Hud_SetVisible( pageButtonD, true )
+
 	// ensures that we only ever show enough buttons for the number of modes we have
 	array<var> buttons = GetElementsByClassname( GetMenu( "ModesMenu" ), "ModeSelectorPanel" )
 	foreach ( var panel in buttons )

@@ -130,7 +130,8 @@ void function InitModMenu()
 
 	AddMenuEventHandler( file.menu, eUIEvent.MENU_OPEN, OnModMenuOpened )
 	AddMenuEventHandler( file.menu, eUIEvent.MENU_CLOSE, OnModMenuClosed )
-
+	AddCallback_InputEvent( InputEventType.IE_AnalogValueChanged, OnAnalogueScroll )
+	
 	int len = file.modPanels.len()
 	for ( int i = 0; i < len; i++ )
 	{
@@ -906,7 +907,6 @@ void function OnModMenuOpened()
 
 		// RegisterButtonPressedCallback( MOUSE_WHEEL_UP , OnScrollUp )
 		// RegisterButtonPressedCallback( MOUSE_WHEEL_DOWN , OnScrollDown )
-		AddCallback_InputEvent( InputEventType.IE_AnalogValueChanged, OnAnalogueScroll )
 		RegisterButtonPressedCallback( MOUSE_LEFT , OnClick )
 
 		OnFiltersChange()

@@ -177,6 +177,7 @@ void function InitServerBrowserMenu()
 	AddMenuFooterOption( file.menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
 	AddMenuFooterOption( file.menu, BUTTON_Y, PrependControllerPrompts( BUTTON_Y, "#REFRESH_SERVERS" ), "#REFRESH_SERVERS", RefreshServers )
     AddMenuFooterOption( file.menu, BUTTON_X, "#X_BUTTON_DIRECT_CONNECT", "Direct Connect", OnDirectConnectButton )
+	AddCallback_InputEvent( InputEventType.IE_AnalogValueChanged, OnAnalogueScroll )
 
 	// Setup server buttons
 	var width = 1120.0  * ( GetScreenSize()[1] / 1080.0 )
@@ -442,7 +443,6 @@ void function OnServerBrowserMenuOpened()
 
 	// RegisterButtonPressedCallback( MOUSE_WHEEL_UP , OnScrollUp )
 	// RegisterButtonPressedCallback( MOUSE_WHEEL_DOWN , OnScrollDown )
-	AddCallback_InputEvent( InputEventType.IE_AnalogValueChanged, OnAnalogueScroll )
 	RegisterButtonPressedCallback( KEY_TAB , OnKeyTabPressed )
 	RegisterButtonPressedCallback( KEY_ENTER, OnEnterPressed )
 	RegisterButtonPressedCallback( KEY_R, OnKeyRPressed )
