@@ -111,6 +111,7 @@ Resource/UI/LoadingProgress.res
 		ControlName				Label
 		xpos					r400
 		ypos					r85
+		tall 50
 		wide 300
 		labelText				""
 		textAlignment				east
