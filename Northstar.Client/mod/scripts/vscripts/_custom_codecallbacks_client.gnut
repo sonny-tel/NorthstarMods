@@ -1,13 +1,10 @@
 untyped
 
 global function AddCallback_OnReceivedSayTextMessage
-global function AddCallback_InputEvent
 
 // this is global due to squirrel bridge v3 making native not be able to find non-global funcs properly
 // temp fix (surely it will get replaced), do not use this function please (although there isnt rly a downside to it?)
 global function CHudChat_ProcessMessageStartThread
-// surely :slight_smile:
-global function CInputSystem_ProcessPostEvent
 
 global struct ClClient_MessageStruct {
 	string message
@@ -22,7 +19,6 @@ global struct ClClient_MessageStruct {
 
 struct {
 	array< ClClient_MessageStruct functionref( ClClient_MessageStruct ) > OnReceivedSayTextMessageCallbacks
-    array< InputEventCallbackStruct > InputEventCallbacks
 } NsCustomCallbacksClient
 
 void function OnReceivedMessage(ClClient_MessageStruct localMessage) {
@@ -145,24 +141,4 @@ void function CHudChat_OnReceivedSayTextMessageCallback(int fromPlayerIndex, str
 void function AddCallback_OnReceivedSayTextMessage( ClClient_MessageStruct functionref (ClClient_MessageStruct) callbackFunc )
 {
 	NsCustomCallbacksClient.OnReceivedSayTextMessageCallbacks.append(callbackFunc)
-}
-
-void function AddCallback_InputEvent(int eventType, void functionref(int, int, int, int, int) callbackFunc)
-{
-    InputEventCallbackStruct callbackStruct
-    callbackStruct.eventType = eventType
-    callbackStruct.callbackFunc = callbackFunc
-    
-    NsCustomCallbacksClient.InputEventCallbacks.append(callbackStruct)
-}
-
-void function CInputSystem_ProcessPostEvent(int nType, int nTick, int nData, int nData2, int nData3)
-{
-    foreach (callbackFunc in NsCustomCallbacksClient.InputEventCallbacks)
-    {
-        if (callbackFunc.eventType == nType )
-        {
-            callbackFunc.callbackFunc(nType, nTick, nData, nData2, nData3)
-        }
-    }
 }
