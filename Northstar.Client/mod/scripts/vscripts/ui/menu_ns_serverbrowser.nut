@@ -81,7 +81,7 @@ struct {
 	int serverButtonFocusedID = 0
 	bool shouldFocus = true
 	bool cancelConnection = false
-    int modsChanged = 0
+	int downloadedMods = 0
 	
 	// filtered array of servers
 	array<serverStruct> serversArrayFiltered
@@ -1014,7 +1014,6 @@ void function OnServerSelected_Threaded( string password = "" )
 
 	ServerInfo server = file.focusedServer
 	file.lastSelectedServer = server
-    file.modsChanged = 0
 
 	if ( server.requiresPassword )
 	{
@@ -1182,17 +1181,8 @@ void function OnServerSelected_Threaded( string password = "" )
 		// If we get here, means that mod version exists locally => we good
 	}
 
-	{
-		TriggerConnectToServerCallbacks()
-        // DialogData dialogData
-        // dialogData.header = "Join Server?"
-        // dialogData.message = "You're about to connect to\n" + server.name + "\n\nAre you sure?"
-	    // AddDialogButton( dialogData, "#YES", DoAuthToServer )
-        // AddDialogButton( dialogData, "#NO" )
-
-        // OpenDialog( dialogData )
-		DoAuthToServer()
-	}
+	TriggerConnectToServerCallbacks()
+	DoAuthToServer()
 }
 
 void function OnPasswordTextEntry()
@@ -1205,12 +1195,12 @@ void function OnPasswordTextEntry()
     if( password == "" )
         return
 
-    thread ThreadedAuthAndConnectToServer( password, file.modsChanged != 0 )
+    thread ThreadedAuthAndConnectToServer( password )
 }
 
 void function DoAuthToServer()
 {
-	thread ThreadedAuthAndConnectToServer( "", file.modsChanged != 0 )
+	thread ThreadedAuthAndConnectToServer( "" )
 }
 
 void function CancelAuthToServer()
@@ -1218,22 +1208,15 @@ void function CancelAuthToServer()
     file.cancelConnection = true
 }
 
-void function ThreadedAuthAndConnectToServer( string password = "", bool modsChanged = false )
+void function ThreadedAuthAndConnectToServer( string password = "" )
 {
 	if ( NSIsAuthenticatingWithServer() )
 		return
 
 	NSTryAuthWithServer( file.lastSelectedServer.index, password )
 
-
-	// ToggleConnectingHUD( true )
-
 	while ( NSIsAuthenticatingWithServer() && !file.cancelConnection )
-	{
 		WaitFrame()
-	}
-
-	// ToggleConnectingHUD( false )
 
 	if ( file.cancelConnection )
 	{
@@ -1245,13 +1228,32 @@ void function ThreadedAuthAndConnectToServer( string password = "", bool modsCha
 
 	file.cancelConnection = false
 
-	if ( NSWasAuthSuccessful() )
+	if ( !NSWasAuthSuccessful() )
 	{
-		// disable all RequiredOnClient mods that are not required by the server and are currently enabled
-		foreach ( ModInfo mod in NSGetModsInformation() )
-		{
-			string modName = mod.name
-			string modVersion = mod.version
+		string reason = NSGetAuthFailReason()
+
+		DialogData dialogData
+		dialogData.header = "#ERROR"
+		dialogData.message = reason
+		dialogData.image = $"ui/menu/common/dialog_error"
+
+		#if PC_PROG
+			AddDialogButton( dialogData, "#DISMISS" )
+
+			AddDialogFooter( dialogData, "#A_BUTTON_SELECT" )
+		#endif // PC_PROG
+		AddDialogFooter( dialogData, "#B_BUTTON_DISMISS_RUI" )
+
+		OpenDialog( dialogData )
+		return
+	}
+
+	bool modsChanged = false
+
+	foreach ( ModInfo mod in NSGetModsInformation() )
+	{
+		string modName = mod.name
+		string modVersion = mod.version
 
 		if ( mod.requiredOnClient && mod.enabled )
 		{
@@ -1275,7 +1277,6 @@ void function ThreadedAuthAndConnectToServer( string password = "", bool modsCha
 				print(format("Disabled \"%s\" (v%s) since it's not required on server.", modName, modVersion))
 			}
 		}
-	}
 	}
 
 	// enable all RequiredOnClient mods that are required by the server and are currently disabled
