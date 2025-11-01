@@ -1079,7 +1079,7 @@ void function OnServerSelected_Threaded( string password = "" )
 
 	// Count mods that have been successfully downloaded
 	bool autoDownloadAllowed = GetConVarBool( "allow_mod_auto_download" )
-	int downloadedMods = 0;
+	file.downloadedMods = 0;
 
 	// Check out if there's any server-required mod that is not locally installed
 	array<string> modNames = NSGetModNames()
@@ -1151,7 +1151,7 @@ void function OnServerSelected_Threaded( string password = "" )
 				{
 					if ( DownloadMod( mod ) )
 					{
-						downloadedMods++
+						file.downloadedMods++
 					}
 					else
 					{
@@ -1249,6 +1249,9 @@ void function ThreadedAuthAndConnectToServer( string password = "" )
 	}
 
 	bool modsChanged = false
+
+	if( file.downloadedMods > 0 )
+		modsChanged = true
 
 	foreach ( ModInfo mod in NSGetModsInformation() )
 	{
