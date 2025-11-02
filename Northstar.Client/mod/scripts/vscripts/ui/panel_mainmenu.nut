@@ -841,13 +841,13 @@ bool function IsStryderAuthenticated()
 {
 	bool res = GetConVarInt( "mp_allowed" ) != -1
 
-	if( res )
+	if( GetConVarInt( "mp_allowed" ) > 0 )
 	{
 		SetConVarInt( "previous_mp_allowed", GetConVarInt( "mp_allowed" ) )
 		return true
 	}
 
-	if( GetConVarInt( "previous_mp_allowed" ) != -1 )
+	if( GetConVarInt( "previous_mp_allowed" ) > -1 )
 	{
 		SetConVarInt( "mp_allowed", 1 )
 		return true
