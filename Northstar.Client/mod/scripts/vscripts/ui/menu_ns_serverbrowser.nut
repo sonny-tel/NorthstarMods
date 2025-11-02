@@ -1190,7 +1190,7 @@ void function OnServerSelected_Threaded( string password = "" )
 	}
 
 	TriggerConnectToServerCallbacks()
-	DoAuthToServer()
+	thread OnServerSelected_Threaded( password )
 }
 
 void function OnPasswordTextEntry()
@@ -1204,11 +1204,6 @@ void function OnPasswordTextEntry()
         return
 
     thread OnServerSelected_Threaded( password )
-}
-
-void function DoAuthToServer()
-{
-	thread ThreadedAuthAndConnectToServer( "" )
 }
 
 void function CancelAuthToServer()
