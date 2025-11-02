@@ -1190,7 +1190,7 @@ void function OnServerSelected_Threaded( string password = "" )
 	}
 
 	TriggerConnectToServerCallbacks()
-	thread OnServerSelected_Threaded( password )
+	OnServerSelected_Threaded( password )
 }
 
 void function OnPasswordTextEntry()
