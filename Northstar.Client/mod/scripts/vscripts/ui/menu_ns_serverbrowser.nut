@@ -1042,6 +1042,9 @@ void function OnServerSelected_Threaded( string password = "" )
     AddDialogButton( connectingDialogData, "#CANCEL", CancelAuthToServer )
     OpenDialog( connectingDialogData )
 
+	Hud_SetVisible( Hud_GetChild( file.menu, "InGamePlayerLabel" ), false )
+	Hud_SetVisible( Hud_GetChild( file.menu, "TotalServerLabel" ), false )
+
 	while ( NSIsAuthenticatingWithServer() && !file.cancelConnection )
 	{
 		WaitFrame()
@@ -1054,6 +1057,8 @@ void function OnServerSelected_Threaded( string password = "" )
 		file.cancelConnection = false
 		// re-focus server list
 		Hud_SetFocused( Hud_GetChild( file.menu, "BtnServer" + ( file.serverButtonFocusedID + 1 ) ) )
+		Hud_SetVisible( Hud_GetChild( file.menu, "InGamePlayerLabel" ), true )
+		Hud_SetVisible( Hud_GetChild( file.menu, "TotalServerLabel" ), true )
 		return
 	}
 
