@@ -860,7 +860,7 @@ bool function IsStryderAllowingMP()
 {
 	bool res = GetConVarInt( "mp_allowed" ) == 1
 
-	if( res )
+	if( GetConVarInt( "mp_allowed" ) > 0 )
 	{
 		SetConVarInt( "previous_mp_allowed", GetConVarInt( "mp_allowed" ) )
 		return true
