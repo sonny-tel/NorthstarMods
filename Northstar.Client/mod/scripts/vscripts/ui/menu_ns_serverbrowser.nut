@@ -436,6 +436,9 @@ void function OnServerBrowserMenuOpened()
 		NSRequestServerList()
 	}
 
+	Hud_SetVisible( Hud_GetChild( file.menu, "InGamePlayerLabel" ), true )
+	Hud_SetVisible( Hud_GetChild( file.menu, "TotalServerLabel" ), true )
+
 	filterDirection.sortingBy = sortingBy.DEFAULT
 
 	thread WaitForServerListRequest()
@@ -1200,7 +1203,7 @@ void function OnPasswordTextEntry()
     if( password == "" )
         return
 
-    thread ThreadedAuthAndConnectToServer( password )
+    thread OnServerSelected_Threaded( password )
 }
 
 void function DoAuthToServer()
