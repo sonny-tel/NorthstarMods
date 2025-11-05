@@ -1035,7 +1035,6 @@ void function OnServerSelected_Threaded( string password = "" )
 
 	if ( NSIsAuthenticatingWithServer() )
 		return
-	NSTryAuthWithServer( file.lastSelectedServer.index, password )
 	// ToggleConnectingHUD( true )
 
     DialogData connectingDialogData
@@ -1044,6 +1043,8 @@ void function OnServerSelected_Threaded( string password = "" )
     connectingDialogData.message = "Connecting to " + file.lastSelectedServer.name
     AddDialogButton( connectingDialogData, "#CANCEL", CancelAuthToServer )
     OpenDialog( connectingDialogData )
+
+	NSTryAuthWithServer( file.lastSelectedServer.index, password )
 
 	Hud_SetVisible( Hud_GetChild( file.menu, "InGamePlayerLabel" ), false )
 	Hud_SetVisible( Hud_GetChild( file.menu, "TotalServerLabel" ), false )
@@ -1202,6 +1203,13 @@ void function OnPasswordTextEntry()
 
     if( password == "" )
         return
+
+    DialogData connectingDialogData
+    connectingDialogData.showSpinner = true
+    connectingDialogData.header = "Connecting"
+    connectingDialogData.message = "Connecting to " + file.lastSelectedServer.name
+    AddDialogButton( connectingDialogData, "#CANCEL", CancelAuthToServer )
+    OpenDialog( connectingDialogData )
 
     thread ThreadedAuthAndConnectToServer( password )
 }
