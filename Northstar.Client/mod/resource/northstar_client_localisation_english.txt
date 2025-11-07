@@ -438,5 +438,8 @@ Press Yes if you agree to this. This choice can be changed in the mods menu at a
 		"SPECTATE_DISABLED"					"Spectator: Disabled"
 		"DEVELOPMENT_VERSION"				"Development Build"
 		"ION_PATCH"							"Patch "
+	
+		"LOW_PRIORITY"						"Low"
+		"HIGH_PRIORITY"						"High"
 	}
 }

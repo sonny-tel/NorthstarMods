@@ -105,15 +105,13 @@ void function InitModMenu()
 		RuiSetImage( rui, "basicImage", $"ui/menu/common/dialog_error" )
 	}
 
-	AddMouseMovementCaptureHandler( Hud_GetChild(file.menu, "MouseMovementCapture"), UpdateMouseDeltaBuffer )
+	// AddMouseMovementCaptureHandler( Hud_GetChild(file.menu, "MouseMovementCapture"), UpdateMouseDeltaBuffer )
+
+	AddCallback_InputEvent( InputEventType.IE_AnalogValueChanged, OnAnalogueScroll )
 
 	// UI Events
 	AddMenuEventHandler( file.menu, eUIEvent.MENU_OPEN, OnModMenuOpened )
 	AddMenuEventHandler( file.menu, eUIEvent.MENU_CLOSE, OnModMenuClosed )
-
-	// up / down buttons
-	AddButtonEventHandler( Hud_GetChild( file.menu, "BtnModListUpArrow" ), UIE_CLICK, OnUpArrowSelected )
-	AddButtonEventHandler( Hud_GetChild( file.menu, "BtnModListDownArrow" ), UIE_CLICK, OnDownArrowSelected )
 
 	// Mod info buttons
 	AddButtonEventHandler( Hud_GetChild( file.menu, "ModPageButton" ), UIE_CLICK, OnModLinkButtonPressed )
@@ -124,7 +122,8 @@ void function InitModMenu()
 	AddButtonEventHandler( Hud_GetChild( file.menu, "BtnListReverse"), UIE_CHANGE, OnFiltersChange )
 	AddButtonEventHandler( Hud_GetChild( file.menu, "BtnFiltersClear"), UIE_CLICK, OnBtnFiltersClear_Activate )
 
-	AddButtonEventHandler( Hud_GetChild( file.menu, "HideCVButton"), UIE_CHANGE, OnHideConVarsChange )
+	AddButtonEventHandler( Hud_GetChild( file.menu, "PageButtonU"), UIE_CLICK, OnUpArrowSelected )
+	AddButtonEventHandler( Hud_GetChild( file.menu, "PageButtonD"), UIE_CLICK, OnDownArrowSelected )
 
 	// Footers
 	AddMenuFooterOption( file.menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
@@ -154,8 +153,27 @@ void function InitModMenu()
 
 	// Nuke weird rui on filter switch
 	RuiSetString( Hud_GetRui( Hud_GetChild( file.menu, "SwtBtnShowFilter")), "buttonText", "")
-	RuiSetString( Hud_GetRui( Hud_GetChild( file.menu, "HideCVButton")), "buttonText", "")
 	RuiSetString( Hud_GetRui( Hud_GetChild( file.menu, "BtnListReverse")), "buttonText", "")
+}
+
+void function OnAnalogueScroll( int eventType, int nTick, int nData, int nData2, int nData3 )
+{
+	if ( uiGlobal.activeMenu != file.menu ) 
+		return
+
+	if ( nData == AnalogCode.MOUSE_WHEEL )
+	{
+		int scrollDirection = nData3
+
+		if( scrollDirection > 0 )
+		{
+			OnScrollUp( null )
+		}
+		else if ( scrollDirection < 0 )
+		{
+			OnScrollDown( null )
+		}
+	}
 }
 
 // EVENTS
@@ -172,8 +190,8 @@ void function OnModMenuOpened()
 
     try
     {
-        RegisterButtonPressedCallback(MOUSE_WHEEL_UP , OnScrollUp)
-	    RegisterButtonPressedCallback(MOUSE_WHEEL_DOWN , OnScrollDown)
+        // RegisterButtonPressedCallback(MOUSE_WHEEL_UP , OnScrollUp)
+	    // RegisterButtonPressedCallback(MOUSE_WHEEL_DOWN , OnScrollDown)
     } catch ( ex )
     {
         printt( "OnModMenuOpened error: " + ex )
@@ -185,8 +203,8 @@ void function OnModMenuClosed()
 {
 	try
 	{
-		DeregisterButtonPressedCallback(MOUSE_WHEEL_UP , OnScrollUp)
-		DeregisterButtonPressedCallback(MOUSE_WHEEL_DOWN , OnScrollDown)
+		// DeregisterButtonPressedCallback(MOUSE_WHEEL_UP , OnScrollUp)
+		// DeregisterButtonPressedCallback(MOUSE_WHEEL_DOWN , OnScrollDown)
 	}
 	catch ( ex ) {}
 
@@ -231,7 +249,9 @@ void function OnModButtonFocused( var button )
 	file.currentButton = button
 	file.lastMod = file.mods[ int ( Hud_GetScriptID( Hud_GetParent( button ) ) ) + file.scrollOffset - 1 ].mod
 	string modName = file.lastMod.name
-	var rui = Hud_GetRui( Hud_GetChild( file.menu, "LabelDetails" ) )
+	var elem = Hud_GetChild( file.menu, "LabelDetails" )
+	Hud_SetVisible( elem, true )
+	var rui = Hud_GetRui( elem )
 
 	RuiSetGameTime( rui, "startTime", -99999.99 ) // make sure it skips the whole animation for showing this
 	RuiSetString( rui, "headerText", modName )
@@ -339,15 +359,6 @@ void function OnBtnFiltersClear_Activate( var button )
 	OnFiltersChange( null )
 }
 
-void function OnHideConVarsChange( var n )
-{
-	string modName = file.lastMod.name
-	if ( modName == "" )
-		return
-	var rui = Hud_GetRui( Hud_GetChild( file.menu, "LabelDetails" ) )
-	RuiSetString( rui, "messageText", FormatModDescription() )
-}
-
 // LIST LOGIC
 
 void function CoreModToggleDialog( string mod )
@@ -413,6 +424,20 @@ void function HideAllPanels()
 
 void function UpdateList()
 {
+	var pageButtonUp = Hud_GetChild( file.menu, "PageButtonU" )
+	var pageButtonD = Hud_GetChild( file.menu, "PageButtonD" )
+
+	if ( file.scrollOffset <= 0 )
+		Hud_SetVisible( pageButtonUp, false )
+	else
+		Hud_SetVisible( pageButtonUp, true )
+
+	if ( file.scrollOffset  >= file.mods.len() )
+		Hud_SetVisible( pageButtonD, false )
+	else
+		Hud_SetVisible( pageButtonD, true )
+
+
 	HideAllPanels()
 	RefreshMods()
 	DisplayModPanels()

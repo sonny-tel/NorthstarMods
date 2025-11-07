@@ -15,12 +15,8 @@ resource/ui/menus/panels/modlist_setting.res
 	Header
 	{
 		ControlName	Label
-		wide		400
-		labelText	"labelText"
-
-		pin_to_sibling			ControlBox
-		pin_corner_to_sibling 	LEFT
-		pin_to_sibling_corner 	RIGHT
+		InheritProperties		SubheaderText		
+		labelText			"labelText"
 	}
 
 	ControlBox
