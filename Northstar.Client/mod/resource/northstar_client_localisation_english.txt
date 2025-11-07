@@ -37,6 +37,8 @@ Press Yes if you agree to this. This choice can be changed in the mods menu at a
 
 		"DIALOG_AUTHENTICATING_MASTERSERVER" "Authenticating to master server."
 		"AUTHENTICATIONAGREEMENT_NO" "You have chosen not to authenticate with Northstar. You can view the agreement in the Mods menu."
+		"DIALOG_AUTHENTICATION_TIMEOUT" "Timed out authenticated to master server."
+		"DIALOG_AUTHENTICATING_STARTINGLOCALSERVER" "Starting local server..."
 
 		"MENU_TITLE_SERVER_BROWSER" "Server Browser"
 		"NS_SERVERBROWSER_NOSERVERS" "No servers found"

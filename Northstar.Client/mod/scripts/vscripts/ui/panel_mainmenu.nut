@@ -439,20 +439,20 @@ void function UpdatePlayButton( var button )
 				file.mpButtonActivateFunc = LaunchMP
 			}
 
+			if ( button == file.fdButton )
+				Hud_SetLocked( file.fdButton, false )
+
+			if ( button == file.fdButton && !isStryderAuthenticated )
+			{
+				nsMessage = "#CONTACTING_RESPAWN_SERVERS"
+				Hud_SetLocked( file.fdButton, true )
+			}
+
 			if ( button == file.fdButton && GetConVarInt( "ns_has_agreed_to_send_token" ) != NS_AGREED_TO_SEND_TOKEN && !GetConVarBool( "ns_auth_allow_insecure" ) )
 			{
 				if( !GetConVarBool( "ns_auth_allow_insecure" ) )
 				{
 					nsMessage = "#AUTHENTICATIONAGREEMENT_NO"
-					Hud_SetLocked( file.fdButton, true )
-				}
-			}
-
-			if ( button == file.fdButton && !NSIsMasterServerAuthenticated() && GetConVarInt( "ns_has_agreed_to_send_token" ) == NS_AGREED_TO_SEND_TOKEN )
-			{
-				if( !GetConVarBool( "ns_auth_allow_insecure" ) )
-				{
-					nsMessage = "#DIALOG_AUTHENTICATING_MASTERSERVER"
 					Hud_SetLocked( file.fdButton, true )
 				}
 			}
@@ -578,22 +578,54 @@ void function OnPlayFDButton_Activate( var button ) // repurposed for launching 
 		SetConVarBool( "communities_enabled", false)
 		SetConVarString( "communities_hostname", "")
 
-		NSTryAuthWithLocalServer()
 		thread TryAuthWithLocalServer()
 	}
 }
 
 void function TryAuthWithLocalServer()
 {
+	float time = Time()
+
+	if( !GetConVarBool("ns_auth_allow_insecure") && !NSIsMasterServerAuthenticated() )
+	{
+		DialogData dialogData
+		dialogData.showSpinner = true
+		dialogData.header = "#CONNECTING"
+		dialogData.message = "#DIALOG_AUTHENTICATING_MASTERSERVER"
+		AddDialogButton( dialogData, "#CANCEL", CancelNSLocalAuth )
+		OpenDialog( dialogData )
+
+		NSRequestMasterServerAuth()
+
+		while( !NSIsMasterServerAuthenticated() )
+			WaitFrame()
+
+		if( time + 7.5 <= Time() && !NSIsMasterServerAuthenticated() )
+		{
+			CloseAllDialogs()
+
+			DialogData dialogData
+			dialogData.image = $"ui/menu/common/dialog_error"
+			dialogData.header = "#ERROR"
+			dialogData.message = "#DIALOG_AUTHENTICATION_TIMEOUT"
+
+			AddDialogButton( dialogData, "#OK", null )
+			OpenDialog( dialogData )
+			return
+		}
+	}
+
 	DialogData dialogData
 	dialogData.showSpinner = true
 	dialogData.header = "#CONNECTING"
-	dialogData.message = "#DIALOG_AUTHENTICATING_MASTERSERVER" // probably isn't actually what's going on here but makes more sense to the user
+	dialogData.message = "#DIALOG_AUTHENTICATING_STARTINGLOCALSERVER"
 
 	AddDialogButton( dialogData, "#CANCEL", CancelNSLocalAuth )
 	AddDialogFooter( dialogData, "#A_BUTTON_SELECT" )
 
 	OpenDialog( dialogData )
+
+	thread NSTryAuthWithLocalServer()
 
 	while ( NSIsAuthenticatingWithServer() )
 	{
