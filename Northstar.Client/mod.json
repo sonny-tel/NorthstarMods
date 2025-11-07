@@ -188,6 +188,13 @@
       "RunOn": "UI"
     },
     {
+      "Path": "ui/menu_dialog_hiddentextentry.nut",
+      "RunOn": "UI",
+      "UICallback": {
+        "Before": "AddDialogHiddenTextEntry"
+      }
+    },
+    {
       "Path": "ui/menu_dialog_textentry.nut",
       "RunOn": "UI",
       "UICallback": {

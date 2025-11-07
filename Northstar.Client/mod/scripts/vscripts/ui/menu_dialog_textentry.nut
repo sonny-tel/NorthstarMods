@@ -25,4 +25,6 @@ void function OpenTextEntryDialog( DialogData dialogData )
     //file.textEntryCallback = textEntryCallback
     dialogData.menu = file.menu
     OpenDialog( dialogData )
+
+    Hud_SetFocused( Hud_GetChild( file.menu, "TextEntryBox" ) )
 }

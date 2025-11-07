@@ -1028,7 +1028,7 @@ void function OnServerSelected_Threaded( string password = "" )
         AddDialogButton( dialogData, "#OK", OnPasswordTextEntry )
         AddDialogButton( dialogData, "#CANCEL" )
 
-        OpenTextEntryDialog( dialogData )
+        OpenHiddenTextEntryDialog( dialogData )
 		return
 	}
 
@@ -1196,7 +1196,7 @@ void function OnServerSelected_Threaded( string password = "" )
 
 void function OnPasswordTextEntry()
 {
-    var menu = GetMenu( "DialogTextEntry" )
+    var menu = GetMenu( "DialogHiddenTextEntry" )
     var textEntry = Hud_GetChild( menu, "TextEntryBox" )
 
     string password = Hud_GetUTF8Text( textEntry )
