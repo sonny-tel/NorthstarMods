@@ -793,6 +793,7 @@ void function ReloadMods()
 {
 	NSReloadMods()
 	ClientCommand( "reload_localization" )
+	ClientCommand( "reload_models" )
 	ClientCommand( "loadPlaylists" )
 	ClientCommand( "weapon_reparse" ) 
 	ClientCommand( "uiscript_reset" )
