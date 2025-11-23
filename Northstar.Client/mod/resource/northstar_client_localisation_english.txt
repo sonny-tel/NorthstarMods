@@ -305,7 +305,7 @@ Press Yes if you agree to this. This choice can be changed in the mods menu at a
 		"HIDE_PROT_FILTER" "Hide Protected Servers"
 		"SERVER_DESCRIPTION" "Description"
 		"SERVER_MODS" "Mods"
-		"CLEAR_FILTERS" "Reset Filters"
+		"CLEAR_FILTERS" "Reset"
 		"JOIN_BUTTON" "JOIN"
 
 		"SWITCH_YES" "Yes"
