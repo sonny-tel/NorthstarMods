@@ -133,7 +133,7 @@ void function CHudChat_OnReceivedSayTextMessageCallback(int fromPlayerIndex, str
     }
 
     if( fromPlayerName != "" )
-        printt( fromPlayerName + " " + message )
+        printt( fromPlayerName + ": " + message )
 
     if( messageType > 0 )
     {
