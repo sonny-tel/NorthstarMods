@@ -796,6 +796,8 @@ void function ReloadMods()
 	ClientCommand( "reload_models" )
 	ClientCommand( "loadPlaylists" )
 	ClientCommand( "weapon_reparse" ) 
+	if( IsFullyConnected())
+		ClientCommand( "retry" )
 	ClientCommand( "uiscript_reset" )
 }
 
