@@ -498,6 +498,10 @@ function Pressed_TitanNextMode( entity player )
 	if ( player.GetHotDropImpactTime() )
 		return
 
+	// don't bother trying to change titan mode if auto titans are disabled
+	if( GetCurrentPlaylistVarInt( "always_enable_autotitans", 1 ) == 0 )
+		return
+
 	player.ClientCommand( "TitanNextMode" )
 
 	local newMode = player.GetPetTitanMode() + 1
