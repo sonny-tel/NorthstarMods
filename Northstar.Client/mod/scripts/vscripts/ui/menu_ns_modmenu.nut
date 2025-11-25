@@ -230,7 +230,11 @@ void function OnModMenuClosed()
 		}
 	}
 	if ( current.len() != file.enabledMods.len() || reload ) // Only reload if we have to
+	{
 		ReloadMods()
+		if( IsFullyConnected())
+			ClientCommand( "retry" )
+	}
 }
 
 bool function ShouldShowFooterButtons()
@@ -320,6 +324,9 @@ void function OnModButtonPressed( var button )
 void function OnReloadModsButtonPressed( var button )
 {
 	ReloadMods()
+
+	if( IsFullyConnected())
+		ClientCommand( "retry" )
 }
 
 void function OnAuthenticationAgreementButtonPressed( var button )
@@ -796,8 +803,6 @@ void function ReloadMods()
 	ClientCommand( "reload_models" )
 	ClientCommand( "loadPlaylists" )
 	ClientCommand( "weapon_reparse" ) 
-	if( IsFullyConnected())
-		ClientCommand( "retry" )
 	ClientCommand( "uiscript_reset" )
 }
 
