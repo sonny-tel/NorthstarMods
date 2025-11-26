@@ -143,6 +143,8 @@ void function OnShowMainMenuPanel()
 
 	UpdateCustomMainMenuPromos()
 
+	NSMarkClearPlaylistOverrides()
+
 	foreach ( button in file.menuButtons )
 	{
 		int buttonID = int( Hud_GetScriptID( button ) )
