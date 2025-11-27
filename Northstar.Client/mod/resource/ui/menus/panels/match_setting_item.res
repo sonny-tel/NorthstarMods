@@ -28,6 +28,26 @@ resource/ui/menus/panels/match_setting_item.res
 		}
     }
 
+	TextEntrySetting
+	{
+		ControlName TextEntry
+		classname MatchSettingTextEntry
+		xpos 10
+		zpos 100
+		wide 80
+		tall 30
+		textHidden 0
+		editable 1
+		font Default_21
+		allowRightClickMenu 0
+		allowSpecialCharacters 1
+		unicode 0
+		
+		pin_to_sibling BtnSlide
+		pin_corner_to_sibling LEFT
+		pin_to_sibling_corner RIGHT
+	}
+
 	Header
 	{
 		ControlName	Label
