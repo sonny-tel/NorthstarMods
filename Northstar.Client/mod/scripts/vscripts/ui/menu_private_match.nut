@@ -257,7 +257,7 @@ void function OnSelectMatchSettings_Activate( var button )
 	if(NSIsVanilla())
 		AdvanceMenu( GetMenu( "MatchSettingsMenu" ) )
 	else
-		AdvanceMenu( GetMenu( "CustomMatchSettingsCategoryMenu" ) )
+		AdvanceMenu( GetMenu( "CustomMatchSettingsMenu" ) )
 }
 
 void function SetupComboButtons( var menu, var navUpButton, var navDownButton  )

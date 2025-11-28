@@ -144,13 +144,6 @@
       }
     },
     {
-      "Path": "ui/menu_ns_custom_match_settings_categories.nut",
-      "RunOn": "UI",
-      "UICallback": {
-        "Before": "AddNorthstarCustomMatchSettingsCategoryMenu"
-      }
-    },
-    {
       "Path": "ui/menu_ns_custom_match_settings.nut",
       "RunOn": "UI",
       "UICallback": {
