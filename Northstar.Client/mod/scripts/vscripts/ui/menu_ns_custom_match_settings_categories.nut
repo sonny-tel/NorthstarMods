@@ -61,8 +61,8 @@ void function InitNorthstarCustomMatchSettingsCategoryMenu()
 	AddMenuFooterOption( file.menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
 	AddMenuFooterOption( file.menu, BUTTON_Y, "#Y_BUTTON_RESTORE_DEFAULTS", "#RESTORE_DEFAULTS", ResetMatchSettingsToDefault )
 	
-	AddButtonEventHandler( Hud_GetChild( file.menu, "BtnModeListUpArrow"), UIE_CLICK, OnUpArrowSelected )
-	AddButtonEventHandler( Hud_GetChild( file.menu, "BtnModeListDownArrow"), UIE_CLICK, OnDownArrowSelected )
+	AddButtonEventHandler( Hud_GetChild( file.menu, "PageButtonU"), UIE_CLICK, OnUpArrowSelected )
+	AddButtonEventHandler( Hud_GetChild( file.menu, "PageButtonD"), UIE_CLICK, OnDownArrowSelected )
 
 	AddCallback_InputEvent( InputEventType.IE_AnalogValueChanged, OnAnalogueScroll )
 
