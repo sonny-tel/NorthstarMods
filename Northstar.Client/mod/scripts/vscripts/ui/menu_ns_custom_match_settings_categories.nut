@@ -487,7 +487,7 @@ void function OnAnalogueScroll( int eventType, int nTick, int nData, int nData2,
 void function OnScrollDown( var button )
 {
 	if (file.settingsList.len() <= ITEMS_PER_PAGE) return
-	file.scrollOffset += 5
+	file.scrollOffset += 1
 	if (file.scrollOffset + ITEMS_PER_PAGE > file.settingsList.len()) {
 		file.scrollOffset = file.settingsList.len() - ITEMS_PER_PAGE
 	}
@@ -497,7 +497,7 @@ void function OnScrollDown( var button )
 
 void function OnScrollUp( var button )
 {
-	file.scrollOffset -= 5
+	file.scrollOffset -= 1
 	if ( file.scrollOffset < 0 ) {
 		file.scrollOffset = 0
 	}

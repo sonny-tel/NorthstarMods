@@ -500,6 +500,7 @@ resource/ui/menus/custom_match_settings.menu
 			xpos 342
 			ypos -42
 			zpos 0
+			visible 0
 
 			image "vgui/hud/white"
 			drawColor "255 255 255 128"
