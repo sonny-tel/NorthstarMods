@@ -20,8 +20,8 @@ void function CreateGamemodeHideAndSeek()
 	GameMode_SetColor( GAMEMODE_HIDEANDSEEK, [147, 204, 57, 255] )
 	
 	AddPrivateMatchMode( GAMEMODE_HIDEANDSEEK ) // add to private lobby modes
-	AddPrivateMatchModeSettingEnum( "#GAMEMODE_hs", "hideandseek_balance_teams", [ "Disabled", "Enabled" ], "1" )
-	AddPrivateMatchModeSettingArbitrary( "#GAMEMODE_hs", "hideandseek_hiding_time", "60" )
+	AddPrivateMatchModeSettingEnum( "#PL_hs", "hideandseek_balance_teams", [ "Disabled", "Enabled" ], "1" )
+	AddPrivateMatchModeSettingArbitrary( "#PL_hs", "hideandseek_hiding_time", "60" )
 	
 	#if SERVER
 		GameMode_AddServerInit( GAMEMODE_HIDEANDSEEK, GamemodeHideAndSeek_Init )

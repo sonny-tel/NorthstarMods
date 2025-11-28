@@ -112,6 +112,42 @@ void function OnNorthstarCustomMatchSettingsMenuClosed()
 	// DeregisterButtonPressedCallback( MOUSE_WHEEL_DOWN , OnScrollDown )
 }
 
+int function GetCategoryPriority( string cat )
+{
+    string selected = "#PL_" + PrivateMatch_GetSelectedMode()
+
+	switch( cat )
+	{
+		case selected:
+			return 0
+		case "#MODE_SETTING_CATEGORY_MATCH":
+			return 1
+		case "#MODE_SETTING_CATEGORY_PILOT":
+			return 2
+		case "#MODE_SETTING_CATEGORY_TITAN":	
+			return 3
+		default:
+			return 100
+	}
+
+	unreachable
+}
+
+int function SortPrivateMatchSettingsCategories( string a, string b )
+{
+    int pa = GetCategoryPriority( a )
+    int pb = GetCategoryPriority( b )
+
+    if ( pa < pb ) return -1
+    if ( pa > pb ) return 1
+
+    string la = Localize( a )
+    string lb = Localize( b )
+    if ( la < lb ) return -1
+    if ( la > lb ) return 1
+    return 0
+}
+
 void function BuildSettingsList()
 {
 	file.settingsList.clear()
@@ -129,6 +165,8 @@ void function BuildSettingsList()
 	
 	// Standard Categories
 	array<string> categories = GetPrivateMatchSettingCategories()
+	categories.sort( SortPrivateMatchSettingsCategories )
+
 	foreach ( string category in categories )
 	{
 		// Add Header
