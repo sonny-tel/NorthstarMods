@@ -7,6 +7,20 @@ playlists
 			vars
 			{
 				player_force_respawn 5
+
+				// These need to be defined somewhere for private match settings defaults to work
+				run_epilogue 1
+				iron_rules 0
+				cp_amped_capture_points 1
+				coliseum_loadouts_enabled 1
+				aitdm_archer_grunts 0
+				roundscorelimit 3
+				timelimit 15
+				roundtimelimit 3.0
+				respawnprotection 0.0
+				aegis_upgrades 0
+				infinite_doomed_state 0
+				titan_shield_regen 0
 			}
 		}
 	}

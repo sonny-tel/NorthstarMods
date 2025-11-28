@@ -255,7 +255,11 @@ void function UpdateVisibleSettings()
 					playlistVar = string( GetCurrentPlaylistVarOrUseValue( setting.playlistVar, setting.defaultValue ) )
 
 				if( setting.playlistVar.len() != 0 )
+				{
+					int gamemodeIdx = expect int( level.ui.privatematch_mode )
+					Hud_SetGamemodeIdx( slider, gamemodeIdx )
 					Hud_SetPlaylistVarName( slider, setting.playlistVar )
+				}
 
 				float val = float( playlistVar )
 
@@ -301,7 +305,11 @@ void function UpdateVisibleSettings()
 						playlistVar = string( GetCurrentPlaylistVarOrUseValue( setting.playlistVar, setting.defaultValue ) )
 					
 					if( setting.playlistVar.len() != 0 )
+					{
+						int gamemodeIdx = expect int( level.ui.privatematch_mode )
+						Hud_SetGamemodeIdx( button, gamemodeIdx )
 						Hud_SetPlaylistVarName( button, setting.playlistVar )
+					}
 
 					if ( gamemodeVar.find( "." ) != null ) gamemodeVar = string( int( float( gamemodeVar ) ) )
 					if ( playlistVar.find( "." ) != null ) playlistVar = string( int( float( playlistVar ) ) )
