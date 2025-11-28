@@ -199,6 +199,19 @@ void function UpdateVisibleSettings()
 		Hud_SetVisible( panel, false )
 	}
 
+	var pageButtonUp = Hud_GetChild( file.menu, "PageButtonU" )
+	var pageButtonD = Hud_GetChild( file.menu, "PageButtonD" )
+
+	if ( file.scrollOffset <= 0 )
+		Hud_SetVisible( pageButtonUp, false )
+	else
+		Hud_SetVisible( pageButtonUp, true )
+
+	if ( ( file.scrollOffset + ITEMS_PER_PAGE ) >= file.settingsList.len() )
+		Hud_SetVisible( pageButtonD, false )
+	else
+		Hud_SetVisible( pageButtonD, true )
+
 	for ( int i = 0; i < ITEMS_PER_PAGE; i++ )
 	{
 		if ( i + file.scrollOffset >= file.settingsList.len() )

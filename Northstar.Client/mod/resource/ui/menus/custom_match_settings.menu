@@ -378,7 +378,7 @@ resource/ui/menus/custom_match_settings.menu
 			ControlName			RuiButton
 			Classname			GridButtonPage
 			InheritProperties	GridPageArrowButtonUp
-			xpos			-240
+			xpos			-300
 			ypos			60
 			wide			128
 			tall			64
@@ -398,7 +398,7 @@ resource/ui/menus/custom_match_settings.menu
 			ControlName			RuiButton
 			Classname			GridButtonPage
 			InheritProperties	GridPageArrowButtonDown
-			xpos			-240
+			xpos			-300
 			ypos			0
 			wide			128
 			tall			64
