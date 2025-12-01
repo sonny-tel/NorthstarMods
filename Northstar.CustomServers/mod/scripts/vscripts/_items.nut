@@ -5899,25 +5899,19 @@ bool function IsItemLockedForEntitlement( entity player, string ref, string pare
 {
 	string fullRef = GetFullRef( ref, parentRef )
 
-	if( GetItemType( ref ) == eItemTypes.CALLSIGN_ICON || GetItemType( ref ) == eItemTypes.CALLING_CARD )
+	foreach ( int entitlementId in file.entitlementUnlocks[fullRef].entitlementIds )
 	{
-		foreach ( int entitlementId in file.entitlementUnlocks[fullRef].entitlementIds )
-		{
-
-			printt( "entitlement check", fullRef, entitlementId )
-			#if SERVER
-				if ( player.HasEntitlement( entitlementId ) )
-					return false
-			#else
-				if ( LocalPlayerHasEntitlement( entitlementId ) )
-					return false
-			#endif
-		}
-
-		return true
+		//printt( "entitlement check", fullRef, entitlementId )
+		#if SERVER
+			if ( player.HasEntitlement( entitlementId ) )
+				return false
+		#else
+			if ( LocalPlayerHasEntitlement( entitlementId ) )
+				return false
+		#endif
 	}
 
-	return false
+	return true
 }
 
 
