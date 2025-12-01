@@ -5917,7 +5917,7 @@ bool function IsItemLockedForEntitlement( entity player, string ref, string pare
 		return true
 	}
 
-	return false
+	return true
 }
 
 
