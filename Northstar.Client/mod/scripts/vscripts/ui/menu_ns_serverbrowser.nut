@@ -1223,6 +1223,77 @@ void function OnServerSelected_Threaded( string password = "" )
 		// If we get here, means that mod version exists locally => we good
 	}
 
+	bool modsChanged = false
+
+	if( file.downloadedMods > 0 )
+		modsChanged = true
+
+	foreach ( ModInfo mod in NSGetModsInformation() )
+	{
+		string modName = mod.name
+		string modVersion = mod.version
+
+		if ( mod.requiredOnClient && mod.enabled )
+		{
+			// find the mod name in the list of server required mods
+			bool found = false
+			foreach ( RequiredModInfo mod in file.lastSelectedServer.requiredMods )
+			{
+				// this tolerates a version difference for requiredOnClient core mods (only Northstar.Custom for now)
+				if (mod.name == modName && ( IsCoreMod( modName ) || mod.version == modVersion ))
+				{
+					found = true
+					print(format("\"%s\" (v%s) is required and already enabled.", modName, modVersion))
+					break
+				}
+			}
+			// if we didn't find the mod name, disable the mod
+			if (!found)
+			{
+				modsChanged = true
+				NSSetModEnabled( modName, modVersion, false )
+				print(format("Disabled \"%s\" (v%s) since it's not required on server.", modName, modVersion))
+			}
+		}
+	}
+
+	// enable all RequiredOnClient mods that are required by the server and are currently disabled
+	foreach ( RequiredModInfo mod in file.lastSelectedServer.requiredMods )
+	{
+		string modName = mod.name
+		string modVersion = mod.version
+		array<ModInfo> localModInfos = NSGetModInformation( modName )
+
+		// Tolerate core mods (only Northstar.Custom for now) having a different version than server
+		if ( IsCoreMod(modName) )
+		{
+			if ( !localModInfos[0].enabled )
+			{
+				modsChanged = true
+				NSSetModEnabled( modName, localModInfos[0].version, true )
+				print(format("Enabled \"%s\" (v%s) to join server.", modName, localModInfos[0].version))
+			}
+		}
+
+		else
+		{
+			foreach( localMod in localModInfos )
+			{
+				if ( localMod.version == mod.version )
+				{
+					modsChanged = true
+					NSSetModEnabled( mod.name, mod.version, true )
+					print(format("Enabled \"%s\" (v%s) to join server.", modName, modVersion))
+					break
+				}
+			}
+		}
+	}
+
+	// only actually reload if we need to since the uiscript reset on reload lags hard
+	if ( modsChanged )
+		ReloadMods()
+
 	TriggerConnectToServerCallbacks()
 	NSConnectToAuthedServer()
 }
