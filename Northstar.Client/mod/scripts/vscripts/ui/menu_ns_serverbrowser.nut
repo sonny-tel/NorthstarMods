@@ -1019,6 +1019,8 @@ void function OnServerSelected_Threaded( string password = "" )
 	if ( NSIsRequestingServerList() || NSGetServerCount() == 0 || file.serverListRequestFailed )
 		return
 
+	NSClearServerRequestedMods()
+
 	ServerInfo server = file.focusedServer
 	file.lastSelectedServer = server
 
