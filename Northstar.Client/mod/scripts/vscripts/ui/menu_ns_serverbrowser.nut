@@ -1075,6 +1075,16 @@ void function OnServerSelected_Threaded( string password = "" )
 		return
 	}
 
+	if ( file.cancelConnection )
+	{
+		file.cancelConnection = false
+		// re-focus server list
+		Hud_SetFocused( Hud_GetChild( file.menu, "BtnServer" + ( file.serverButtonFocusedID + 1 ) ) )
+		Hud_SetVisible( Hud_GetChild( file.menu, "InGamePlayerLabel" ), true )
+		Hud_SetVisible( Hud_GetChild( file.menu, "TotalServerLabel" ), true )
+		return
+	}
+
 	bool autoDownloadAllowed = GetConVarBool( "allow_mod_auto_download" )
 	file.downloadedMods = 0;
 
@@ -1099,7 +1109,32 @@ void function OnServerSelected_Threaded( string password = "" )
 	while( !ServerModInfoTimedOut() && ( NSReceivedServerModInfoCount() == 0 ) && !file.cancelConnection )
 		WaitFrame()
 
-	if ( NSReceivedServerModInfoCount() > 0 )
+	int clientModInstalledCount = 0
+	array<ModInfo> localMods = NSGetModsInformation()
+
+	foreach( RequiredModInfo mod in NSGetServerRequestedMods() )
+	{
+		foreach( ModInfo localMod in localMods )
+		{
+			if( mod.name == localMod.name && mod.version == localMod.version )
+			{
+				clientModInstalledCount++
+				break
+			}
+		}
+	}
+
+	if ( file.cancelConnection )
+	{
+		file.cancelConnection = false
+		// re-focus server list
+		Hud_SetFocused( Hud_GetChild( file.menu, "BtnServer" + ( file.serverButtonFocusedID + 1 ) ) )
+		Hud_SetVisible( Hud_GetChild( file.menu, "InGamePlayerLabel" ), true )
+		Hud_SetVisible( Hud_GetChild( file.menu, "TotalServerLabel" ), true )
+		return
+	}
+
+	if ( clientModInstalledCount < NSReceivedServerModInfoCount() )
 	{
 		file.agreedToDownloadMods = false
 
@@ -1110,10 +1145,10 @@ void function OnServerSelected_Threaded( string password = "" )
 		AddDialogButton( dialogData2, "#YES", void function() { file.agreedToDownloadMods = true } )
 		AddDialogButton( dialogData2, "#NO", CancelAuthToServer )
 		OpenDialog( dialogData2 )
-	}
 
-	while( !file.agreedToDownloadMods && !file.cancelConnection && NSReceivedServerModInfoCount() > 0 )
-		WaitFrame()
+		while( !file.agreedToDownloadMods && !file.cancelConnection )
+			WaitFrame()
+	}
 
 	if ( file.cancelConnection )
 	{
@@ -1126,14 +1161,23 @@ void function OnServerSelected_Threaded( string password = "" )
 	}
 
 	array< RequiredModInfo > serverMods = NSGetServerRequestedMods()
+	array< RequiredModInfo > requiredMods
 
 	foreach( RequiredModInfo mod in serverMods )
-		server.requiredMods.append( mod )
+	{
+		foreach( RequiredModInfo serverMod in server.requiredMods )
+		{
+			if( mod.name == serverMod.name && mod.version == serverMod.version )
+				continue
+			else
+				requiredMods.append( mod )
+		}
+	}
 
 	// Check out if there's any server-required mod that is not locally installed
 	array<string> modNames = NSGetModNames()
 	bool uninstalledModFound = false
-	foreach ( requiredModInfo in server.requiredMods )
+	foreach ( requiredModInfo in requiredMods )
 	{
 		// Tolerate core mods having different versions
 		if ( IsCoreMod( requiredModInfo.name ) )
@@ -1160,7 +1204,7 @@ void function OnServerSelected_Threaded( string password = "" )
 		}
 	}
 	
-	foreach ( RequiredModInfo mod in server.requiredMods )
+	foreach ( RequiredModInfo mod in requiredMods )
 	{
 		// Tolerate core mods having different versions
 		if ( IsCoreMod( mod.name ) )
@@ -1258,7 +1302,7 @@ void function OnServerSelected_Threaded( string password = "" )
 	}
 
 	// enable all RequiredOnClient mods that are required by the server and are currently disabled
-	foreach ( RequiredModInfo mod in file.lastSelectedServer.requiredMods )
+	foreach ( RequiredModInfo mod in requiredMods )
 	{
 		string modName = mod.name
 		string modVersion = mod.version
