@@ -1107,13 +1107,13 @@ void function OnServerSelected_Threaded( string password = "" )
 		dialogData2.image = $"ui/menu/common/dialog_error"
 		dialogData2.header = "Download Required Mods"
 		dialogData2.message = "This server wants to download " + NSTotalServerRequestedMods() + " unverified mod(s).\n\nDo you want to proceed? You can view more information in the console."
-		AddDialogButton( dialogData2, "#YES", null )
+		AddDialogButton( dialogData2, "#YES", void function() { file.agreedToDownloadMods = true } )
 		AddDialogButton( dialogData2, "#NO", CancelAuthToServer )
 		OpenDialog( dialogData2 )
 	}
 
 	while( !file.agreedToDownloadMods && !file.cancelConnection && NSReceivedServerModInfoCount() > 0 )
-		wait 5.0
+		WaitFrame()
 
 	if ( file.cancelConnection )
 	{
