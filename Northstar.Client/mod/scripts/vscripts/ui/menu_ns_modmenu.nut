@@ -16,6 +16,7 @@ enum filterShow {
 	ONLY_DISABLED = 2,
 	ONLY_NOT_REQUIRED = 3,
 	ONLY_REQUIRED = 4
+	ONLY_REMOTE = 5
 }
 
 struct {
@@ -467,10 +468,6 @@ void function RefreshMods()
 		ModInfo mod = mods[i]
 		string modName = mod.name
 
-		// Do not display remote mods
-		if ( mod.isRemote )
-			continue
-
 		if ( searchTerm.len() && modName.tolower().find( searchTerm ) == null )
 			continue
 
@@ -494,6 +491,10 @@ void function RefreshMods()
 				if( required )
 					continue
 				break
+			case filterShow.ONLY_REMOTE:
+				if( !mod.isRemote )
+					continue
+
 		}
 
 		int pr = mod.loadPriority

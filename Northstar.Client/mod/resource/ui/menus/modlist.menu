@@ -407,6 +407,7 @@ resource/ui/menus/modlist.menu
 				"#SHOW_ONLY_DISABLED"	2
 				"#SHOW_ONLY_NOT_REQUIRED" 3
 				"#SHOW_ONLY_REQUIRED"	4
+				"#SHOW_ONLY_REMOTE" 	5
 			}
 
 			pin_to_sibling			BtnSearchLabel
