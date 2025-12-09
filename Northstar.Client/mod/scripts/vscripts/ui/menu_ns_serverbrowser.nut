@@ -100,6 +100,8 @@ struct {
 	array<var> serversRegion
 
 	array< void functionref( ServerInfo ) > connectCallbacks
+	float startedAdditionalServerInfoReq = 0.0
+	bool agreedToDownloadMods = false
 } file
 
 
@@ -440,6 +442,8 @@ void function OnServerBrowserMenuOpened()
 	Hud_SetVisible( Hud_GetChild( file.menu, "TotalServerLabel" ), true )
 
 	filterDirection.sortingBy = sortingBy.DEFAULT
+
+	file.startedAdditionalServerInfoReq = 0.0
 
 	thread WaitForServerListRequest()
 
@@ -1018,7 +1022,7 @@ void function OnServerSelected_Threaded( string password = "" )
 	ServerInfo server = file.focusedServer
 	file.lastSelectedServer = server
 
-	if ( server.requiresPassword )
+	if ( server.requiresPassword && password == "" )
 	{
         DialogData dialogData
         dialogData.header = "Enter Password"
@@ -1032,9 +1036,6 @@ void function OnServerSelected_Threaded( string password = "" )
 		return
 	}
 
-
-	if ( NSIsAuthenticatingWithServer() )
-		return
 	// ToggleConnectingHUD( true )
 
     DialogData connectingDialogData
@@ -1050,21 +1051,9 @@ void function OnServerSelected_Threaded( string password = "" )
 	Hud_SetVisible( Hud_GetChild( file.menu, "TotalServerLabel" ), false )
 
 	while ( NSIsAuthenticatingWithServer() && !file.cancelConnection )
-	{
 		WaitFrame()
-	}
 
 	// ToggleConnectingHUD( false )
-
-	if ( file.cancelConnection )
-	{
-		file.cancelConnection = false
-		// re-focus server list
-		Hud_SetFocused( Hud_GetChild( file.menu, "BtnServer" + ( file.serverButtonFocusedID + 1 ) ) )
-		Hud_SetVisible( Hud_GetChild( file.menu, "InGamePlayerLabel" ), true )
-		Hud_SetVisible( Hud_GetChild( file.menu, "TotalServerLabel" ), true )
-		return
-	}
 
 	if ( !NSWasAuthSuccessful() )
 	{
@@ -1086,9 +1075,60 @@ void function OnServerSelected_Threaded( string password = "" )
 		return
 	}
 
-	// Count mods that have been successfully downloaded
 	bool autoDownloadAllowed = GetConVarBool( "allow_mod_auto_download" )
 	file.downloadedMods = 0;
+
+	// fetch manifest before server mods check, so we can check against conflicting with auto-downloadable mods
+	if ( autoDownloadAllowed )
+		FetchVerifiedModsManifesto()
+
+	string address = NSGetAuthedServerIPv4()
+	int port = NSGetAuthedServerPort()
+	NSAllowServerModDownloads()
+	NSRequestServerInfo( address, port, true )
+
+	file.startedAdditionalServerInfoReq = Time()
+
+	DialogData dialogData
+	dialogData.showSpinner = true
+	dialogData.header = "Connecting"
+	dialogData.message = "Requesting additional server information..."
+	AddDialogButton( dialogData, "#CANCEL", CancelAuthToServer )
+	OpenDialog( dialogData )
+
+	while( !ServerModInfoTimedOut() && ( NSReceivedServerModInfoCount() == 0 ) && !file.cancelConnection )
+		WaitFrame()
+
+	if ( NSReceivedServerModInfoCount() > 0 )
+	{
+		file.agreedToDownloadMods = false
+
+		DialogData dialogData2
+		dialogData2.image = $"ui/menu/common/dialog_error"
+		dialogData2.header = "Download Required Mods"
+		dialogData2.message = "This server wants to download " + NSTotalServerRequestedMods() + " unverified mod(s).\n\nDo you want to proceed? You can view more information in the console."
+		AddDialogButton( dialogData2, "#YES", null )
+		AddDialogButton( dialogData2, "#NO", CancelAuthToServer )
+		OpenDialog( dialogData2 )
+	}
+
+	while( !file.agreedToDownloadMods && !file.cancelConnection && NSReceivedServerModInfoCount() > 0 )
+		wait 5.0
+
+	if ( file.cancelConnection )
+	{
+		file.cancelConnection = false
+		// re-focus server list
+		Hud_SetFocused( Hud_GetChild( file.menu, "BtnServer" + ( file.serverButtonFocusedID + 1 ) ) )
+		Hud_SetVisible( Hud_GetChild( file.menu, "InGamePlayerLabel" ), true )
+		Hud_SetVisible( Hud_GetChild( file.menu, "TotalServerLabel" ), true )
+		return
+	}
+
+	array< RequiredModInfo > serverMods = NSGetServerRequestedMods()
+
+	foreach( RequiredModInfo mod in serverMods )
+		server.requiredMods.append( mod )
 
 	// Check out if there's any server-required mod that is not locally installed
 	array<string> modNames = NSGetModNames()
@@ -1120,13 +1160,6 @@ void function OnServerSelected_Threaded( string password = "" )
 		}
 	}
 	
-	// If yes, we fetch the verified mods manifesto, to check whether uninstalled
-	// mods can be installed through auto-download
-	if ( uninstalledModFound && autoDownloadAllowed )
-	{
-		FetchVerifiedModsManifesto()
-	}
-
 	foreach ( RequiredModInfo mod in server.requiredMods )
 	{
 		// Tolerate core mods having different versions
@@ -1191,7 +1224,7 @@ void function OnServerSelected_Threaded( string password = "" )
 	}
 
 	TriggerConnectToServerCallbacks()
-	DoAuthToServer()
+	NSConnectToAuthedServer()
 }
 
 void function OnPasswordTextEntry()
@@ -1204,20 +1237,7 @@ void function OnPasswordTextEntry()
     if( password == "" )
         return
 
-    DialogData connectingDialogData
-    connectingDialogData.showSpinner = true
-    connectingDialogData.header = "Connecting"
-    connectingDialogData.message = "Connecting to " + file.lastSelectedServer.name
-    AddDialogButton( connectingDialogData, "#CANCEL", CancelAuthToServer )
-    OpenDialog( connectingDialogData )
-
-    thread ThreadedAuthAndConnectToServer( password )
-}
-
-
-void function DoAuthToServer()
-{
-	thread ThreadedAuthAndConnectToServer( "" )
+    thread OnServerSelected_Threaded( password )
 }
 
 void function CancelAuthToServer()
@@ -1225,118 +1245,11 @@ void function CancelAuthToServer()
     file.cancelConnection = true
 }
 
-void function ThreadedAuthAndConnectToServer( string password = "" )
+bool function ServerModInfoTimedOut()
 {
-	if ( NSIsAuthenticatingWithServer() )
-		return
-
-	NSTryAuthWithServer( file.lastSelectedServer.index, password )
-
-	while ( NSIsAuthenticatingWithServer() && !file.cancelConnection )
-		WaitFrame()
-
-	if ( file.cancelConnection )
-	{
-		file.cancelConnection = false
-		// re-focus server list
-		Hud_SetFocused( Hud_GetChild( file.menu, "BtnServer" + ( file.serverButtonFocusedID + 1 ) ) )
-		return
-	}
-
-	file.cancelConnection = false
-
-	if ( !NSWasAuthSuccessful() )
-	{
-		string reason = NSGetAuthFailReason()
-
-		DialogData dialogData
-		dialogData.header = "#ERROR"
-		dialogData.message = reason
-		dialogData.image = $"ui/menu/common/dialog_error"
-
-		#if PC_PROG
-			AddDialogButton( dialogData, "#DISMISS" )
-
-			AddDialogFooter( dialogData, "#A_BUTTON_SELECT" )
-		#endif // PC_PROG
-		AddDialogFooter( dialogData, "#B_BUTTON_DISMISS_RUI" )
-
-		OpenDialog( dialogData )
-		return
-	}
-
-	bool modsChanged = false
-
-	if( file.downloadedMods > 0 )
-		modsChanged = true
-
-	foreach ( ModInfo mod in NSGetModsInformation() )
-	{
-		string modName = mod.name
-		string modVersion = mod.version
-
-		if ( mod.requiredOnClient && mod.enabled )
-		{
-			// find the mod name in the list of server required mods
-			bool found = false
-			foreach ( RequiredModInfo mod in file.lastSelectedServer.requiredMods )
-			{
-				// this tolerates a version difference for requiredOnClient core mods (only Northstar.Custom for now)
-				if (mod.name == modName && ( IsCoreMod( modName ) || mod.version == modVersion ))
-				{
-					found = true
-					print(format("\"%s\" (v%s) is required and already enabled.", modName, modVersion))
-					break
-				}
-			}
-			// if we didn't find the mod name, disable the mod
-			if (!found)
-			{
-				modsChanged = true
-				NSSetModEnabled( modName, modVersion, false )
-				print(format("Disabled \"%s\" (v%s) since it's not required on server.", modName, modVersion))
-			}
-		}
-	}
-
-	// enable all RequiredOnClient mods that are required by the server and are currently disabled
-	foreach ( RequiredModInfo mod in file.lastSelectedServer.requiredMods )
-	{
-		string modName = mod.name
-		string modVersion = mod.version
-		array<ModInfo> localModInfos = NSGetModInformation( modName )
-
-		// Tolerate core mods (only Northstar.Custom for now) having a different version than server
-		if ( IsCoreMod(modName) )
-		{
-			if ( !localModInfos[0].enabled )
-			{
-				modsChanged = true
-				NSSetModEnabled( modName, localModInfos[0].version, true )
-				print(format("Enabled \"%s\" (v%s) to join server.", modName, localModInfos[0].version))
-			}
-		}
-
-		else
-		{
-			foreach( localMod in localModInfos )
-			{
-				if ( localMod.version == mod.version )
-				{
-					modsChanged = true
-					NSSetModEnabled( mod.name, mod.version, true )
-					print(format("Enabled \"%s\" (v%s) to join server.", modName, modVersion))
-					break
-				}
-			}
-		}
-	}
-
-	// only actually reload if we need to since the uiscript reset on reload lags hard
-	if ( modsChanged )
-		ReloadMods()
-
-	NSConnectToAuthedServer()
+	if ( Time() - file.startedAdditionalServerInfoReq > 3.0 )
+		return true
+	return false
 }
 
 //////////////////////////////////////
