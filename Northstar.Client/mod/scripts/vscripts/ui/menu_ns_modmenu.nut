@@ -122,6 +122,7 @@ void function InitModMenu()
 	AddButtonEventHandler( Hud_GetChild( file.menu, "BtnModsSearch"), UIE_CHANGE, OnFiltersChange )
 	AddButtonEventHandler( Hud_GetChild( file.menu, "BtnListReverse"), UIE_CHANGE, OnFiltersChange )
 	AddButtonEventHandler( Hud_GetChild( file.menu, "BtnFiltersClear"), UIE_CLICK, OnBtnFiltersClear_Activate )
+	AddButtonEventHandler( Hud_GetChild( file.menu, "BtnDeleteRemoteMod"), UIE_CLICK, OnDeleteRemoteModButtonPressed )
 
 	AddButtonEventHandler( Hud_GetChild( file.menu, "PageButtonU"), UIE_CLICK, OnUpArrowSelected )
 	AddButtonEventHandler( Hud_GetChild( file.menu, "PageButtonD"), UIE_CLICK, OnDownArrowSelected )
@@ -140,8 +141,7 @@ void function InitModMenu()
 		BUTTON_X,
 		PrependControllerPrompts( BUTTON_X, "#RELOAD_MODS" ),
 		"#RELOAD_MODS",
-		OnReloadModsButtonPressed,
-        ShouldShowFooterButtons
+		OnReloadModsButtonPressed
 	)
 	AddMenuFooterOption(
 		file.menu,
@@ -262,6 +262,19 @@ void function OnModButtonFocused( var button )
 	RuiSetString( rui, "headerText", modName )
 	RuiSetString( rui, "messageText", FormatModDescription() )
 
+	var deleteModButton = Hud_GetChild( file.menu, "BtnDeleteRemoteMod" )
+
+	if( file.lastMod.isRemote )
+	{
+		Hud_SetEnabled( deleteModButton, true )
+		Hud_SetVisible( deleteModButton, true )
+	}
+	else
+	{
+		Hud_SetEnabled( deleteModButton, false )
+		Hud_SetVisible( deleteModButton, false )
+	}
+
 	// Add a button to open the link with if required
 	string link = file.lastMod.downloadLink
 	var linkButton = Hud_GetChild( file.menu, "ModPageButton" )
@@ -365,6 +378,24 @@ void function OnBtnFiltersClear_Activate( var button )
 	SetConVarInt( "filter_mods", 0 )
 
 	OnFiltersChange( null )
+}
+
+void function OnDeleteRemoteModButtonPressed( var button )
+{
+	ModInfo mod = file.mods[ int ( Hud_GetScriptID( Hud_GetParent( file.currentButton ) ) ) + file.scrollOffset - 1 ].mod
+
+	DialogData dialogData
+	dialogData.header = "#ARE_YOU_SURE"
+	dialogData.message = "#DELETE_REMOTE_MOD_CONFIRMATION"
+	AddDialogButton( dialogData, "#DELETE_MOD", void function()
+		{
+			ModInfo mod = file.mods[ int ( Hud_GetScriptID( Hud_GetParent( file.currentButton ) ) ) + file.scrollOffset - 1 ].mod
+			NSDeleteRemoteMod( mod.name, mod.version )
+		}
+	)
+	AddDialogButton( dialogData, "#CANCEL" )
+
+	OpenDialog( dialogData )
 }
 
 // LIST LOGIC
@@ -742,7 +773,7 @@ void function UpdateListSliderHeight()
 void function OnScrollDown( var button )
 {
 	if ( file.mods.len() <= PANELS_LEN ) return
-	file.scrollOffset += 5
+	file.scrollOffset += 1
 	if (file.scrollOffset + PANELS_LEN > file.mods.len())
 		file.scrollOffset = file.mods.len() - PANELS_LEN
 	Hud_SetFocused( Hud_GetChild( file.menu, "BtnModListSlider" ) )
@@ -751,7 +782,7 @@ void function OnScrollDown( var button )
 
 void function OnScrollUp( var button )
 {
-	file.scrollOffset -= 5
+	file.scrollOffset -= 1
 	if (file.scrollOffset < 0)
 		file.scrollOffset = 0
 	Hud_SetFocused( Hud_GetChild( file.menu, "BtnModListSlider" ) )

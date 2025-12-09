@@ -11,6 +11,7 @@
 		"WARNING" "Warning"
 		"CORE_MOD_DISABLE_WARNING"  "Disabling core mods can break your client!"
 		"DISABLE" "Disable"
+		"MODS_REVERSE" "Order:"
 
 		"AITDM_UI_SCORE" ""
 		"SETTING_INDICATOR_INCOMING" "Incoming Only"
@@ -306,7 +307,11 @@ Press Yes if you agree to this. This choice can be changed in the mods menu at a
 		"SERVER_DESCRIPTION" "Description"
 		"SERVER_MODS" "Mods"
 		"CLEAR_FILTERS" "Reset"
+		"CLEAR_FILTERS_LONG" "Reset Filters"
 		"JOIN_BUTTON" "JOIN"
+
+		"DELETE_REMOTE_MOD_CONFIRMATION" "This will permanently delete the mod. Changes will only be applied after reloading."
+		"DELETE_MOD" "Delete Mod"
 
 		"SWITCH_YES" "Yes"
 		"SWITCH_NO" "No"
@@ -441,7 +446,7 @@ Press Yes if you agree to this. This choice can be changed in the mods menu at a
 		"DEVELOPMENT_VERSION"				"Development Build"
 		"ION_PATCH"							"Patch "
 	
-		"LOW_PRIORITY"						"Low"
-		"HIGH_PRIORITY"						"High"
+		"LOW_PRIORITY"						"Lowest"
+		"HIGH_PRIORITY"						"Highest"
 	}
 }
