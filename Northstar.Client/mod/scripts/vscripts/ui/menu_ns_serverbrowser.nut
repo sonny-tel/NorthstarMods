@@ -1364,7 +1364,7 @@ void function CancelAuthToServer()
 
 bool function ServerModInfoTimedOut()
 {
-	if ( Time() - file.startedAdditionalServerInfoReq > 3.0 )
+	if ( Time() - file.startedAdditionalServerInfoReq > 2.0 )
 		return true
 	return false
 }
