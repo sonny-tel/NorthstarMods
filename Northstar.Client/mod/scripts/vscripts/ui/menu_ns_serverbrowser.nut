@@ -1042,7 +1042,7 @@ void function OnServerSelected_Threaded( string password = "" )
 
     DialogData connectingDialogData
     connectingDialogData.showSpinner = true
-    connectingDialogData.header = "Connecting"
+    connectingDialogData.header = "#MATCHMAKING_TITLE_CONNECTING"
     connectingDialogData.message = "Connecting to " + file.lastSelectedServer.name
     AddDialogButton( connectingDialogData, "#CANCEL", CancelAuthToServer )
     OpenDialog( connectingDialogData )
@@ -1103,7 +1103,7 @@ void function OnServerSelected_Threaded( string password = "" )
 
 	DialogData dialogData
 	dialogData.showSpinner = true
-	dialogData.header = "Connecting"
+	dialogData.header = "#MATCHMAKING_TITLE_CONNECTING"
 	dialogData.message = "Requesting additional server information..."
 	AddDialogButton( dialogData, "#CANCEL", CancelAuthToServer )
 	OpenDialog( dialogData )
