@@ -1040,6 +1040,8 @@ void function OnServerSelected_Threaded( string password = "" )
 
 	// ToggleConnectingHUD( true )
 
+	ClientPreCacheLevel( file.lastSelectedServer.map )
+
     DialogData connectingDialogData
     connectingDialogData.showSpinner = true
     connectingDialogData.header = "#MATCHMAKING_TITLE_CONNECTING"
