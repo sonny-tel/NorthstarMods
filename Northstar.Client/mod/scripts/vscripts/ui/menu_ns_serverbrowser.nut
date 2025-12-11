@@ -1163,16 +1163,21 @@ void function OnServerSelected_Threaded( string password = "" )
 	}
 
 	array< RequiredModInfo > serverMods = NSGetServerRequestedMods()
-	array< RequiredModInfo > requiredMods
-
+	array< RequiredModInfo > requiredMods = server.requiredMods
 	foreach( RequiredModInfo mod in serverMods )
 	{
-		foreach( RequiredModInfo serverMod in server.requiredMods )
+		bool found = false
+		foreach( RequiredModInfo reqMod in requiredMods )
 		{
-			if( mod.name == serverMod.name && mod.version == serverMod.version )
-				continue
-			else
-				requiredMods.append( mod )
+			if( mod.name == reqMod.name && mod.version == reqMod.version )
+			{
+				found = true
+				break
+			}
+		}
+		if( !found )
+		{
+			server.requiredMods.append( mod )
 		}
 	}
 
