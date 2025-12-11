@@ -208,6 +208,7 @@ void function MapButton_Activate( var button )
 
 	UpdateMapsInfo( mapName )
 	ClientCommand( "SetCustomMap " + mapName )
+	ClientPreCacheLevel( mapName )
 	CloseActiveMenu()
 }
 
