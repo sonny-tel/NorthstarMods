@@ -835,6 +835,14 @@ void function ReloadMods()
 	ClientCommand( "reload_models" )
 	ClientCommand( "loadPlaylists" )
 	ClientCommand( "weapon_reparse" ) 
+	ClientCommand( "playerSettings_reparse" )
+
+	if( IsFullyConnected() )
+	{
+		ClientCommand( "aisettings_reparse_client" )
+		ClientCommand( "damagedefs_reparse_client" )
+	}
+	
 	ClientCommand( "uiscript_reset" )
 }
 
