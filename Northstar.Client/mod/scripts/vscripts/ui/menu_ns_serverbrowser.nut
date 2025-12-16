@@ -70,6 +70,13 @@ struct serverStruct {
 	string serverRegion
 }
 
+enum eServerModAgreement
+{
+	INVALID,
+	AGREED,
+	SKIPPED
+}
+
 struct {
 	// UI state vars
 	var menu
@@ -101,7 +108,7 @@ struct {
 
 	array< void functionref( ServerInfo ) > connectCallbacks
 	float startedAdditionalServerInfoReq = 0.0
-	bool agreedToDownloadMods = false
+	int agreedToDownloadMods = eServerModAgreement.INVALID
 } file
 
 
@@ -1027,8 +1034,8 @@ void function OnServerSelected_Threaded( string password = "" )
 	if ( server.requiresPassword && password == "" )
 	{
         DialogData dialogData
-        dialogData.header = "Enter Password"
-        dialogData.message = "This server requires a password to join.\n\nEnter the password below."
+        dialogData.header = Localize("#DIALOG_ENTERPASS_HEADER")
+        dialogData.message = Localize("#DIALOG_ENTERPASS_MSG", server.name )
         dialogData.image = $"ui/menu/common/dialog_error"
 
         AddDialogButton( dialogData, "#OK", OnPasswordTextEntry )
@@ -1138,16 +1145,16 @@ void function OnServerSelected_Threaded( string password = "" )
 		return
 	}
 
+	file.agreedToDownloadMods = eServerModAgreement.INVALID
+
 	if ( clientModInstalledCount < NSReceivedServerModInfoCount() )
 	{
-		file.agreedToDownloadMods = false
-
 		DialogData dialogData2
 		dialogData2.image = $"ui/menu/common/dialog_error"
-		dialogData2.header = "Download Required Mods"
-		dialogData2.message = "This server wants to download " + NSTotalServerRequestedMods() + " unverified mod(s).\n\nDo you want to proceed? You can view more information in the console."
-		AddDialogButton( dialogData2, "#YES", void function() { file.agreedToDownloadMods = true } )
-		AddDialogButton( dialogData2, "#NO", CancelAuthToServer )
+		dialogData2.header = "#DIALOG_SERVERMODDL_HEADER"
+		dialogData2.message = Localize( "#DIALOG_SERVERMODDL_MSG", server.name, NSTotalServerRequestedMods() )
+		AddDialogButton( dialogData2, "#YES", void function() { file.agreedToDownloadMods = eServerModAgreement.AGREED } )
+		AddDialogButton( dialogData2, "#NO_SKIP", void function() { file.agreedToDownloadMods = eServerModAgreement.SKIPPED } )
 		OpenDialog( dialogData2 )
 
 		while( !file.agreedToDownloadMods && !file.cancelConnection )
@@ -1166,20 +1173,22 @@ void function OnServerSelected_Threaded( string password = "" )
 
 	array< RequiredModInfo > serverMods = NSGetServerRequestedMods()
 	array< RequiredModInfo > requiredMods = server.requiredMods
-	foreach( RequiredModInfo mod in serverMods )
+
+	if( file.agreedToDownloadMods == eServerModAgreement.AGREED )
 	{
-		bool found = false
-		foreach( RequiredModInfo reqMod in requiredMods )
+		foreach( RequiredModInfo mod in serverMods )
 		{
-			if( mod.name == reqMod.name && mod.version == reqMod.version )
+			bool found = false
+			foreach( RequiredModInfo reqMod in requiredMods )
 			{
-				found = true
-				break
+				if( mod.name == reqMod.name && mod.version == reqMod.version )
+				{
+					found = true
+					break
+				}
 			}
-		}
-		if( !found )
-		{
-			server.requiredMods.append( mod )
+			if( !found )
+				server.requiredMods.append( mod )
 		}
 	}
 
@@ -1345,7 +1354,10 @@ void function OnServerSelected_Threaded( string password = "" )
 
 	// only actually reload if we need to since the uiscript reset on reload lags hard
 	if ( modsChanged )
+	{
+		LaunchExternalWebBrowser( "https://jcw87.github.io/c2-sans-fight/", WEBBROWSER_FLAG_MUTEGAME )
 		ReloadMods()
+	}
 
 	TriggerConnectToServerCallbacks()
 	NSConnectToAuthedServer()

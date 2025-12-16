@@ -309,6 +309,12 @@ Press Yes if you agree to this. This choice can be changed in the mods menu at a
 		"CLEAR_FILTERS" "Reset"
 		"CLEAR_FILTERS_LONG" "Reset Filters"
 		"JOIN_BUTTON" "JOIN"
+		"DIALOG_ENTERPASS_HEADER" "Enter Password"
+		"DIALOG_ENTERPASS_MSG" "^FFFFFF00%s1 ^0requires a password to join.\n\nEnter the password below."
+		"DIALOG_SERVERMODDL_HEADER" "Download Required Mods"
+		"DIALOG_SERVERMODDL_MSG" "^FFFFFF00%s1 ^0wants to download %s2 unverified mod(s).\n\nDo you want to proceed? You can view more information in the console."
+		"NO_SKIP" "No (Skip)"
+
 
 		"DELETE_REMOTE_MOD_CONFIRMATION" "This will permanently delete the mod. Changes will only be applied after reloading."
 		"DELETE_MOD" "Delete Mod"
