@@ -1032,6 +1032,8 @@ void function OnServerSelected_Threaded( string password = "" )
 {
 	if ( NSIsRequestingServerList() || NSGetServerCount() == 0 || file.serverListRequestFailed )
 		return
+	
+	file.cancelConnection = false
 
 	NSClearServerRequestedMods()
 
