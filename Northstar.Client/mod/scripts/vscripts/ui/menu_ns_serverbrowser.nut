@@ -425,6 +425,7 @@ void function OnCloseServerBrowserMenu()
 		DeregisterButtonPressedCallback( KEY_TAB , OnKeyTabPressed )
 		DeregisterButtonPressedCallback( KEY_ENTER, OnEnterPressed )
 		DeregisterButtonPressedCallback( KEY_R, OnKeyRPressed )
+		DeregisterButtonPressedCallback( KEY_ESCAPE, OnKeyEscPressed )
 	}
 	catch ( ex ) {}
 }
@@ -460,6 +461,7 @@ void function OnServerBrowserMenuOpened()
 	RegisterButtonPressedCallback( KEY_TAB , OnKeyTabPressed )
 	RegisterButtonPressedCallback( KEY_ENTER, OnEnterPressed )
 	RegisterButtonPressedCallback( KEY_R, OnKeyRPressed )
+	RegisterButtonPressedCallback( KEY_ESCAPE, OnKeyEscPressed )
 }
 
 void function OnAnalogueScroll( int eventType, int nTick, int nData, int nData2, int nData3 )
@@ -609,6 +611,11 @@ void function OnKeyRPressed( arg )
 	{
 		RefreshServers(0);
 	}
+}
+
+void function OnKeyEscPressed( arg ) 
+{
+	file.cancelConnection = true
 }
 
 bool function IsServerButtonFocused() 
