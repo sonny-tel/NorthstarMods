@@ -145,7 +145,7 @@ resource/ui/menus/dialog_hiddentextentry.menu
             // keyboardTitle			"#NAME_YOUR_LOADOUT"
             // keyboardDescription		"#CHOOSE_A_NAME"
             allowRightClickMenu		0
-            allowSpecialCharacters	0
+            allowSpecialCharacters	1
             unicode					1
             paintborder		        1
 

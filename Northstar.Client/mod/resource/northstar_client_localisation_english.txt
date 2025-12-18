@@ -454,5 +454,14 @@ Press Yes if you agree to this. This choice can be changed in the mods menu at a
 	
 		"LOW_PRIORITY"						"Lowest"
 		"HIGH_PRIORITY"						"Highest"
+
+		"REQUESTING_CUSTOM_SERVER_INFO"		"Requesting server information."
+
+		"DIALOG_TITLE_ION_P2P"				"Allow Peer-To-Peer Networking?"
+		"EOS_AGREEMENT_DIALOG_TEXT"			"Ion allows you to host P2P Northstar servers over Epic Online Services. For this to work your device's hardware ID and EA account username are collected. Press Yes if you agree to this.\n\nThis is optional and can be disabled at any time. You'll need to restart your game for any changes to take effect."
+		"DIALOG_TITLE_SHOW_JOIN_INFO"		"P2P Connection Info"
+		"DIALOG_MESSAGE_SHOW_JOIN_INFO"		"%s1\n\nSend this to your friends, they can connect from the Server Browser by selecting \"Direct Connect\" and pasting the address."
+		"COPY_CLIPBOARD"					"Copy To Clipboard"
+		"SHOW_JOIN_INFO"					"Peer-to-Peer Info"
 	}
 }

@@ -208,6 +208,7 @@ void function InitPrivateMatchMenu()
 	AddMenuFooterOption( menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
 	AddMenuFooterOption( menu, BUTTON_X, PrependControllerPrompts(BUTTON_X, "#MENU_TITLE_MODS"), "#MENU_TITLE_MODS", OpenModsMenu, NotCanMute )
 	AddMenuFooterOption( menu, BUTTON_Y, "#Y_BUTTON_SWITCH_TEAMS", "#SWITCH_TEAMS", PCSwitchTeamsButton_Activate, CanSwitchTeams )
+	AddMenuFooterOption( menu, BUTTON_SHOULDER_LEFT, "#LB_SHOW_JOIN_INFO", "#SHOW_JOIN_INFO", ShowJoinInfoButton_Activate, IsEOSP2PEnabledAndAvailable )
 	AddMenuFooterOption( menu, BUTTON_SHOULDER_RIGHT, "#BUTTON_VIEW_PLAYER_PROFILE", "#MOUSE1_VIEW_PROFILE", null, CanMute )
 	AddMenuFooterOption( menu, BUTTON_X, "#X_BUTTON_MUTE", "#MOUSE2_MUTE", null, CanMute )
 	AddMenuFooterOption( menu, BUTTON_SHOULDER_RIGHT, "#RB_TRIGGER_TOGGLE_SPECTATE", "#SPECTATE_TEAM", PCToggleSpectateButton_Activate, CanSwitchTeamsToggleSpec, UpdateSpectatorButton )
@@ -343,6 +344,12 @@ void function SetupComboButtons( var menu, var navUpButton, var navDownButton  )
 	ComboButtons_Finalize( comboStruct )
 }
 
+bool function IsEOSP2PEnabledAndAvailable()
+{
+	return ( GetConVarInt( "ns_has_agreed_allow_eos" ) == NS_AGREED_TO_SEND_TOKEN ) 
+			&& !NSIsVanilla()
+			&& NSIsListenServer()
+}
 
 bool function IsPlayerListFocused()
 {
@@ -359,6 +366,27 @@ bool function MatchResultsExist()
 
 	// AddMenuFooterOption( menu, BUTTON_SHOULDER_RIGHT, "#RB_TRIGGER_TOGGLE_SPECTATE", "#SPECTATE_TEAM", PCToggleSpectateButton_Activate, CanSwitchTeamsToggleSpec, UpdateSpectatorButton )
 
+void function ShowJoinInfoButton_Activate( var button )
+{
+	if ( Hud_IsLocked( button ) )
+		return
+
+	string addressFormatted = "[" + NSGetLocalP2PEndpointAddress() + "]" + ":" + NSGetLocalP2PEndpointPort()
+
+	DialogData dialogData
+	dialogData.header = "#DIALOG_TITLE_SHOW_JOIN_INFO"
+	dialogData.message = Localize( "#DIALOG_MESSAGE_SHOW_JOIN_INFO", addressFormatted )
+	AddDialogButton( dialogData, "#COPY_CLIPBOARD", CopyJoinInfoToClipboard )
+	AddDialogButton( dialogData, "#BACK" )
+
+	OpenDialog( dialogData )
+}
+
+void function CopyJoinInfoToClipboard()
+{
+	string joinInfo = "[" + NSGetLocalP2PEndpointAddress() + "]" + ":" + NSGetLocalP2PEndpointPort()
+	NSCopyToClipboard( joinInfo )
+}
 
 void function UpdateSpectatorButton( InputDef data )
 {

@@ -98,6 +98,9 @@ void function OnMainMenu_Open()
 	if ( !GetConVarBool( "ns_has_agreed_to_send_token" ) )
 		NorthstarMasterServerAuthDialog()
 
+	if ( GetConVarBool( "ns_has_agreed_to_send_token" ) && !GetConVarBool( "ns_has_agreed_allow_eos") )
+		EOSDialog()
+
 #if PC_PROG
 	ActivatePanel( GetPanel( "MainMenuPanel" ) )
 	return
@@ -155,8 +158,10 @@ void function NorthstarMasterServerAuthDialogAgree()
 		dialogData.header = "#DIALOG_TITLE_INSTALLED_NORTHSTAR"
 		dialogData.image = $"rui/menu/fd_menu/upgrade_northstar_chassis"
 		dialogData.message = "#AUTHENTICATION_AGREEMENT_RESTART"
-		AddDialogButton( dialogData, "#OK" )
+		AddDialogButton( dialogData, "#OK", void function() { EOSDialog() } )
 		OpenDialog( dialogData )
+	} else {
+		EOSDialog()
 	}
 }
 
@@ -171,7 +176,52 @@ void function NorthstarMasterServerAuthDialogDisagree()
 		dialogData.header = "#DIALOG_TITLE_INSTALLED_NORTHSTAR"
 		dialogData.image = $"rui/menu/fd_menu/upgrade_northstar_chassis"
 		dialogData.message = "#AUTHENTICATION_AGREEMENT_RESTART"
+		AddDialogButton( dialogData, "#OK", void function() { EOSDialog() } )
+		OpenDialog( dialogData )
+	} else {
+		EOSDialog()
+	}
+}
+
+void function EOSDialog()
+{
+	DialogData dialogData
+	dialogData.header = "#DIALOG_TITLE_ION_P2P"
+	dialogData.image = $"rui/menu/fd_menu/upgrade_ion_chassis"
+	dialogData.message = "#EOS_AGREEMENT_DIALOG_TEXT"
+	AddDialogButton( dialogData, "#YES", EOSDialogAgree )
+	AddDialogButton( dialogData, "#NO", EOSDialogDisagree )
+	OpenDialog( dialogData )
+}
+
+void function EOSDialogAgree()
+{
+	int oldValue = GetConVarInt( "ns_has_agreed_allow_eos" )
+	SetConVarInt( "ns_has_agreed_allow_eos", NS_AGREED_TO_SEND_TOKEN )
+
+	if ( oldValue != 0 && oldValue != NS_AGREED_TO_SEND_TOKEN )
+	{
+		DialogData dialogData
+		dialogData.header = "#DIALOG_TITLE_ION_P2P"
+		dialogData.image = $"rui/menu/fd_menu/upgrade_ion_chassis"
+		dialogData.message = "#AUTHENTICATION_AGREEMENT_RESTART"
 		AddDialogButton( dialogData, "#OK" )
+		OpenDialog( dialogData )
+	}
+}
+
+void function EOSDialogDisagree()
+{
+	int oldValue = GetConVarInt( "ns_has_agreed_allow_eos" )
+	SetConVarInt( "ns_has_agreed_allow_eos", NS_DISAGREED_TO_SEND_TOKEN )
+
+	if ( oldValue != 0 && oldValue != NS_DISAGREED_TO_SEND_TOKEN )
+	{
+		DialogData dialogData
+		dialogData.header = "#DIALOG_TITLE_ION_P2P"
+		dialogData.image = $"rui/menu/fd_menu/upgrade_ion_chassis"
+		dialogData.message = "#AUTHENTICATION_AGREEMENT_RESTART"
+		AddDialogButton( dialogData, "#OK")
 		OpenDialog( dialogData )
 	}
 }

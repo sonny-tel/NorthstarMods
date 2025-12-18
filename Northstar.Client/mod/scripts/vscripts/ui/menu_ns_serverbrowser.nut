@@ -770,6 +770,35 @@ void function OnDirectConnectButton( var button )
     OpenTextEntryDialog( dialogData )    
 }
 
+bool function IsIPv4( string s )
+{
+    array<string> parts = split( s, "." )
+    if ( parts.len() != 4 )
+        return false
+
+    foreach ( string part in parts )
+    {
+        if ( part.len() == 0 )
+            return false
+
+        for ( int i = 0; i < part.len(); i++ )
+        {
+            int c = expect int( part[i].tointeger() )
+            if ( c < '0' || c > '9' )
+                return false
+        }
+
+        int val = int( part )
+        if ( val < 0 || val > 255 )
+            return false
+
+        if ( part.len() > 1 && part[0] == '0' )
+            return false
+    }
+
+    return true
+}
+
 void function OnDirectConnectDialog()
 {
     var menu = GetMenu( "DialogTextEntry" )
@@ -780,7 +809,38 @@ void function OnDirectConnectDialog()
     if( ip == "" )
         return
 
-    ClientCommand( "connect " + ip )
+	string originalAddress = ip
+
+	file.cancelConnection = false
+
+	StringReplace( ip, "[", "" )
+	StringReplace( ip, "]", "" )
+
+	array<string> splitIpPort = split( ip, ":" )
+	string address = splitIpPort[splitIpPort.len() - 1]
+	int port = splitIpPort.len() > 1 ? int( splitIpPort[splitIpPort.len() - 0 - 1] ) : 37015
+
+	if( IsIPv4( address ) )
+		address = "::ffff:" + address
+
+	NSAllowServerModDownloads()
+	NSRequestServerInfo( address, port, true )
+
+	file.startedAdditionalServerInfoReq = Time()
+
+	DialogData dialogData
+	dialogData.header = "#MATCHMAKING_TITLE_CONNECTING"
+	dialogData.message = "#REQUESTING_CUSTOM_SERVER_INFO"
+
+	AddDialogButton( dialogData, "#CANCEL", CancelAuthToServer )
+	OpenDialog( dialogData )
+
+	while( !ServerModInfoTimedOut() && ( NSReceivedServerModInfoCount() == 0 ) && !file.cancelConnection )
+		WaitFrame()
+
+	CloseAllDialogs()
+
+    // ClientCommand( "connect " + ip )
 }
 
 
@@ -1115,14 +1175,14 @@ void function OnServerSelected_Threaded( string password = "" )
 	string address = NSGetAuthedServerIPv4()
 	int port = NSGetAuthedServerPort()
 	NSAllowServerModDownloads()
-	NSRequestServerInfo( address, port, true )
+	NSRequestServerInfo( "::ffff:" + address, port, true )
 
 	file.startedAdditionalServerInfoReq = Time()
 
 	DialogData dialogData
 	dialogData.showSpinner = true
 	dialogData.header = "#MATCHMAKING_TITLE_CONNECTING"
-	dialogData.message = "Requesting additional server information..."
+	dialogData.message = "#REQUESTING_CUSTOM_SERVER_INFO"
 	AddDialogButton( dialogData, "#CANCEL", CancelAuthToServer )
 	OpenDialog( dialogData )
 
