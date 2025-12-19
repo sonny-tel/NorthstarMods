@@ -314,7 +314,7 @@ Press Yes if you agree to this. This choice can be changed in the mods menu at a
 		"DIALOG_SERVERMODDL_HEADER" "Download Required Mods"
 		"DIALOG_SERVERMODDL_MSG" "^FFFFFF00%s1 ^0wants to download %s2 unverified mod(s).\n\nDo you want to proceed? You can view more information in the console."
 		"NO_SKIP" "No (Skip)"
-
+		"DIALOG_SERVERCONNECTING_MSG" "Connecting to ^FFFFFF00%s1^0..."
 
 		"DELETE_REMOTE_MOD_CONFIRMATION" "This will permanently delete the mod. Changes will only be applied after reloading."
 		"DELETE_MOD" "Delete Mod"
@@ -460,7 +460,7 @@ Press Yes if you agree to this. This choice can be changed in the mods menu at a
 		"DIALOG_TITLE_ION_P2P"				"Allow Peer-To-Peer Networking?"
 		"EOS_AGREEMENT_DIALOG_TEXT"			"Ion allows you to host P2P Northstar servers over Epic Online Services. For this to work your device's hardware ID and EA account username are collected. Press Yes if you agree to this.\n\nThis is optional and can be disabled at any time. You'll need to restart your game for any changes to take effect."
 		"DIALOG_TITLE_SHOW_JOIN_INFO"		"P2P Connection Info"
-		"DIALOG_MESSAGE_SHOW_JOIN_INFO"		"%s1\n\nSend this to your friends, they can connect from the Server Browser by selecting \"Direct Connect\" and pasting the address."
+		"DIALOG_MESSAGE_SHOW_JOIN_INFO"		"^CCCCCC00%s1^0\n\nSend this to your friends, they can connect from the Server Browser by selecting \"Direct Connect\" and pasting the address."
 		"COPY_CLIPBOARD"					"Copy To Clipboard"
 		"SHOW_JOIN_INFO"					"Peer-to-Peer Info"
 	}

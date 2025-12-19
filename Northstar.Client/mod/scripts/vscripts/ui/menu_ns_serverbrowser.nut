@@ -809,6 +809,12 @@ void function OnDirectConnectDialog()
     if( ip == "" )
         return
 
+	thread OnDirectConnectDialog_Threaded( ip )
+    // ClientCommand( "connect " + ip )
+}
+
+void function OnDirectConnectDialog_Threaded(string ip)
+{
 	string originalAddress = ip
 
 	file.cancelConnection = false
@@ -824,23 +830,43 @@ void function OnDirectConnectDialog()
 		address = "::ffff:" + address
 
 	NSAllowServerModDownloads()
-	NSRequestServerInfo( address, port, true )
+	NSRequestServerInfo( address, port, true, true )
 
 	file.startedAdditionalServerInfoReq = Time()
 
 	DialogData dialogData
 	dialogData.header = "#MATCHMAKING_TITLE_CONNECTING"
 	dialogData.message = "#REQUESTING_CUSTOM_SERVER_INFO"
+	dialogData.showSpinner = true
 
 	AddDialogButton( dialogData, "#CANCEL", CancelAuthToServer )
 	OpenDialog( dialogData )
 
-	while( !ServerModInfoTimedOut() && ( NSReceivedServerModInfoCount() == 0 ) && !file.cancelConnection )
+	while( !ServerModInfoTimedOut( 3.0 ) && ( NSReceivedServerModInfoCount() == 0 ) && !file.cancelConnection )
 		WaitFrame()
 
-	CloseAllDialogs()
+	DialogData dialogData2
+	dialogData2.header = "#MATCHMAKING_TITLE_CONNECTING"
+	dialogData2.message = "Waiting for authentication response."
+	dialogData2.showSpinner = true
 
-    // ClientCommand( "connect " + ip )
+	OpenDialog( dialogData2 )
+
+	float lastNotifyTime = NSGetTimeSinceLastAuthNotify()
+	float notifyWaitStartTime = Time()
+
+	while( notifyWaitStartTime + 5.0 > Time() && !file.cancelConnection )
+	{
+		float timeSinceLastNotify = NSGetTimeSinceLastAuthNotify()
+		if( timeSinceLastNotify > notifyWaitStartTime )
+		{
+			printt( "Received auth notify after waiting " + string( Time() - notifyWaitStartTime ) + " seconds." )
+		}
+
+		WaitFrame()
+	}
+
+	CloseAllDialogs()
 }
 
 
@@ -1121,7 +1147,7 @@ void function OnServerSelected_Threaded( string password = "" )
     DialogData connectingDialogData
     connectingDialogData.showSpinner = true
     connectingDialogData.header = "#MATCHMAKING_TITLE_CONNECTING"
-    connectingDialogData.message = "Connecting to " + file.lastSelectedServer.name
+    connectingDialogData.message = Localize( "#DIALOG_SERVERCONNECTING_MSG", file.lastSelectedServer.name )
     AddDialogButton( connectingDialogData, "#CANCEL", CancelAuthToServer )
     OpenDialog( connectingDialogData )
 
@@ -1175,7 +1201,7 @@ void function OnServerSelected_Threaded( string password = "" )
 	string address = NSGetAuthedServerIPv4()
 	int port = NSGetAuthedServerPort()
 	NSAllowServerModDownloads()
-	NSRequestServerInfo( "::ffff:" + address, port, true )
+	NSRequestServerInfo( "::ffff:" + address, port, true, false )
 
 	file.startedAdditionalServerInfoReq = Time()
 
@@ -1450,9 +1476,9 @@ void function CancelAuthToServer()
     file.cancelConnection = true
 }
 
-bool function ServerModInfoTimedOut()
+bool function ServerModInfoTimedOut(float timeoutLengthSeconds = 2.0 )
 {
-	if ( Time() - file.startedAdditionalServerInfoReq > 2.0 )
+	if ( Time() - file.startedAdditionalServerInfoReq > timeoutLengthSeconds )
 		return true
 	return false
 }
