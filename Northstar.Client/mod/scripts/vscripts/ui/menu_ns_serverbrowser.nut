@@ -813,26 +813,46 @@ void function OnDirectConnectDialog()
     // ClientCommand( "connect " + ip )
 }
 
-void function OnDirectConnectDialog_Threaded(string ip)
+void function OnDirectConnectDialog_Threaded( string ip )
 {
-	string originalAddress = ip
+    string originalAddress = ip
 
-	file.cancelConnection = false
+    file.cancelConnection = false
 
-	StringReplace( ip, "[", "" )
-	StringReplace( ip, "]", "" )
+    StringReplace( ip, "[", "" )
+    StringReplace( ip, "]", "" )
 
-	array<string> splitIpPort = split( ip, ":" )
-	string address = splitIpPort[splitIpPort.len() - 1]
-	int port = splitIpPort.len() > 1 ? int( splitIpPort[splitIpPort.len() - 0 - 1] ) : 37015
+    int port = 37015
+    string address = ip
 
-	if( IsIPv4( address ) )
-		address = "::ffff:" + address
+    array<string> splitIpPort = split( ip, ":" )
+    if ( splitIpPort.len() > 1 )
+    {
+        // last segment is port
+        port = int( splitIpPort.top() )
+        splitIpPort.pop()
 
-	NSAllowServerModDownloads()
-	NSRequestServerInfo( address, port, true, true )
+        // everything before is the address (handles IPv6 with colons)
+        address = ""
+        for ( int i = 0; i < splitIpPort.len(); i++ )
+        {
+            if ( i > 0 )
+                address += ":"
+            address += splitIpPort[i]
+        }
+    }
+
+    printt( "Direct connecting to server at address " + originalAddress + " parsed as " + address + ":" + string( port ) )
+
+	string requestAddress = address
+
+    if( IsIPv4( address ) )
+        requestAddress = "::ffff:" + address
 
 	file.startedAdditionalServerInfoReq = Time()
+
+    NSAllowServerModDownloads()
+    NSRequestServerInfo( requestAddress, port, true, true )
 
 	DialogData dialogData
 	dialogData.header = "#MATCHMAKING_TITLE_CONNECTING"
@@ -842,8 +862,10 @@ void function OnDirectConnectDialog_Threaded(string ip)
 	AddDialogButton( dialogData, "#CANCEL", CancelAuthToServer )
 	OpenDialog( dialogData )
 
-	while( !ServerModInfoTimedOut( 3.0 ) && ( NSReceivedServerModInfoCount() == 0 ) && !file.cancelConnection )
-		WaitFrame()
+	while( file.startedAdditionalServerInfoReq + 3.0 > Time() 
+		&& NSGetLastServerInfoTime() < file.startedAdditionalServerInfoReq
+		&& !file.cancelConnection )
+	WaitFrame()
 
 	DialogData dialogData2
 	dialogData2.header = "#MATCHMAKING_TITLE_CONNECTING"
@@ -852,21 +874,14 @@ void function OnDirectConnectDialog_Threaded(string ip)
 
 	OpenDialog( dialogData2 )
 
-	float lastNotifyTime = NSGetTimeSinceLastAuthNotify()
 	float notifyWaitStartTime = Time()
 
-	while( notifyWaitStartTime + 5.0 > Time() && !file.cancelConnection )
-	{
-		float timeSinceLastNotify = NSGetTimeSinceLastAuthNotify()
-		if( timeSinceLastNotify > notifyWaitStartTime )
-		{
-			printt( "Received auth notify after waiting " + string( Time() - notifyWaitStartTime ) + " seconds." )
-		}
-
+	while( notifyWaitStartTime + 10.0 > Time() 
+		&& NSGetLastAuthNotifyTime() < file.startedAdditionalServerInfoReq
+		&& !file.cancelConnection )
 		WaitFrame()
-	}
 
-	CloseAllDialogs()
+	ClientCommand( "connect " + originalAddress )
 }
 
 
@@ -1212,7 +1227,9 @@ void function OnServerSelected_Threaded( string password = "" )
 	AddDialogButton( dialogData, "#CANCEL", CancelAuthToServer )
 	OpenDialog( dialogData )
 
-	while( !ServerModInfoTimedOut() && ( NSReceivedServerModInfoCount() == 0 ) && !file.cancelConnection )
+	while( file.startedAdditionalServerInfoReq + 3.0 > Time() 
+		&& NSGetLastServerInfoTime() < file.startedAdditionalServerInfoReq
+		&& !file.cancelConnection )
 		WaitFrame()
 
 	int clientModInstalledCount = 0
@@ -1474,13 +1491,6 @@ void function OnPasswordTextEntry()
 void function CancelAuthToServer()
 {
     file.cancelConnection = true
-}
-
-bool function ServerModInfoTimedOut(float timeoutLengthSeconds = 2.0 )
-{
-	if ( Time() - file.startedAdditionalServerInfoReq > timeoutLengthSeconds )
-		return true
-	return false
 }
 
 //////////////////////////////////////
