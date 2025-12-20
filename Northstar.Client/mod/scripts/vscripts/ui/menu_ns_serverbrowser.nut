@@ -862,7 +862,7 @@ void function OnDirectConnectDialog_Threaded( string ip )
 	AddDialogButton( dialogData, "#CANCEL", CancelAuthToServer )
 	OpenDialog( dialogData )
 
-	while( file.startedAdditionalServerInfoReq + 3.0 > Time() 
+	while( file.startedAdditionalServerInfoReq + 500.0 > Time() 
 		&& NSGetLastServerInfoTime() < file.startedAdditionalServerInfoReq
 		&& !file.cancelConnection )
 	WaitFrame()
@@ -876,11 +876,12 @@ void function OnDirectConnectDialog_Threaded( string ip )
 
 	float notifyWaitStartTime = Time()
 
-	while( notifyWaitStartTime + 10.0 > Time() 
+	while( notifyWaitStartTime + 500.0 > Time() 
 		&& NSGetLastAuthNotifyTime() < file.startedAdditionalServerInfoReq
 		&& !file.cancelConnection )
 		WaitFrame()
 
+	string 
 	ClientCommand( "connect " + originalAddress )
 }
 
