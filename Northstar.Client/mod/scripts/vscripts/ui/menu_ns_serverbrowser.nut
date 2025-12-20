@@ -863,7 +863,7 @@ void function OnDirectConnectDialog_Threaded( string ip )
 	OpenDialog( dialogData )
 
 	while( file.startedAdditionalServerInfoReq + 500.0 > Time() 
-		&& NSGetLastServerInfoTime() < file.startedAdditionalServerInfoReq
+		|| NSGetLastServerInfoTime() < file.startedAdditionalServerInfoReq
 		&& !file.cancelConnection )
 	WaitFrame()
 
@@ -877,7 +877,7 @@ void function OnDirectConnectDialog_Threaded( string ip )
 	float notifyWaitStartTime = Time()
 
 	while( notifyWaitStartTime + 500.0 > Time() 
-		&& NSGetLastAuthNotifyTime() < file.startedAdditionalServerInfoReq
+		|| NSGetLastAuthNotifyTime() < file.startedAdditionalServerInfoReq
 		&& !file.cancelConnection )
 		WaitFrame()
 
