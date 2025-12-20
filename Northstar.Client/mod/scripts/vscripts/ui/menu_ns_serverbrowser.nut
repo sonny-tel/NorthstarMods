@@ -865,12 +865,33 @@ void function OnDirectConnectDialog_Threaded( string ip )
 		&& !file.cancelConnection )
 	WaitFrame()
 
+	if ( file.cancelConnection )
+	{
+		file.cancelConnection = false
+		// re-focus server list
+		Hud_SetFocused( Hud_GetChild( file.menu, "BtnServer" + ( file.serverButtonFocusedID + 1 ) ) )
+		Hud_SetVisible( Hud_GetChild( file.menu, "InGamePlayerLabel" ), true )
+		Hud_SetVisible( Hud_GetChild( file.menu, "TotalServerLabel" ), true )
+		return
+	}
+
 	DialogData dialogData2
 	dialogData2.header = "#MATCHMAKING_TITLE_CONNECTING"
 	dialogData2.message = "Waiting for authentication response."
 	dialogData2.showSpinner = true
 
+	AddDialogButton( dialogData2, "#CANCEL", CancelAuthToServer )
 	OpenDialog( dialogData2 )
+
+	if ( file.cancelConnection )
+	{
+		file.cancelConnection = false
+		// re-focus server list
+		Hud_SetFocused( Hud_GetChild( file.menu, "BtnServer" + ( file.serverButtonFocusedID + 1 ) ) )
+		Hud_SetVisible( Hud_GetChild( file.menu, "InGamePlayerLabel" ), true )
+		Hud_SetVisible( Hud_GetChild( file.menu, "TotalServerLabel" ), true )
+		return
+	}
 
 	float notifyWaitStartTime = Time()
 
@@ -878,6 +899,16 @@ void function OnDirectConnectDialog_Threaded( string ip )
 		|| NSGetLastAuthNotifyTime() < file.startedAdditionalServerInfoReq
 		&& !file.cancelConnection )
 		WaitFrame()
+
+	if ( file.cancelConnection )
+	{
+		file.cancelConnection = false
+		// re-focus server list
+		Hud_SetFocused( Hud_GetChild( file.menu, "BtnServer" + ( file.serverButtonFocusedID + 1 ) ) )
+		Hud_SetVisible( Hud_GetChild( file.menu, "InGamePlayerLabel" ), true )
+		Hud_SetVisible( Hud_GetChild( file.menu, "TotalServerLabel" ), true )
+		return
+	}
 
 	ClientCommand( "connect " + originalAddress )
 }
