@@ -185,7 +185,7 @@ void function InitServerBrowserMenu()
 	AddMenuEventHandler( file.menu, eUIEvent.MENU_OPEN, OnServerBrowserMenuOpened )
 	AddMenuFooterOption( file.menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
 	AddMenuFooterOption( file.menu, BUTTON_Y, PrependControllerPrompts( BUTTON_Y, "#REFRESH_SERVERS" ), "#REFRESH_SERVERS", RefreshServers )
-    AddMenuFooterOption( file.menu, BUTTON_X, "#X_BUTTON_DIRECT_CONNECT", "Direct Connect", OnDirectConnectButton )
+    AddMenuFooterOption( file.menu, BUTTON_X, "#X_BUTTON_DIRECT_CONNECT", "#DIALOG_TITLE_DIRECT_CONNECT", OnDirectConnectButton )
 	AddCallback_InputEvent( InputEventType.IE_AnalogValueChanged, OnAnalogueScroll )
 
 	// Setup server buttons
@@ -760,9 +760,12 @@ void function RefreshServers( var button )
 
 void function OnDirectConnectButton( var button )
 {
+	Hud_SetVisible( Hud_GetChild( file.menu, "InGamePlayerLabel" ), false )
+	Hud_SetVisible( Hud_GetChild( file.menu, "TotalServerLabel" ), false )
+
     DialogData dialogData
-    dialogData.header = "Direct Connect"
-    dialogData.message = "Only connect to servers you trust.\nType in an IP or hostname below to connect to a server"
+    dialogData.header = "#DIALOG_TITLE_DIRECT_CONNECT"
+    dialogData.message = "#DIALOG_DIRECT_CONNECT_MESSAGE"
 
     AddDialogButton( dialogData, "#OK", OnDirectConnectDialog )
     AddDialogButton( dialogData, "#CANCEL" )
@@ -1205,7 +1208,7 @@ void function OnServerSelected_Threaded( string password = "" )
 
 	// ToggleConnectingHUD( false )
 
-	if ( !NSWasAuthSuccessful() )
+	if ( !NSWasAuthSuccessful() && !file.cancelConnection )
 	{
 		string reason = NSGetAuthFailReason()
 

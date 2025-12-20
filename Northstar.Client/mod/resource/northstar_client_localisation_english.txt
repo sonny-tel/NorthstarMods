@@ -463,5 +463,7 @@ Press Yes if you agree to this. This choice can be changed in the mods menu at a
 		"DIALOG_MESSAGE_SHOW_JOIN_INFO"		"^CCCCCC00%s1^0\n\nSend this to your friends, they can connect from the Server Browser by selecting \"Direct Connect\" and pasting the address."
 		"COPY_CLIPBOARD"					"Copy To Clipboard"
 		"SHOW_JOIN_INFO"					"Peer-to-Peer Info"
+		"DIALOG_TITLE_DIRECT_CONNECT" 		"Direct Connect"
+		"DIALOG_DIRECT_CONNECT_MESSAGE"		"Only connect to servers you trust.\nType in an IP or hostname below to connect to a server"
 	}
 }
