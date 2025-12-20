@@ -646,7 +646,7 @@ void function TryAuthWithLocalServer()
 			SetConVarString( "mp_gamemode", "tdm" )
 
 		CloseAllDialogs()
-
+		NSMarkConnectingToServer( true )
 		ClientCommand( "setplaylist tdm" )
 		ClientCommand( "map mp_lobby" )
 	}

@@ -860,8 +860,7 @@ void function OnDirectConnectDialog_Threaded( string ip )
 	AddDialogButton( dialogData, "#CANCEL", CancelAuthToServer )
 	OpenDialog( dialogData )
 
-	while( file.startedAdditionalServerInfoReq + 5.0 > Time() 
-		|| NSGetLastServerInfoTime() < file.startedAdditionalServerInfoReq
+	while( NSGetLastServerInfoTime() < file.startedAdditionalServerInfoReq
 		&& !file.cancelConnection )
 	WaitFrame()
 
@@ -895,8 +894,7 @@ void function OnDirectConnectDialog_Threaded( string ip )
 
 	float notifyWaitStartTime = Time()
 
-	while( notifyWaitStartTime + 10.0 > Time() 
-		|| NSGetLastAuthNotifyTime() < file.startedAdditionalServerInfoReq
+	while( NSGetLastAuthNotifyTime() < file.startedAdditionalServerInfoReq
 		&& !file.cancelConnection )
 		WaitFrame()
 
@@ -909,6 +907,8 @@ void function OnDirectConnectDialog_Threaded( string ip )
 		Hud_SetVisible( Hud_GetChild( file.menu, "TotalServerLabel" ), true )
 		return
 	}
+
+	NSMarkConnectingToServer( true )
 
 	ClientCommand( "connect " + originalAddress )
 }
@@ -1501,6 +1501,7 @@ void function OnServerSelected_Threaded( string password = "" )
 	}
 
 	TriggerConnectToServerCallbacks()
+	NSMarkConnectingToServer( true )
 	NSConnectToAuthedServer()
 }
 
