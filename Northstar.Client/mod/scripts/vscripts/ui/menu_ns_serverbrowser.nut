@@ -819,8 +819,8 @@ void function OnDirectConnectDialog_Threaded( string ip )
 
     file.cancelConnection = false
 
-    StringReplace( ip, "[", "" )
-    StringReplace( ip, "]", "" )
+    ip = StringReplace( ip, "[", "" )
+    ip = StringReplace( ip, "]", "" )
 
     int port = 37015
     string address = ip
@@ -828,11 +828,9 @@ void function OnDirectConnectDialog_Threaded( string ip )
     array<string> splitIpPort = split( ip, ":" )
     if ( splitIpPort.len() > 1 )
     {
-        // last segment is port
         port = int( splitIpPort.top() )
         splitIpPort.pop()
 
-        // everything before is the address (handles IPv6 with colons)
         address = ""
         for ( int i = 0; i < splitIpPort.len(); i++ )
         {
@@ -862,7 +860,7 @@ void function OnDirectConnectDialog_Threaded( string ip )
 	AddDialogButton( dialogData, "#CANCEL", CancelAuthToServer )
 	OpenDialog( dialogData )
 
-	while( file.startedAdditionalServerInfoReq + 500.0 > Time() 
+	while( file.startedAdditionalServerInfoReq + 5.0 > Time() 
 		|| NSGetLastServerInfoTime() < file.startedAdditionalServerInfoReq
 		&& !file.cancelConnection )
 	WaitFrame()
@@ -876,7 +874,7 @@ void function OnDirectConnectDialog_Threaded( string ip )
 
 	float notifyWaitStartTime = Time()
 
-	while( notifyWaitStartTime + 500.0 > Time() 
+	while( notifyWaitStartTime + 10.0 > Time() 
 		|| NSGetLastAuthNotifyTime() < file.startedAdditionalServerInfoReq
 		&& !file.cancelConnection )
 		WaitFrame()
