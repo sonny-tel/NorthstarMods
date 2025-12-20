@@ -881,7 +881,6 @@ void function OnDirectConnectDialog_Threaded( string ip )
 		&& !file.cancelConnection )
 		WaitFrame()
 
-	string 
 	ClientCommand( "connect " + originalAddress )
 }
 
