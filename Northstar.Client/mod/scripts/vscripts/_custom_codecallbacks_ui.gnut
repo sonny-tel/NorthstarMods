@@ -1,0 +1,24 @@
+global function NSUICodeCallback_ConnectionCallbacksInit
+global function NSUICodeCallback_ConnectionStarted
+global function NSUICodeCallback_ConnectionFinished
+
+
+void function NSUICodeCallback_ConnectionCallbacksInit()
+{
+    RegisterSignal( "NSConnectionStarted" )
+    RegisterSignal( "NSConnectionFinished" )
+    RegisterSignal( "NSConnectionFailed" )
+}
+
+void function NSUICodeCallback_ConnectionStarted()
+{
+    Signal( uiGlobal.signalDummy, "NSConnectionStarted" )
+}
+
+void function NSUICodeCallback_ConnectionFinished(bool error)
+{
+    if (error)
+        Signal( uiGlobal.signalDummy, "NSConnectionFailed" )
+    else
+        Signal( uiGlobal.signalDummy, "NSConnectionFinished" )
+}
