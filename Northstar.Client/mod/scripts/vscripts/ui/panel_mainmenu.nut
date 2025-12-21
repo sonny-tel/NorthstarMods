@@ -170,10 +170,10 @@ void function OnShowMainMenuPanel()
 	#endif // PS4_PROG
 
 	UpdateSPButtons()
-
 	// dont try and update the launch multiplayer button, because it doesn't exist
-	thread UpdatePlayButton( file.mpButton )
+	//thread UpdatePlayButton( file.mpButton )
 	thread UpdatePlayButton( file.fdButton )
+	#endif
 	thread MonitorTrialVersionChange()
 
 	#if DURANGO_PROG
@@ -484,6 +484,7 @@ void function UpdatePlayButton( var button )
 			isLocked = file.mpButtonActivateFunc == null ? true : false
 			if( button != file.fdButton )
 				Hud_SetLocked( button, isLocked )
+			#endif
 		#endif
 
 		if ( Script_IsRunningTrialVersion() && !IsTrialPeriodActive() && file.mpButtonActivateFunc != LaunchGamePurchase )
@@ -497,8 +498,9 @@ void function UpdatePlayButton( var button )
 		// dont try and update the launch multiplayer button, because it doesn't exist
 		ComboButton_SetText( file.mpButton, buttonText )
 
-		ComboButton_SetText( file.fdButton, "#MENU_LAUNCH_NORTHSTAR" )
-		//Hud_SetEnabled( file.fdButton, false )
+			ComboButton_SetText( file.fdButton, "#MENU_LAUNCH_NORTHSTAR" )
+			//Hud_SetEnabled( file.fdButton, false )
+		#endif
 
 		if ( file.installing )
 			message = ""
@@ -573,7 +575,20 @@ void function TryUnlockNorthstarButton()
 	Hud_SetLocked( file.fdButton, false )
 }
 
-void function OnPlayFDButton_Activate( var button ) // repurposed for launching northstar lobby
+void function OnPlayFDButton_Activate( var button )
+{
+	if ( file.mpButtonActivateFunc == null )
+		printt( "file.mpButtonActivateFunc is null" )
+
+	if ( !Hud_IsLocked( button ) && file.mpButtonActivateFunc != null )
+	{
+		Lobby_SetAutoFDOpen( true )
+		// Lobby_SetFDMode( true )
+		thread file.mpButtonActivateFunc()
+	}
+}
+
+void function OnPlayNSButton_Activate( var button )
 {
 	if ( !Hud_IsLocked( button ) )
 	{
@@ -954,6 +969,8 @@ enum eMainMenuPromoDataProperty
 
 void function UpdateCustomMainMenuPromos()
 {
+	// HACK: wait a frame, so that autoexec_ns_client.cfg has taken effect and changed the masterserver hostname
+	WaitFrame()
 	NSRequestCustomMainMenuPromos()
 
 	thread UpdateCustomMainMenuPromosThreaded()

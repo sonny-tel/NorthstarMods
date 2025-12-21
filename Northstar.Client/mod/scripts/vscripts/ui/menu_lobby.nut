@@ -1367,7 +1367,9 @@ function UpdateLobbyUI()
 	thread UpdateLobbyType()
 	thread UpdateMatchmakingStatus()
 	thread UpdateChatroomThread()
-	//thread UpdateInviteJoinButton()
+	#if VANILLA
+		thread UpdateInviteJoinButton()
+	#endif
 	thread UpdateInviteFriendsToNetworkButton()
 	thread UpdatePlayerInfo()
 
