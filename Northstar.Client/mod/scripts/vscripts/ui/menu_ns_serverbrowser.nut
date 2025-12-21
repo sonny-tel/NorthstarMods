@@ -853,6 +853,8 @@ void function OnDirectConnectDialog_Threaded( string ip )
 	file.startedAdditionalServerInfoReq = Time()
 
     NSAllowServerModDownloads()
+	printt( "Requesting additional server info from [" + requestAddress + "]:" + string( port ) )
+
     NSRequestServerInfo( requestAddress, port, true, true )
 
 	DialogData dialogData
@@ -863,9 +865,23 @@ void function OnDirectConnectDialog_Threaded( string ip )
 	AddDialogButton( dialogData, "#CANCEL", CancelAuthToServer )
 	OpenDialog( dialogData )
 
-	while( NSGetLastServerInfoTime() < file.startedAdditionalServerInfoReq
-		&& !file.cancelConnection )
-	WaitFrame()
+	int attempts = 0
+
+	while( !NSReceivedServerInfo() && !file.cancelConnection )
+	{
+		attempts++
+
+		if( !NSReceivedServerInfo() && !file.cancelConnection )
+			Wait( 1.0 )
+
+		printt( "Waiting for server info... attempt " + string( attempts ) )
+
+		if( attempts >= 15 || NSReceivedServerInfo() || file.cancelConnection )
+			break
+
+		NSRequestServerInfo( requestAddress, port, true, true )
+		Wait( 2.0 )
+	}
 
 	if ( file.cancelConnection )
 	{
@@ -885,6 +901,24 @@ void function OnDirectConnectDialog_Threaded( string ip )
 	AddDialogButton( dialogData2, "#CANCEL", CancelAuthToServer )
 	OpenDialog( dialogData2 )
 
+	attempts = 0
+
+	while( !NSReceivedAuthNotify() && !file.cancelConnection )
+	{
+		attempts++
+
+		if( !NSReceivedAuthNotify() && !file.cancelConnection )
+			Wait( 1.0 )
+
+		printt( "Waiting for server info... attempt " + string( attempts ) )
+
+		if( attempts >= 15 || NSReceivedAuthNotify() || file.cancelConnection )
+			break
+
+		NSRequestServerInfo( requestAddress, port, true, true )
+		Wait( 2.0 )
+	}
+
 	if ( file.cancelConnection )
 	{
 		file.cancelConnection = false
@@ -897,8 +931,7 @@ void function OnDirectConnectDialog_Threaded( string ip )
 
 	float notifyWaitStartTime = Time()
 
-	while( NSGetLastAuthNotifyTime() < file.startedAdditionalServerInfoReq
-		&& !file.cancelConnection )
+	while( !NSReceivedAuthNotify() && !file.cancelConnection )
 		WaitFrame()
 
 	if ( file.cancelConnection )
@@ -1260,7 +1293,7 @@ void function OnServerSelected_Threaded( string password = "" )
 	OpenDialog( dialogData )
 
 	while( file.startedAdditionalServerInfoReq + 3.0 > Time() 
-		&& NSGetLastServerInfoTime() < file.startedAdditionalServerInfoReq
+		&& !NSReceivedServerInfo()
 		&& !file.cancelConnection )
 		WaitFrame()
 
