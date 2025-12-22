@@ -86,7 +86,7 @@ void function InitMainMenuPanel()
 	file.mpButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MULTIPLAYER_LAUNCH" )
 	Hud_AddEventHandler( file.mpButton, UIE_CLICK, OnPlayMPButton_Activate )
 	file.fdButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MENU_LAUNCH_NORTHSTAR" )
-	Hud_AddEventHandler( file.fdButton, UIE_CLICK, OnPlayFDButton_Activate )
+	Hud_AddEventHandler( file.fdButton, UIE_CLICK, OnPlayNSButton_Activate )
 	Hud_SetLocked( file.fdButton, true )
 
 	headerIndex++
@@ -171,7 +171,7 @@ void function OnShowMainMenuPanel()
 
 	UpdateSPButtons()
 	// dont try and update the launch multiplayer button, because it doesn't exist
-	//thread UpdatePlayButton( file.mpButton )
+	thread UpdatePlayButton( file.mpButton )
 	thread UpdatePlayButton( file.fdButton )
 	thread MonitorTrialVersionChange()
 
@@ -571,18 +571,6 @@ void function TryUnlockNorthstarButton()
 	Hud_SetLocked( file.fdButton, false )
 }
 
-void function OnPlayFDButton_Activate( var button )
-{
-	if ( file.mpButtonActivateFunc == null )
-		printt( "file.mpButtonActivateFunc is null" )
-
-	if ( !Hud_IsLocked( button ) && file.mpButtonActivateFunc != null )
-	{
-		Lobby_SetAutoFDOpen( true )
-		// Lobby_SetFDMode( true )
-		thread file.mpButtonActivateFunc()
-	}
-}
 
 void function OnPlayNSButton_Activate( var button )
 {
