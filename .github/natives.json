@@ -551,6 +551,12 @@
       "argTypes": ""
     },
     {
+      "name": "NSGetAuthedServerPort",
+      "helpText": "",
+      "returnTypeString": "int",
+      "argTypes": ""
+    },
+    {
       "name": "NSConnectToAuthedServer",
       "helpText": "",
       "returnTypeString": "void",
@@ -558,6 +564,12 @@
     },
     {
       "name": "NSTryAuthWithLocalServer",
+      "helpText": "",
+      "returnTypeString": "void",
+      "argTypes": ""
+    },
+    {
+      "name": "NSCancelConnection",
       "helpText": "",
       "returnTypeString": "void",
       "argTypes": ""
