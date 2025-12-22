@@ -145,11 +145,9 @@ void function Progression_SetPreference( bool enabled )
 
 bool function Progression_GetPreference()
 {
-	#if VANILLA
-	return true
-	#else
+	if ( NSIsVanilla() )
+		return true	
 	return GetConVarBool( "ns_progression_enabled" )
-	#endif
 }
 
 void function UpdateCachedLoadouts_Delayed()

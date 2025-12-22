@@ -497,10 +497,8 @@ void function UpdatePlayButton( var button )
 		// dont try and update the launch multiplayer button, because it doesn't exist
 		ComboButton_SetText( file.mpButton, buttonText )
 
-			ComboButton_SetText( file.fdButton, "#MENU_LAUNCH_NORTHSTAR" )
-			//Hud_SetEnabled( file.fdButton, false )
-		#endif
-
+		ComboButton_SetText( file.fdButton, "#MENU_LAUNCH_NORTHSTAR" )
+		
 		if ( file.installing )
 			message = ""
 		else if ( message == "" )
