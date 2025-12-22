@@ -545,6 +545,12 @@
       "argTypes": ""
     },
     {
+      "name": "NSGetAuthedServerIPv4",
+      "helpText": "",
+      "returnTypeString": "string",
+      "argTypes": ""
+    },
+    {
       "name": "NSConnectToAuthedServer",
       "helpText": "",
       "returnTypeString": "void",
