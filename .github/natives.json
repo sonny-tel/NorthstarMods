@@ -837,6 +837,12 @@
       "helpText": "",
       "returnTypeString": "bool",
       "argTypes": ""
+    },
+    {
+      "name": "ClearJoinSecret",
+      "helpText": "Clears the current join secret stored in the client.",
+      "returnTypeString": "void",
+      "argTypes": ""
     }
   ]
 }
