@@ -170,9 +170,8 @@ void function OnShowMainMenuPanel()
 	#endif // PS4_PROG
 
 	UpdateSPButtons()
-
 	// dont try and update the launch multiplayer button, because it doesn't exist
-	thread UpdatePlayButton( file.mpButton )
+	//thread UpdatePlayButton( file.mpButton )
 	thread UpdatePlayButton( file.fdButton )
 	thread MonitorTrialVersionChange()
 
@@ -498,8 +497,7 @@ void function UpdatePlayButton( var button )
 		ComboButton_SetText( file.mpButton, buttonText )
 
 		ComboButton_SetText( file.fdButton, "#MENU_LAUNCH_NORTHSTAR" )
-		//Hud_SetEnabled( file.fdButton, false )
-
+		
 		if ( file.installing )
 			message = ""
 		else if ( message == "" )
@@ -573,7 +571,20 @@ void function TryUnlockNorthstarButton()
 	Hud_SetLocked( file.fdButton, false )
 }
 
-void function OnPlayFDButton_Activate( var button ) // repurposed for launching northstar lobby
+void function OnPlayFDButton_Activate( var button )
+{
+	if ( file.mpButtonActivateFunc == null )
+		printt( "file.mpButtonActivateFunc is null" )
+
+	if ( !Hud_IsLocked( button ) && file.mpButtonActivateFunc != null )
+	{
+		Lobby_SetAutoFDOpen( true )
+		// Lobby_SetFDMode( true )
+		thread file.mpButtonActivateFunc()
+	}
+}
+
+void function OnPlayNSButton_Activate( var button )
 {
 	if ( !Hud_IsLocked( button ) )
 	{
@@ -954,6 +965,8 @@ enum eMainMenuPromoDataProperty
 
 void function UpdateCustomMainMenuPromos()
 {
+	// HACK: wait a frame, so that autoexec_ns_client.cfg has taken effect and changed the masterserver hostname
+	WaitFrame()
 	NSRequestCustomMainMenuPromos()
 
 	thread UpdateCustomMainMenuPromosThreaded()

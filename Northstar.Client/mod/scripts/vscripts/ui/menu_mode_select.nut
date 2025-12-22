@@ -16,7 +16,7 @@ global enum eModeMenuModeCategory
 	SIZE
 }
 
-// List of blocked modes due to them being unfinished
+
 const array<string> blockedModes =
 [
 	"fd_easy",
