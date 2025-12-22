@@ -105,11 +105,14 @@ void function UICodeCallback_CloseAllMenus()
 	printt( "UICodeCallback_CloseAllMenus" )
 	CloseAllMenus()
 	// This is usually followed by a call to UICodeCallback_ActivateMenus().
+
 }
 
 // Bringing up the console will cause this, and it probably shouldn't
 void function UICodeCallback_ActivateMenus()
 {
+	thread ConnectionDialog_Think()
+
 	if ( IsConnected() )
 		return
 

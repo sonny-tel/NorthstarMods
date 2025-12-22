@@ -580,7 +580,8 @@ void function OnPlayFDButton_Activate( var button ) // repurposed for launching 
 		SetConVarBool( "communities_enabled", false)
 		SetConVarString( "communities_hostname", "")
 
-		thread TryAuthWithLocalServer()
+		ClientCommand( "setplaylist tdm" )
+		ClientCommand( "map mp_lobby 0" )
 	}
 }
 
@@ -647,8 +648,7 @@ void function TryAuthWithLocalServer()
 
 		CloseAllDialogs()
 		NSMarkConnectingToServer( true )
-		ClientCommand( "setplaylist tdm" )
-		ClientCommand( "map mp_lobby" )
+		
 	}
 	else
 	{

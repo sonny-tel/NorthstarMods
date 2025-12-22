@@ -1,24 +1,69 @@
 global function NSUICodeCallback_ConnectionCallbacksInit
 global function NSUICodeCallback_ConnectionStarted
 global function NSUICodeCallback_ConnectionFinished
+global function ConnectionDialog_Think
 
+struct {
+    bool running = false
+} file
 
 void function NSUICodeCallback_ConnectionCallbacksInit()
 {
     RegisterSignal( "NSConnectionStarted" )
     RegisterSignal( "NSConnectionFinished" )
     RegisterSignal( "NSConnectionFailed" )
+    RegisterSignal( "NSConnectionStartDialog" )
 }
 
-void function NSUICodeCallback_ConnectionStarted()
+void function NSUICodeCallback_ConnectionStarted(bool scriptManaged)
 {
     Signal( uiGlobal.signalDummy, "NSConnectionStarted" )
+
+    if (scriptManaged)
+        Signal( uiGlobal.signalDummy, "NSConnectionStartDialog" )
 }
 
-void function NSUICodeCallback_ConnectionFinished(bool error)
+void function NSUICodeCallback_ConnectionFinished(string error)
 {
-    if (error)
+    if (error != "")
         Signal( uiGlobal.signalDummy, "NSConnectionFailed" )
     else
         Signal( uiGlobal.signalDummy, "NSConnectionFinished" )
+}
+
+void function ConnectionDialog_Think()
+{
+    file.running = true
+
+    for(;;)
+    {
+        WaitSignal( uiGlobal.signalDummy, "NSConnectionStartDialog" )
+        thread ConnectionRunning_Think()
+    }
+}
+
+void function ConnectionRunning_Think()
+{
+    EndSignal( uiGlobal.signalDummy, "NSConnectionStarted" )
+    EndSignal( uiGlobal.signalDummy, "NSConnectionFailed" )
+    EndSignal( uiGlobal.signalDummy, "NSConnectionFinished" )
+
+    OnThreadEnd(
+        function() : ()
+        {
+            CloseAllDialogs()
+        }
+    )
+
+    DialogData dialogData
+    dialogData.header = "#MATCHMAKING_TITLE_CONNECTING"
+    dialogData.showSpinner = true
+    AddDialogButton( dialogData, "#CANCEL", NSCancelConnection )
+
+    OpenDialog( dialogData )
+
+    for(;;)
+    {
+        WaitFrame()
+    }
 }

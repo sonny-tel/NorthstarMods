@@ -93,7 +93,10 @@
     },
     {
       "Path": "_custom_codecallbacks_ui.gnut",
-      "RunOn": "UI"
+      "RunOn": "UI",
+      "UICallback": {
+        "Before": "NSUICodeCallback_ConnectionCallbacksInit"
+      }
     },
     {
       "Path": "_custom_codecallbacks_sh.gnut",
