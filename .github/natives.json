@@ -785,6 +785,48 @@
       "helpText": "Requests authentication with the master server.",
       "returnTypeString": "void",
       "argTypes": ""
+    },
+    {
+      "name": "NSMarkConnectingToServer",
+      "helpText": "Skips the retry logic and marks that we're connecting to the server.",
+      "returnTypeString": "void",
+      "argTypes": "bool state"
+    },
+    {
+      "name": "NSReceivedServerInfo",
+      "helpText": "",
+      "returnTypeString": "bool",
+      "argTypes": ""
+    },
+    {
+      "name": "NSReceivedAuthNotify",
+      "helpText": "",
+      "returnTypeString": "bool",
+      "argTypes": ""
+    },
+    {
+      "name": "NSRequestServerInfo",
+      "helpText": "Requests server info from the master server for a specific server ID.",
+      "returnTypeString": "void",
+      "argTypes": "string ip, int port, bool requestMods, bool serverAuthUs"
+    },
+    {
+      "name": "NSIsServerAuthingUs",
+      "helpText": "",
+      "returnTypeString": "bool",
+      "argTypes": ""
+    },
+    {
+      "name": "NSGetNameFromServerInfo",
+      "helpText": "",
+      "returnTypeString": "string",
+      "argTypes": ""
+    },
+    {
+      "name": "NSReceivedServerInfo",
+      "helpText": "",
+      "returnTypeString": "bool",
+      "argTypes": ""
     }
   ]
 }
