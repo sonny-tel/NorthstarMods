@@ -223,6 +223,12 @@
 			"helpText": "Checks if the game is currently in vanilla compat mode",
 			"returnTypeString": "bool",
 			"argTypes": ""
+		},
+		{
+			"name": "NSShouldClearPlaylistOverrides",
+			"helpText": "Returns whether the listen server should clear playlist overrides.",
+			"returnTypeString": "bool",
+			"argTypes": ""
 		}
 	],
 	"CLIENT":[
