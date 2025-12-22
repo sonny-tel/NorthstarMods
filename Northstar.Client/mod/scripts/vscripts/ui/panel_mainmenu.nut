@@ -173,7 +173,6 @@ void function OnShowMainMenuPanel()
 	// dont try and update the launch multiplayer button, because it doesn't exist
 	//thread UpdatePlayButton( file.mpButton )
 	thread UpdatePlayButton( file.fdButton )
-	#endif
 	thread MonitorTrialVersionChange()
 
 	#if DURANGO_PROG
