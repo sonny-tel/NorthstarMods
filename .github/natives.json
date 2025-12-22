@@ -877,7 +877,7 @@
     {
       "name": "NSGetServerRequestedMods",
       "helpText": "",
-      "returnTypeString": "array<ModInfo>",
+      "returnTypeString": "array<RequiredModInfo>",
       "argTypes": ""
     },
     {
