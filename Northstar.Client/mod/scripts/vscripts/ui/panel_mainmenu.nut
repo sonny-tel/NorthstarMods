@@ -483,7 +483,6 @@ void function UpdatePlayButton( var button )
 			isLocked = file.mpButtonActivateFunc == null ? true : false
 			if( button != file.fdButton )
 				Hud_SetLocked( button, isLocked )
-			#endif
 		#endif
 
 		if ( Script_IsRunningTrialVersion() && !IsTrialPeriodActive() && file.mpButtonActivateFunc != LaunchGamePurchase )
