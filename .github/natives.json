@@ -731,6 +731,12 @@
       "helpText": "Stops the demo playback",
       "returnTypeString": "void",
       "argTypes": ""
+    },
+    {
+      "name": "NSGetFriendSubscriptionMap",
+      "helpText": "Gets a map of friend subscriptions",
+      "returnTypeString": "table< string, string >",
+      "argTypes": ""
     }
   ]
 }
