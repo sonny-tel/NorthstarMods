@@ -779,6 +779,12 @@
       "helpText": "Requests server info from the master server for a specific server ID.",
       "returnTypeString": "void",
       "argTypes": "string ip, int port, bool requestMods"
+    },
+    {
+      "name": "NSRequestMasterServerAuth",
+      "helpText": "Requests authentication with the master server.",
+      "returnTypeString": "void",
+      "argTypes": ""
     }
   ]
 }
