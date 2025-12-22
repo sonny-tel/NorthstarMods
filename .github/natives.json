@@ -439,6 +439,12 @@
       "argTypes": "string modName, string modVersion, bool enabled"
     },
     {
+      "name": "NSDeleteRemoteMod",
+      "helpText": "Deletes a remote mod from the local profile",
+      "returnTypeString": "void",
+      "argTypes": "string modName, string modVersion"
+    },
+    {
       "name": "NSFetchVerifiedModsManifesto",
       "helpText": "Retrieves the verified mods list from the central authority (GitHub).",
       "returnTypeString": "void",
