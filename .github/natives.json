@@ -743,6 +743,42 @@
       "helpText": "Marks that the listen server should clear playlist overrides.",
       "returnTypeString": "void",
       "argTypes": ""
+    },
+    {
+      "name": "NSIsListenServer",
+      "helpText": "Returns whether or not the current client is connected to a listen server.",
+      "returnTypeString": "bool",
+      "argTypes": ""
+    },
+    {
+      "name": "NSCopyToClipboard",
+      "helpText": "Copies the given text to the system clipboard.",
+      "returnTypeString": "void",
+      "argTypes": "string text"
+    },
+    {
+      "name": "NSPasteFromClipboard",
+      "helpText": "Pastes text from the system clipboard.",
+      "returnTypeString": "string",
+      "argTypes": ""
+    },
+    {
+      "name": "NSGetLocalP2PEndpointAddress",
+      "helpText": "Returns the local P2P endpoint address for the local player.",
+      "returnTypeString": "string",
+      "argTypes": ""
+    },
+    {
+      "name": "NSGetLocalP2PEndpointPort",
+      "helpText": "Returns the local P2P endpoint port for the local player.",
+      "returnTypeString": "int",
+      "argTypes": ""
+    },
+    {
+      "name": "NSRequestServerInfo",
+      "helpText": "Requests server info from the master server for a specific server ID.",
+      "returnTypeString": "void",
+      "argTypes": "string ip, int port, bool requestMods"
     }
   ]
 }
