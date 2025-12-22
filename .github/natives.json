@@ -903,6 +903,18 @@
       "helpText": "",
       "returnTypeString": "bool",
       "argTypes": ""
+    },
+    {
+      "name": "Hud_DialogList_RemoveListItems",
+      "helpText": "",
+      "returnTypeString": "void",
+      "argTypes": "var elem"
+    },
+    {
+      "name": "Hud_ChangeDialogListConVar",
+      "helpText": "",
+      "returnTypeString": "void",
+      "argTypes": "var elem, string convarName"
     }
   ]
 }
