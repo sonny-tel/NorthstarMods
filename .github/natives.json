@@ -23,6 +23,10 @@
     {
       "name": "NS_VERSION_DEV",
       "value": 1
+    },
+    {
+      "name": "ION_PATCH",
+      "value": 0
     }
   ],
   "SERVER": [
