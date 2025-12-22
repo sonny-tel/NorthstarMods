@@ -875,6 +875,12 @@
       "argTypes": ""
     },
     {
+      "name": "NSGetServerRequestedMods",
+      "helpText": "",
+      "returnTypeString": "array<ModInfo>",
+      "argTypes": ""
+    },
+    {
       "name": "NSClearServerRequestedMods",
       "helpText": "",
       "returnTypeString": "void",
