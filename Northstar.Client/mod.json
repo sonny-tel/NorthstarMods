@@ -6,10 +6,6 @@
   "InitScript": "cl_northstar_client_init.nut",
   "ConVars": [
     {
-      "Name": "allow_mod_auto_download",
-      "DefaultValue": "1"
-    },
-    {
       "Name": "filter_hide_empty",
       "DefaultValue": "0"
     },
