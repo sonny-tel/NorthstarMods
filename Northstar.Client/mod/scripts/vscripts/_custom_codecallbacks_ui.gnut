@@ -22,12 +22,12 @@ void function NSUICodeCallback_ConnectionCallbacksInit()
 
 void function NSUICodeCallback_ConnectionStarted(bool scriptManaged)
 {
-    Signal( uiGlobal.signalDummy, "NSConnectionStarted" )
-
     file.message = ""
     file.active = true
     file.error = ""
     file.failed = false
+
+    Signal( uiGlobal.signalDummy, "NSConnectionStarted" )
 
     if (scriptManaged)
         Signal( uiGlobal.signalDummy, "NSConnectionStartDialog" )
@@ -118,7 +118,7 @@ void function ConnectionRunning_Think()
         if(file.active)
         {
             Hud_SetText( header, Localize( "#MATCHMAKING_TITLE_CONNECTING" ) )
-            Hud_SetText( body, Localize( file.message ) )
+            Hud_SetText( body, file.message )
         }
 
         WaitFrame()
