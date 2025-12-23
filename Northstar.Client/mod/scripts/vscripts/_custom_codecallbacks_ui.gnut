@@ -1,10 +1,15 @@
 global function NSUICodeCallback_ConnectionCallbacksInit
 global function NSUICodeCallback_ConnectionStarted
-global function NSUICodeCallback_ConnectionFinished
+global function NSUICodeCallback_ConnectionStopped
+global function NSUICodeCallback_ConnectionMessage
 global function ConnectionDialog_Think
 
 struct {
     bool running = false
+    string message = ""
+    bool active = false
+    string error = ""
+    bool failed = false
 } file
 
 void function NSUICodeCallback_ConnectionCallbacksInit()
@@ -19,20 +24,58 @@ void function NSUICodeCallback_ConnectionStarted(bool scriptManaged)
 {
     Signal( uiGlobal.signalDummy, "NSConnectionStarted" )
 
+    file.message = ""
+    file.active = true
+    file.error = ""
+    file.failed = false
+
     if (scriptManaged)
         Signal( uiGlobal.signalDummy, "NSConnectionStartDialog" )
 }
 
-void function NSUICodeCallback_ConnectionFinished(string error)
+void function NSUICodeCallback_ConnectionMessage(string message)
+{
+    file.message = message
+}
+
+void function NSUICodeCallback_ConnectionStopped(string error)
 {
     if (error != "")
+    {
+        file.failed = true
+        file.error = error
         Signal( uiGlobal.signalDummy, "NSConnectionFailed" )
+    }
     else
+    {
         Signal( uiGlobal.signalDummy, "NSConnectionFinished" )
+    }
+
+    file.active = false
+}
+
+void function OpenErrorDialog( string errorDetails )
+{
+	DialogData dialogData
+	dialogData.header = "#ERROR"
+	dialogData.message = errorDetails
+	dialogData.image = $"ui/menu/common/dialog_error"
+
+#if PC_PROG
+	AddDialogButton( dialogData, "#DISMISS" )
+
+	AddDialogFooter( dialogData, "#A_BUTTON_SELECT" )
+#endif // PC_PROG
+	AddDialogFooter( dialogData, "#B_BUTTON_DISMISS_RUI" )
+
+	OpenDialog( dialogData )
 }
 
 void function ConnectionDialog_Think()
 {
+    if(file.running)
+        return
+
     file.running = true
 
     for(;;)
@@ -51,19 +94,33 @@ void function ConnectionRunning_Think()
     OnThreadEnd(
         function() : ()
         {
-            CloseAllDialogs()
+            if( file.failed )
+                OpenErrorDialog( file.error )
+            else
+                CloseAllDialogs()
         }
     )
 
     DialogData dialogData
     dialogData.header = "#MATCHMAKING_TITLE_CONNECTING"
+    dialogData.message = file.message
     dialogData.showSpinner = true
+    dialogData.forceChoice = true
     AddDialogButton( dialogData, "#CANCEL", NSCancelConnection )
-
     OpenDialog( dialogData )
+
+	var menu = GetMenu( "Dialog" )
+	var header = Hud_GetChild( menu, "DialogHeader" )
+	var body = GetSingleElementByClassname( menu, "DialogMessageClass" )
 
     for(;;)
     {
+        if(file.active)
+        {
+            Hud_SetText( header, Localize( "#MATCHMAKING_TITLE_CONNECTING" ) )
+            Hud_SetText( body, Localize( file.message ) )
+        }
+
         WaitFrame()
     }
 }
