@@ -77,6 +77,8 @@ global struct MasterServerAuthResult
 
 global struct ModInstallState
 {
+    string name
+    string version
     int status
     int progress
     int total

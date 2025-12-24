@@ -2,6 +2,7 @@ global function NSUICodeCallback_ConnectionCallbacksInit
 global function NSUICodeCallback_ConnectionStarted
 global function NSUICodeCallback_ConnectionStopped
 global function NSUICodeCallback_ConnectionMessage
+global function NSUICodeCallback_DownloadingModsStarted
 global function ConnectionDialog_Think
 
 struct {
@@ -10,6 +11,7 @@ struct {
     bool active = false
     string error = ""
     bool failed = false
+    bool downloading = false
 } file
 
 void function NSUICodeCallback_ConnectionCallbacksInit()
@@ -18,6 +20,7 @@ void function NSUICodeCallback_ConnectionCallbacksInit()
     RegisterSignal( "NSConnectionFinished" )
     RegisterSignal( "NSConnectionFailed" )
     RegisterSignal( "NSConnectionStartDialog" )
+    RegisterSignal( "NSModsDownloadStarted" )
 }
 
 void function NSUICodeCallback_ConnectionStarted(bool scriptManaged)
@@ -26,6 +29,7 @@ void function NSUICodeCallback_ConnectionStarted(bool scriptManaged)
     file.active = true
     file.error = ""
     file.failed = false
+    file.downloading = false
 
     Signal( uiGlobal.signalDummy, "NSConnectionStarted" )
 
@@ -52,6 +56,12 @@ void function NSUICodeCallback_ConnectionStopped(string error)
     }
 
     file.active = false
+}
+
+void function NSUICodeCallback_DownloadingModsStarted()
+{
+    file.downloading = true
+    Signal( uiGlobal.signalDummy, "NSModsDownloadStarted" )
 }
 
 void function OpenErrorDialog( string errorDetails )
@@ -117,8 +127,18 @@ void function ConnectionRunning_Think()
     {
         if(file.active)
         {
-            Hud_SetText( header, Localize( "#MATCHMAKING_TITLE_CONNECTING" ) )
-            Hud_SetText( body, file.message )
+            if(file.downloading)
+            {
+                ModInstallState state = NSGetModInstallState()
+
+                Hud_SetText( header, Localize( "#MODS_DOWNLOADING_TITLE" ) )
+                Hud_SetText( body, Localize( "#MODS_DOWNLOADING_MESSAGE" ) )
+            }
+            else
+            {
+                Hud_SetText( header, Localize( "#MATCHMAKING_TITLE_CONNECTING" ) )
+                Hud_SetText( body, file.message )
+            }
         }
 
         WaitFrame()
