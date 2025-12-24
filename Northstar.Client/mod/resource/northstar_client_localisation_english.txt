@@ -315,6 +315,7 @@ Press Yes if you agree to this. This choice can be changed in the mods menu at a
 		"DIALOG_SERVERMODDL_MSG" "^FFFFFF00%s1 ^0wants to download %s2 unverified mod(s).\n\nDo you want to proceed? You can view more information in the console."
 		"NO_SKIP" "No (Skip)"
 		"DIALOG_SERVERCONNECTING_MSG" "Connecting to ^FFFFFF00%s1^0..."
+		"REQUESTING_SERVERS" "Requesting server list."
 
 		"DELETE_REMOTE_MOD_CONFIRMATION" "This will permanently delete the mod. Changes will only be applied after reloading."
 		"DELETE_MOD" "Delete Mod"
