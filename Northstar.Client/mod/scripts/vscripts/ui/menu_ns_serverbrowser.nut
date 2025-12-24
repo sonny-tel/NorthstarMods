@@ -1227,20 +1227,9 @@ void function OnServerSelected_Threaded( string password = "" )
 
 	ClientPreCacheLevel( file.lastSelectedServer.map )
 
-    DialogData connectingDialogData
-    connectingDialogData.showSpinner = true
-    connectingDialogData.header = "#MATCHMAKING_TITLE_CONNECTING"
-    connectingDialogData.message = Localize( "#DIALOG_SERVERCONNECTING_MSG", file.lastSelectedServer.name )
-    AddDialogButton( connectingDialogData, "#CANCEL", CancelAuthToServer )
-    OpenDialog( connectingDialogData )
-
-	NSTryAuthWithServer( file.lastSelectedServer.index, password )
-
 	Hud_SetVisible( Hud_GetChild( file.menu, "InGamePlayerLabel" ), false )
 	Hud_SetVisible( Hud_GetChild( file.menu, "TotalServerLabel" ), false )
 
-	while ( NSIsAuthenticatingWithServer() && !file.cancelConnection )
-		WaitFrame()
 
 	printt( "Trying to authenticate with server: " + NSGetServerIDFromIndex( file.lastSelectedServer.index ) )
 
