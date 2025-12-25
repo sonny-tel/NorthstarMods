@@ -449,6 +449,12 @@
       "argTypes": "string modName, string modVersion"
     },
     {
+      "name": "NSGetServerIDFromIndex",
+      "helpText": "",
+      "returnTypeString": "string",
+      "argTypes": "int serverIndex"
+    },
+    {
       "name": "NSDecideModDownload",
       "helpText": "",
       "returnTypeString": "void",
