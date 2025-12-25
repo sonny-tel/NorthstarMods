@@ -3,6 +3,7 @@ global function NSUICodeCallback_ConnectionStarted
 global function NSUICodeCallback_ConnectionStopped
 global function NSUICodeCallback_ConnectionMessage
 global function NSUICodeCallback_DownloadingModsStarted
+global function NSUICodeCallback_DownloadingModsStopped
 global function ConnectionDialog_Think
 
 struct {
@@ -13,6 +14,8 @@ struct {
     bool failed = false
     bool downloading = false
 } file
+
+const int MB = 1024*1000;
 
 void function NSUICodeCallback_ConnectionCallbacksInit()
 {
@@ -62,6 +65,11 @@ void function NSUICodeCallback_DownloadingModsStarted()
 {
     file.downloading = true
     Signal( uiGlobal.signalDummy, "NSModsDownloadStarted" )
+}
+
+void function NSUICodeCallback_DownloadingModsStopped()
+{
+    file.downloading = false
 }
 
 void function OpenErrorDialog( string errorDetails )
@@ -131,8 +139,25 @@ void function ConnectionRunning_Think()
             {
                 ModInstallState state = NSGetModInstallState()
 
-                Hud_SetText( header, Localize( "#MODS_DOWNLOADING_TITLE" ) )
-                Hud_SetText( body, Localize( "#MODS_DOWNLOADING_MESSAGE" ) )
+                switch( state.status )
+                {
+	                case eModInstallStatus.DOWNLOADING:
+	                	Hud_SetText( header, Localize( "#DOWNLOADING_MOD_TITLE_W_PROGRESS", string( state.ratio ) ) )
+	                	Hud_SetText( body, Localize( "#DOWNLOADING_MOD_TEXT_W_PROGRESS", state.name, state.version, floor( state.progress / MB ), floor( state.total / MB ) ) )
+	                	break
+	                case eModInstallStatus.CHECKSUMING:
+	                	Hud_SetText( header, Localize( "#CHECKSUMING_TITLE" ) )
+	                	Hud_SetText( body, Localize( "#CHECKSUMING_TEXT", state.name, state.version ) )
+	                	break
+	                case eModInstallStatus.EXTRACTING:
+	                	Hud_SetText( header, Localize( "#EXTRACTING_MOD_TITLE", string( state.ratio ) ) )
+	                	Hud_SetText( body, Localize( "#EXTRACTING_MOD_TEXT", state.name, state.version, floor( state.progress / MB ), floor( state.total / MB ) ) )
+	                	break
+                    default:
+                        Hud_SetText( header, Localize( "#DOWNLOADING_MOD_TITLE" ) )
+                        Hud_SetText( body, Localize( "#DOWNLOADING_MOD_TEXT", state.name, state.version ) )
+                        break
+                }
             }
             else
             {
