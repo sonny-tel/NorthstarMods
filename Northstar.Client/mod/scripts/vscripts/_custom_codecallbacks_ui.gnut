@@ -4,6 +4,7 @@ global function NSUICodeCallback_ConnectionStopped
 global function NSUICodeCallback_ConnectionMessage
 global function NSUICodeCallback_DownloadingModsStarted
 global function NSUICodeCallback_DownloadingModsStopped
+global function NSUICodeCallback_ConfirmDownloadMods
 global function ConnectionDialog_Think
 
 struct {
@@ -13,6 +14,8 @@ struct {
     string error = ""
     bool failed = false
     bool downloading = false
+    int serverModCount = 0
+    string serverModDownloadName = ""
 } file
 
 const int MB = 1024*1000;
@@ -24,6 +27,7 @@ void function NSUICodeCallback_ConnectionCallbacksInit()
     RegisterSignal( "NSConnectionFailed" )
     RegisterSignal( "NSConnectionStartDialog" )
     RegisterSignal( "NSModsDownloadStarted" )
+    RegisterSignal( "NSModsRequestConfirmation" )
 }
 
 void function NSUICodeCallback_ConnectionStarted(bool scriptManaged)
@@ -33,6 +37,8 @@ void function NSUICodeCallback_ConnectionStarted(bool scriptManaged)
     file.error = ""
     file.failed = false
     file.downloading = false
+    file.serverModCount = 0
+    file.serverModDownloadName = ""
 
     Signal( uiGlobal.signalDummy, "NSConnectionStarted" )
 
@@ -72,6 +78,13 @@ void function NSUICodeCallback_DownloadingModsStopped()
     file.downloading = false
 }
 
+void function NSUICodeCallback_ConfirmDownloadMods(int modCount, string serverName)
+{
+    file.serverModCount = 1
+    file.serverModDownloadName = serverName
+    Signal( uiGlobal.signalDummy, "NSModsRequestConfirmation" )
+}
+
 void function OpenErrorDialog( string errorDetails )
 {
 	DialogData dialogData
@@ -87,6 +100,20 @@ void function OpenErrorDialog( string errorDetails )
 	AddDialogFooter( dialogData, "#B_BUTTON_DISMISS_RUI" )
 
 	OpenDialog( dialogData )
+}
+
+void function ShowModDownloadConfirmationDialog()
+{
+    DialogData dialogData
+    dialogData.header = "#DIALOG_SERVERMODDL_HEADER"
+    dialogData.message = Localize( "#DIALOG_SERVERMODDL_MSG", file.serverModDownloadName, string( file.serverModCount ) )
+    dialogData.image = $"ui/menu/common/dialog_error"
+    dialogData.forceChoice = true
+
+    AddDialogButton( dialogData, "#YES", void function() { NSDecideModDownload(true); ConnectionRunning_Think() } )
+    AddDialogButton( dialogData, "#CANCEL", void function() { NSDecideModDownload(false) } )
+
+    OpenDialog( dialogData )
 }
 
 void function ConnectionDialog_Think()
@@ -108,12 +135,15 @@ void function ConnectionRunning_Think()
     EndSignal( uiGlobal.signalDummy, "NSConnectionStarted" )
     EndSignal( uiGlobal.signalDummy, "NSConnectionFailed" )
     EndSignal( uiGlobal.signalDummy, "NSConnectionFinished" )
+    EndSignal( uiGlobal.signalDummy, "NSModsRequestConfirmation" )
 
     OnThreadEnd(
         function() : ()
         {
             if( file.failed )
                 OpenErrorDialog( file.error )
+            else if( file.serverModCount > 0 )
+                ShowModDownloadConfirmationDialog()
             else
                 CloseAllDialogs()
         }

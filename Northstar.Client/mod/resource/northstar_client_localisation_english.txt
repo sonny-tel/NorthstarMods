@@ -468,5 +468,6 @@ Press Yes if you agree to this. This choice can be changed in the mods menu at a
 		"SHOW_JOIN_INFO"					"Peer-to-Peer Info"
 		"DIALOG_TITLE_DIRECT_CONNECT" 		"Direct Connect"
 		"DIALOG_DIRECT_CONNECT_MESSAGE"		"Only connect to servers you trust.\nType in an IP or hostname below to connect to a server"
+		"CHECKING_REQUIRED_MODS"			"Checking required mods."
 	}
 }
