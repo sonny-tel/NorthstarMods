@@ -449,6 +449,12 @@
       "argTypes": "string modName, string modVersion"
     },
     {
+      "name": "NSDecideModDownload",
+      "helpText": "",
+      "returnTypeString": "void",
+      "argTypes": "bool accept"
+    },
+    {
       "name": "NSFetchVerifiedModsManifesto",
       "helpText": "Retrieves the verified mods list from the central authority (GitHub).",
       "returnTypeString": "void",
