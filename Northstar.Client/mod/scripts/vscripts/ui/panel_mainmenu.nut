@@ -580,6 +580,7 @@ void function OnPlayNSButton_Activate( var button )
 		SetConVarString( "communities_hostname", "")
 
 		ClientCommand( "setplaylist tdm" )
+		ClientCommand( "mp_gamemode tdm" )
 		ClientCommand( "map mp_lobby 0" )
 	}
 }
