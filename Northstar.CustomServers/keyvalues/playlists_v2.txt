@@ -20,7 +20,7 @@ playlists
 				roundtimelimit 0
 				respawnprotection 0.0
 				aegis_upgrades 0
-				infinite_doomed_state 0
+				infinite_doomed_state 1
 				titan_shield_regen 0
 ///endif
 			}
