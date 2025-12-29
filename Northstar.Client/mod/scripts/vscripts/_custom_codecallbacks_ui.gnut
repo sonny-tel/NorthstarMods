@@ -110,8 +110,8 @@ void function ShowModDownloadConfirmationDialog()
     dialogData.image = $"ui/menu/common/dialog_error"
     dialogData.forceChoice = true
 
-    AddDialogButton( dialogData, "#YES", void function() { NSDecideModDownload(true); ConnectionRunning_Think() } )
-    AddDialogButton( dialogData, "#CANCEL", void function() { NSDecideModDownload(false) } )
+    AddDialogButton( dialogData, Localize("#YES"), void function() { NSDecideModDownload(true); ConnectionRunning_Think() } )
+    AddDialogButton( dialogData, Localize("#CANCEL"), void function() { NSDecideModDownload(false) } )
 
     OpenDialog( dialogData )
 }
@@ -154,7 +154,7 @@ void function ConnectionRunning_Think()
     dialogData.message = file.message
     dialogData.showSpinner = true
     dialogData.forceChoice = true
-    AddDialogButton( dialogData, "#CANCEL", NSCancelConnection )
+    AddDialogButton( dialogData, Localize("#CANCEL"), NSCancelConnection )
     OpenDialog( dialogData )
 
 	var menu = GetMenu( "Dialog" )
