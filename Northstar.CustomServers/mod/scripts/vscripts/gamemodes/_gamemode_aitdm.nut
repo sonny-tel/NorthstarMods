@@ -90,14 +90,10 @@ void function AITdm_SetLevelReapers( int level )
 }
 //
 
-// Helper function to filter spawn points based on gamemode keys
-// Mimics GameModeRemove logic but for filtering arrays
 bool function IsSpawnPointValidForAITDM( entity point )
 {
-	// AI_TDM maps to TEAM_DEATHMATCH per GameModeRemove logic
 	string gamemodeKey = "gamemode_" + TEAM_DEATHMATCH
 
-	// Check if spawn point is disabled for this gamemode
 	if ( point.HasKey( gamemodeKey ) )
 		if ( point.kv[ gamemodeKey ] == "0" || point.kv[ gamemodeKey ] == "" )
 			return false
@@ -311,17 +307,17 @@ void function Spawner_Threaded( int team )
 			array< entity > points = SpawnPoints_GetDropPod()
 			array< entity > validPoints
 
-			// Filter spawn points based on gamemode keys
 			foreach ( entity point in points )
 			{
-				if ( IsSpawnPointValidForAITDM( point ) )
-					validPoints.append( point )
+				if ( IsSpawnPointValidForAITDM( point ) == false )
+					continue
+
+				validPoints.append( point )
 			}
 
-			// Fallback to all points if no valid ones found
-			if ( validPoints.len() == 0 )
+			if( validPoints.len() == 0 )
 			{
-				printt( "WARNING: No valid reaper spawn points found, defaulting to all drop pod points" )
+				printt("WARNING: No valid reaper spawn points found, defaulting to all drop pod points" )
 				validPoints = points
 			}
 
@@ -336,21 +332,21 @@ void function Spawner_Threaded( int team )
 		if ( count < file.squadsPerTeam * 4 - 2 )
 		{
 			string ent = file.podEntities[ index ][ RandomInt( file.podEntities[ index ].len() ) ]
-
+			
 			array< entity > points = GetZiplineDropshipSpawns()
 			array< entity > validPoints
 
-			// Filter dropship spawn points based on gamemode keys
 			foreach ( entity point in points )
 			{
-				if ( IsSpawnPointValidForAITDM( point ) )
-					validPoints.append( point )
+				if ( IsSpawnPointValidForAITDM( point ) == false )
+					continue
+
+				validPoints.append( point )
 			}
 
-			// Fallback to all points if no valid ones found
-			if ( validPoints.len() == 0 )
+			if( validPoints.len() == 0 )
 			{
-				printt( "WARNING: No valid dropship spawn points found, defaulting to all zipline dropship points" )
+				printt("WARNING: No valid dropship spawn points found, defaulting to all zipline dropship points" )
 				validPoints = points
 			}
 
@@ -365,22 +361,20 @@ void function Spawner_Threaded( int team )
 				}
 			}
 
+
 			points = SpawnPoints_GetDropPod()
 			validPoints = []
 
-			// Filter drop pod spawn points based on gamemode keys
 			foreach ( entity point in points )
 			{
-				if ( IsSpawnPointValidForAITDM( point ) )
-					validPoints.append( point )
-			}
+				if ( IsSpawnPointValidForAITDM( point ) == false )
+					continue
 
-			// Fallback to all points if no valid ones found
-			if ( validPoints.len() == 0 )
-			{
-				printt( "WARNING: No valid drop pod spawn points found, defaulting to all drop pod points" )
-				validPoints = points
+				validPoints.append( point )
 			}
+	
+			if( validPoints.len() == 0 )
+				validPoints = points
 
 			entity node = validPoints[ GetSpawnPointIndex( validPoints, team ) ]
 			waitthread AiGameModes_SpawnDropPod( node.GetOrigin(), node.GetAngles(), team, ent, SquadHandler )
@@ -389,7 +383,6 @@ void function Spawner_Threaded( int team )
 		WaitFrame()
 	}
 }
-
 void function Aitdm_SpawnDropShip( entity node, int team )
 {
 	thread AiGameModes_SpawnDropShip( node.GetOrigin(), node.GetAngles(), team, 4, SquadHandler )
