@@ -92,7 +92,7 @@ void function AITdm_SetLevelReapers( int level )
 
 bool function IsSpawnPointValidForAITDM( entity point )
 {
-	string gamemodeKey = "gamemode_" + TEAM_DEATHMATCH
+	string gamemodeKey = "gamemode_" + GetSpawnpointGamemodeOverride() 
 
 	if ( point.HasKey( gamemodeKey ) )
 		if ( point.kv[ gamemodeKey ] == "0" || point.kv[ gamemodeKey ] == "" )
