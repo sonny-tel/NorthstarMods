@@ -722,9 +722,9 @@ function RunDropshipDropoff( CallinData Table )
 
 	ArrayRemoveDead( guys )
 
+	WaittillAnimDone( dropship )
 	Signal( Table, "OnDropoff", { guys = guys } )
 
-	WaittillAnimDone( dropship )
 	wait 2.0
 }
 
