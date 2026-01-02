@@ -21,6 +21,7 @@ global function ReaperMinionLauncherThink
 // Each of those minions has a reference back to it's "master."
 //==============================================================
 const FRAG_DRONE_BATCH_COUNT				= 10
+const FRAG_DRONE_BATCH_COUNT_MP				= 4
 const FRAG_DRONE_IN_FRONT_COUNT				= 2
 const FRAG_DRONE_MIN_LAUNCH_COUNT			= 4
 const FRAG_DRONE_LAUNCH_INTIAL_DELAY_MIN	= 10
@@ -304,6 +305,11 @@ function SuperSpectreThink( entity npc )
 
 	npc.ai.superSpectreEnableFragDrones = expect int( npc.Dev_GetAISettingByKeyField( "enable_frag_drones" ) ) == 1
 
+	#if MP	
+	if( !npc.ai.superSpectreEnableFragDrones )
+		npc.ai.superSpectreEnableFragDrones = GetCurrentPlaylistVarInt("ai_super_spectre_enable_frag_drones", 0 ) == 1
+	#endif
+
 	OnThreadEnd (
 		function() : ( activeMinions_EntArrayID, npc, team )
 		{
@@ -338,7 +344,15 @@ function SuperSpectreThink( entity npc )
 
 void function SuperSpectre_LaunchFragDrone_Think( entity npc, int activeMinions_EntArrayID )
 {
-	array<vector> targetOrigins = GetFragDroneTargetOrigins( npc, npc.GetOrigin(), 200, 2000, 64, FRAG_DRONE_BATCH_COUNT )
+	string droneSettings = ""
+	int batchCount = FRAG_DRONE_BATCH_COUNT
+
+	#if MP
+	batchCount = GetCurrentPlaylistVarInt("ai_frag_drone_batch_count", FRAG_DRONE_BATCH_COUNT_MP )
+	droneSettings = GetCurrentPlaylistVarString("ai_frag_drone_settings", "npc_frag_drone_fd" )
+	#endif
+	
+	array<vector> targetOrigins = GetFragDroneTargetOrigins( npc, npc.GetOrigin(), 200, 2000, 64, batchCount )
 
 	if ( targetOrigins.len() < FRAG_DRONE_MIN_LAUNCH_COUNT )
 		return
@@ -359,7 +373,7 @@ void function SuperSpectre_LaunchFragDrone_Think( entity npc, int activeMinions_
 
 		foreach ( targetOrigin in frontOfEnemyOrigins )
 		{
-			thread LaunchSpawnerProjectile( npc, targetOrigin, activeMinions_EntArrayID )
+			thread LaunchSpawnerProjectile( npc, targetOrigin, activeMinions_EntArrayID, droneSettings )
 			//DebugDrawBox( targetOrigin, Vector(-10, -10, 0), Vector(10, 10, 10), 255, 0, 0, 255, 5 )
 			npc.WaitSignal( "OnSpecialAttack" )
 		}
@@ -368,7 +382,7 @@ void function SuperSpectre_LaunchFragDrone_Think( entity npc, int activeMinions_
 	// drop rest in pre-searched spots
 	foreach ( targetOrigin in targetOrigins )
 	{
-		thread LaunchSpawnerProjectile( npc, targetOrigin, activeMinions_EntArrayID )
+		thread LaunchSpawnerProjectile( npc, targetOrigin, activeMinions_EntArrayID, droneSettings )
 		npc.WaitSignal( "OnSpecialAttack" )
 	}
 }

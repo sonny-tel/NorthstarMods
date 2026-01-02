@@ -9,6 +9,7 @@ const int REAPERS_PER_TEAM = 2
 const int LEVEL_SPECTRES = 125
 const int LEVEL_STALKERS = 380
 const int LEVEL_REAPERS = 500
+const float REAPER_RESPAWN_DEBOUNCE = 10.0
 
 // add settings
 global function AITdm_SetSquadsPerTeam
@@ -23,6 +24,7 @@ struct
 	array< int > levels = [] // Initilazed in `Spawner_Threaded`
 	array< array< string > > podEntities = [ [ "npc_soldier" ], [ "npc_soldier" ] ]
 	array< bool > reapers = [ false, false ]
+	table< int, float > reaperRespawnTimes = {}
 
 	// default settings
 	int squadsPerTeam = SQUADS_PER_TEAM 
@@ -43,9 +45,11 @@ void function GamemodeAITdm_Init()
 	AddCallback_OnPlayerKilled( HandleScoreEvent )
 		
 	AddCallback_OnClientConnected( OnPlayerConnected )
-	
+	AddCallback_EntitiesDidLoad( LoadEntities )
+
 	AddCallback_NPCLeeched( OnSpectreLeeched )
-	
+	AddCallback_OnNPCKilled( OnReaperKilled )
+
 	if ( GetCurrentPlaylistVarInt( "aitdm_archer_grunts", 0 ) == 0 )
 	{
 		AiGameModes_SetNPCWeapons( "npc_soldier", [ "mp_weapon_rspn101", "mp_weapon_dmr", "mp_weapon_r97", "mp_weapon_lmg" ] )
@@ -58,9 +62,18 @@ void function GamemodeAITdm_Init()
 		AiGameModes_SetNPCWeapons( "npc_spectre", [ "mp_weapon_rocket_launcher" ] )
 		AiGameModes_SetNPCWeapons( "npc_stalker", [ "mp_weapon_rocket_launcher" ] )
 	}
+
+	file.levelSpectres = GetCurrentPlaylistVarInt( "aitdm_level_spectres", LEVEL_SPECTRES )
+	file.levelStalkers = GetCurrentPlaylistVarInt( "aitdm_level_stalkers", LEVEL_STALKERS )
+	file.levelReapers = GetCurrentPlaylistVarInt( "aitdm_level_reapers", LEVEL_REAPERS )
 	
 	ScoreEvent_SetupEarnMeterValuesForMixedModes()
 	SetupGenericTDMChallenge()
+}
+
+void function LoadEntities()
+{
+	ValidateAndFinalizePendingStationaryPositions()
 }
 
 // add settings
@@ -302,31 +315,35 @@ void function Spawner_Threaded( int team )
 		int reaperCount = GetNPCArrayEx( "npc_super_spectre", team, -1, <0,0,0>, -1 ).len()
 		
 		// REAPERS
-		if ( file.reapers[ index ] )
-		{
-			array< entity > points = SpawnPoints_GetDropPod()
-			array< entity > validPoints
+        if ( file.reapers[ index ] )
+        {
+            array< entity > points = SpawnPoints_GetDropPod()
+            array< entity > validPoints
 
-			foreach ( entity point in points )
-			{
-				if ( IsSpawnPointValidForAITDM( point ) == false )
-					continue
+            foreach ( entity point in points )
+            {
+                if ( IsSpawnPointValidForAITDM( point ) == false )
+                    continue
 
-				validPoints.append( point )
-			}
+                validPoints.append( point )
+            }
 
-			if( validPoints.len() == 0 )
-			{
-				printt("WARNING: No valid reaper spawn points found, defaulting to all drop pod points" )
-				validPoints = points
-			}
+            if( validPoints.len() == 0 )
+            {
+                printt("WARNING: No valid reaper spawn points found, defaulting to all drop pod points" )
+                validPoints = points
+            }
 
-			if ( reaperCount < file.reapersPerTeam )
-			{
-				entity node = validPoints[ GetSpawnPointIndex( validPoints, team ) ]
-				waitthread AiGameModes_SpawnReaper( node.GetOrigin(), node.GetAngles(), team, "npc_super_spectre_aitdm", ReaperHandler )
-			}
-		}
+            // ensure debounce entry exists for this team
+            if ( !( team in file.reaperRespawnTimes ) )
+                file.reaperRespawnTimes[ team ] <- 0.0
+
+            if ( reaperCount < file.reapersPerTeam && Time() > file.reaperRespawnTimes[ team ] )
+            {
+                entity node = validPoints[ GetSpawnPointIndex( validPoints, team ) ]
+                waitthread AiGameModes_SpawnReaper( node.GetOrigin(), node.GetAngles(), team, "npc_super_spectre_aitdm", ReaperHandler )
+            }
+        }
 		
 		// NORMAL SPAWNS
 		if ( count < file.squadsPerTeam * 4 - 2 )
@@ -553,6 +570,16 @@ void function OnSpectreLeeched( entity spectre, entity player )
 	AddTeamScore( player.GetTeam(), 1 )
 	player.AddToPlayerGameStat( PGS_ASSAULT_SCORE, 1 )
 	player.SetPlayerNetInt("AT_bonusPoints", player.GetPlayerGameStat( PGS_ASSAULT_SCORE ) )
+}
+
+void function OnReaperKilled( entity victim, entity attacker, var damageInfo )
+{
+	// Basic checks
+	if ( victim.GetClassName() != "npc_super_spectre" )
+		return
+	
+	int team = victim.GetTeam()
+	file.reaperRespawnTimes[ team ] <- Time() + GetCurrentPlaylistVarFloat("aitdm_reaper_debounce", REAPER_RESPAWN_DEBOUNCE)
 }
 
 // Same as SquadHandler, just for reapers
