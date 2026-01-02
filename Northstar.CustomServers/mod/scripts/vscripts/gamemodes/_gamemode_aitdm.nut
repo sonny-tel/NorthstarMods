@@ -34,7 +34,7 @@ struct
 
 void function GamemodeAITdm_Init()
 {
-	SetSpawnpointGamemodeOverride( ATTRITION ) // use bounty hunt spawns as vanilla game has no spawns explicitly defined for aitdm
+	SetSpawnpointGamemodeOverride( TEAM_DEATHMATCH ) // use bounty hunt spawns as vanilla game has no spawns explicitly defined for aitdm
 
 	AddCallback_GameStateEnter( eGameState.Prematch, OnPrematchStart )
 	AddCallback_GameStateEnter( eGameState.Playing, OnPlaying )
@@ -295,9 +295,26 @@ void function Spawner_Threaded( int team )
 		if ( file.reapers[ index ] )
 		{
 			array< entity > points = SpawnPoints_GetDropPod()
+			array< entity > validPoints
+
+			foreach ( entity point in points )
+			{
+				if ( point.HasKey( "gamemode_at" ) )
+					if ( point.kv[ "gamemode_at" ] == "0" )
+						continue
+
+				validPoints.append( point )
+			}
+
+			if( validPoints.len() == 0 )
+			{
+				printt("WARNING: No valid reaper spawn points found, defaulting to all drop pod points" )
+				validPoints = points
+			}
+
 			if ( reaperCount < file.reapersPerTeam )
 			{
-				entity node = points[ GetSpawnPointIndex( points, team ) ]
+				entity node = validPoints[ GetSpawnPointIndex( validPoints, team ) ]
 				waitthread AiGameModes_SpawnReaper( node.GetOrigin(), node.GetAngles(), team, "npc_super_spectre_aitdm", ReaperHandler )
 			}
 		}
@@ -308,19 +325,51 @@ void function Spawner_Threaded( int team )
 			string ent = file.podEntities[ index ][ RandomInt( file.podEntities[ index ].len() ) ]
 			
 			array< entity > points = GetZiplineDropshipSpawns()
-			// Prefer dropship when spawning grunts
-			if ( ent == "npc_soldier" && points.len() != 0 )
+			array< entity > validPoints
+
+			foreach ( entity point in points )
 			{
-				if ( RandomInt( points.len() ) )
+				if ( point.HasKey( "gamemode_at" ) )
+					if ( point.kv[ "gamemode_at" ] == "0" )
+						continue
+
+				validPoints.append( point )
+			}
+
+			if( validPoints.len() == 0 )
+			{
+				printt("WARNING: No valid dropship spawn points found, defaulting to all zipline dropship points" )
+				validPoints = points
+			}
+
+			// Prefer dropship when spawning grunts
+			if ( ent == "npc_soldier" && validPoints.len() != 0 )
+			{
+				if ( RandomInt( validPoints.len() ) )
 				{
-					entity node = points[ GetSpawnPointIndex( points, team ) ]
+					entity node = validPoints[ GetSpawnPointIndex( validPoints, team ) ]
 					waitthread Aitdm_SpawnDropShip( node, team )
 					continue
 				}
 			}
-			
+
+
 			points = SpawnPoints_GetDropPod()
-			entity node = points[ GetSpawnPointIndex( points, team ) ]
+			validPoints = []
+
+			foreach ( entity point in points )
+			{
+				if ( point.HasKey( "gamemode_at" ) )
+					if ( point.kv[ "gamemode_at" ] == "0" )
+						continue
+
+				validPoints.append( point )
+			}
+	
+			if( validPoints.len() == 0 )
+				validPoints = points
+
+			entity node = validPoints[ GetSpawnPointIndex( validPoints, team ) ]
 			waitthread AiGameModes_SpawnDropPod( node.GetOrigin(), node.GetAngles(), team, ent, SquadHandler )
 		}
 		
