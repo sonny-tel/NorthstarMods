@@ -9,7 +9,7 @@ const int REAPERS_PER_TEAM = 2
 const int LEVEL_SPECTRES = 125
 const int LEVEL_STALKERS = 380
 const int LEVEL_REAPERS = 500
-const float REAPER_RESPAWN_DEBOUNCE = 10.0
+const float REAPER_RESPAWN_DEBOUNCE = 0.0 
 
 // add settings
 global function AITdm_SetSquadsPerTeam
