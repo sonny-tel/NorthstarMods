@@ -31,9 +31,15 @@ struct NoSpawnArea
 	string id
 	int blockedTeam
 	int blockOtherTeams
-	vector position
+	vector origin
 	float lifetime
-	float radius
+	float lengthSqr
+	bool rectangle
+	vector forward
+	vector right
+	vector left
+	vector lowerRight
+	vector upperLeft
 }
 
 struct {
@@ -105,28 +111,48 @@ bool function RespawnsEnabled()
 	return file.respawnsEnabled
 }
 
-void function InitSpawnpoint( entity spawnpoint ) 
+void function InitSpawnpoint( entity spawnpoint )
 {
-	spawnpoint.s.lastUsedTime <- -999
-	spawnpoint.s.inUse <- false
+	if ( GameModeRemove( spawnpoint ) )
+		return
+
+	spawnpoint.s.enabled <- true
+	spawnpoint.s.lastUsedTime <- -9999.0
+	spawnpoint.s.inUse <- false // for drop pod logic
 } 
 
-string function CreateNoSpawnArea( int blockSpecificTeam, int blockEnemiesOfTeam, vector position, float lifetime, float radius )
+/*
+	if you only pass length it will treat it as a circle and use the length as the radius.
+	if you pass the length, width and angles it will become a rectangle that extends from the origin out.
+	direction is based on the forward vector of the angles passed.
+*/
+string function CreateNoSpawnArea( int blockSpecificTeam, int blockEnemiesOfTeam, vector origin, float timeout, float length, float width = -1, angles = null )
 {
-	NoSpawnArea noSpawnArea
-	noSpawnArea.blockedTeam = blockSpecificTeam
-	noSpawnArea.blockOtherTeams = blockEnemiesOfTeam
-	noSpawnArea.position = position
-	noSpawnArea.lifetime = lifetime
-	noSpawnArea.radius = radius
-	
-	noSpawnArea.id = UniqueString( "noSpawnArea" )
-	
-	if ( lifetime > 0 )
-		thread NoSpawnAreaLifetime( noSpawnArea )
-	
-	file.noSpawnAreas.append( noSpawnArea )
-	return noSpawnArea.id
+	NoSpawnArea area
+	area.blockedTeam = blockSpecificTeam
+	area.blockOtherTeams = blockEnemiesOfTeam
+	area.origin = origin
+	area.lifetime = timeout
+	area.lengthSqr = length * length
+	area.rectangle = (width != -1)
+
+	if ( area.rectangle )
+	{
+		Assert( angles != null, "CreateNoSpawnArea: angles required for rectangular area" )
+		area.forward = AnglesToForward( angles )
+		area.right = AnglesToRight( angles )
+		area.left = area.right * -1
+		area.lowerRight = origin + area.right * ( width / 2 )
+		area.upperLeft = origin + area.forward * length - area.right * ( width / 2 )
+	}
+
+	area.id = UniqueString( string( Time() ) )
+
+	if ( timeout >= 0 )
+		thread NoSpawnAreaLifetime( area )
+
+	file.noSpawnAreas.append( area )
+	return area.id
 }
 
 void function NoSpawnAreaLifetime( NoSpawnArea noSpawnArea )
@@ -144,26 +170,52 @@ void function DeleteNoSpawnArea( string noSpawnIdx )
 	}
 }
 
-bool function SpawnPointInNoSpawnArea( vector vec, int team )
+bool function SpawnPointInNoSpawnArea( vector origin, int team )
 {
-	foreach ( noSpawnArea in file.noSpawnAreas )
+	foreach ( area in file.noSpawnAreas )
 	{
-		if ( Distance( noSpawnArea.position, vec ) < noSpawnArea.radius )
+		if ( (area.blockedTeam > TEAM_INVALID) && (area.blockedTeam != team) )
+			continue
+		if ( (area.blockOtherTeams > TEAM_INVALID) && !IsEnemyTeam( area.blockOtherTeams, team ) )
+			continue
+
+		if ( DistanceSqr( origin, area.origin ) > area.lengthSqr )
+			continue
+
+		if ( !area.rectangle )
 		{
-			if ( noSpawnArea.blockedTeam != TEAM_INVALID && noSpawnArea.blockedTeam == team )
-				return true
-			
-			if ( noSpawnArea.blockOtherTeams != TEAM_INVALID && noSpawnArea.blockOtherTeams != team )
-				return true
+			return true // inside radius of no spawn area, return true
 		}
+
+		// check to see if it's inside the rectangle
+		vector lowerVector = origin - area.lowerRight
+		vector upperVector = origin - area.upperLeft
+		if ( DotProduct( area.forward, lowerVector ) < 0 )
+			continue
+		if ( DotProduct( area.left, lowerVector ) < 0 )
+			continue
+		if ( DotProduct( area.right, upperVector ) < 0 )
+			continue
+
+		return true // inside the rectangle, return true
 	}
-	
+
 	return false
 }
 
 bool function IsSpawnpointValidDrop( entity spawnpoint, int team )
 {
-	if ( spawnpoint.IsOccupied() || spawnpoint.s.inUse )
+	if ( spawnpoint.s.inUse )
+		return false
+
+	if ( spawnpoint.s.enabled != null && !spawnpoint.s.enabled )
+		return false
+
+	int spawnpointTeam = spawnpoint.GetTeam()
+	if ( spawnpointTeam != TEAM_UNASSIGNED && spawnpointTeam != team )
+		return false
+
+	if ( spawnpoint.IsOccupied() )
 		return false
 
 	return true
@@ -279,10 +331,10 @@ entity function GetBestSpawnpoint( entity player, array<entity> spawnpoints, boo
 	{
 		CodeWarning( "Map has no proper spawn points, falling back to info_player_start" )
 		entity start = GetEnt( "info_player_start" )
-		
+
 		if ( IsValid( start ) )
 		{
-			start.s.lastUsedTime <- -999
+			start.s.lastUsedTime <- -9999.0
 			validSpawns.append( start )
 		}
 		else
@@ -312,7 +364,13 @@ bool function IsSpawnpointValid( entity spawnpoint, int team )
 	foreach ( bool functionref( entity, int ) customValidationRule in file.customSpawnpointValidationRules )
 		if ( !customValidationRule( spawnpoint, team ) )
 			return false
-		
+
+	if ( spawnpoint.s.enabled != null && !spawnpoint.s.enabled )
+		return false
+
+	if ( spawnpoint.s.lastUsedTime == Time() )
+		return false
+
 	if ( !IsSpawnpointValidDrop( spawnpoint, team ) || Time() - spawnpoint.s.lastUsedTime <= 10.0 )
 		return false
 	
