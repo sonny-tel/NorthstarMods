@@ -238,9 +238,15 @@ function InitFrontLine()
 
 		printl( "[frontline] InitFrontLine built " + file.frontlineGroupTable.len() + " groups; picked current=" + ( file.currentFrontline ? file.currentFrontline.name : "null" ) )
 		if ( file.currentFrontline )
+		{
 			printl( "[frontline] current center=" + file.currentFrontline.frontlineCenter + " dir=" + file.currentFrontline.combatDir )
-
-	SetFrontlineSides( file.currentFrontline, TEAM_MILITIA )
+			SetFrontlineSides( file.currentFrontline, TEAM_MILITIA )
+		}
+		else
+		{
+			printl( "[frontline] disabling frontline: no valid groups for map" )
+			return false
+		}
 #endif
 
 	return true
@@ -378,6 +384,8 @@ function CheckFrontlineOverrun( losingTeam )
 
 	local teamScore = [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ]
 	local frontline = file.currentFrontline
+	if ( frontline == null )
+		return
 	local center = frontline.frontlineCenter
 	local combatDir = GetTeamCombatDir( frontline, otherTeam )
 	local playerArray = GetPlayerArray()
@@ -417,6 +425,11 @@ function MoveFrontline( winningTeam )
 		return
 
 	file.currentFrontline = GetBestFrontline( winningTeam )
+	if ( file.currentFrontline == null )
+	{
+		printl( "[frontline] MoveFrontline aborted: no frontline available" )
+		return
+	}
 	file.currentFrontline.useCount++
 	file.nextOverrunCheck = Time() + FRONTLINE_MIN_TIME
 
