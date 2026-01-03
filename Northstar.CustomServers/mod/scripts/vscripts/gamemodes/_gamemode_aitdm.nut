@@ -114,6 +114,15 @@ void function OnPlaying()
 	// don't run spawning code if ains and nms aren't up to date
 	if ( GetAINScriptVersion() == AIN_REV && GetNodeCount() != 0 )
 	{
+		FlagInit( "FrontlineInitiated", false )
+		local initOk = InitFrontLine()
+		printl( "[frontline] OnPlaying InitFrontLine result=" + initOk )
+		if ( initOk )
+		{
+			FlagSet( "FrontlineInitiated" )
+			GetFrontline( TEAM_IMC )
+		}
+
 		thread SpawnIntroBatch_Threaded( TEAM_MILITIA )
 		thread SpawnIntroBatch_Threaded( TEAM_IMC )
 	}
@@ -290,11 +299,21 @@ void function Spawner_Threaded( int team )
 
 	// used to index into escalation arrays
 	int index = team == TEAM_MILITIA ? 0 : 1
+	float frontlineTickNext = Time()
 	
 	file.levels = [ file.levelSpectres, file.levelSpectres ] // due we added settings, should init levels here!
 	
 	while( true )
 	{
+		// keep frontline refreshed off the main spawn loop
+		#if SERVER
+		if ( Flag( "FrontlineInitiated" ) && Time() >= frontlineTickNext )
+		{
+			GetFrontline( TEAM_IMC )
+			frontlineTickNext = Time() + 1.0 // GetFrontline itself clamps to 1Hz; keep this aligned
+		}
+		#endif
+
 		Escalate( team )
 		
 		// TODO: this should possibly not count scripted npc spawns, probably only the ones spawned by this script
@@ -439,6 +458,46 @@ void function Escalate( int team )
 // These zones should swap based on which team is dominating where
 int function GetSpawnPointIndex( array< entity > points, int team )
 {
+	#if SERVER
+	if ( Flag( "FrontlineInitiated" ) )
+	{
+		var frontline = GetCurrentFrontline()
+		if ( frontline != null )
+		{
+			vector combatDir = Vector( GetTeamCombatDir( frontline, team ).x, GetTeamCombatDir( frontline, team ).y, GetTeamCombatDir( frontline, team ).z )
+			vector edgeOrigin = Vector( frontline.frontlineCenter.x, frontline.frontlineCenter.y, frontline.frontlineCenter.z )
+
+			int bestIndex = -1
+			float bestRating = -99999.0
+			for ( int i = 0; i < points.len(); i++ )
+			{
+				entity point = points[i]
+				vector org = point.GetOrigin()
+				bool infront = IsPointInFrontofLine( org, edgeOrigin, combatDir )
+				float rating
+				if ( !infront )
+				{
+					float distSqr = Distance2DSqr( org, edgeOrigin )
+					rating = GraphCapped( distSqr, FRONTLINE_MIN_DIST_SQR, FRONTLINE_MAX_DIST_SQR, 1.0, 0.0 ) * 2.0
+				}
+				else
+				{
+					rating = -100.0
+				}
+
+				if ( rating > bestRating )
+				{
+					bestRating = rating
+					bestIndex = i
+				}
+			}
+
+			if ( bestIndex != -1 )
+				return bestIndex
+		}
+	}
+	#endif
+
 	entity zone = DecideSpawnZone_Generic( points, team )
 	
 	if ( IsValid( zone ) )
@@ -473,82 +532,135 @@ void function SquadHandler( array<entity> guys )
 		}
 	}
 
-	// Not all maps have assaultpoints / have weird assault points ( looking at you ac )
-	// So we use enemies with a large radius
-	while ( GetNPCArrayOfEnemies( team ).len() == 0 ) // if we can't find any enemy npcs, keep waiting
-		WaitFrame()
+	bool frontlineReady = Flag( "FrontlineInitiated" ) && GetCurrentFrontline() != null
 
-	// our waiting is end, check if any soldiers left
-	bool squadAlive = false
-	foreach ( entity guy in guys )
+	// If frontline is not ready, fall back to old random-enemy assault behavior
+	if ( !frontlineReady )
 	{
-		if ( IsAlive( guy ) )
-			squadAlive = true
-		else
-			guys.removebyvalue( guy )
-	}
-	if ( !squadAlive )
-		return
+		// Not all maps have assaultpoints / have weird assault points ( looking at you ac )
+		// So we use enemies with a large radius
+		while ( GetNPCArrayOfEnemies( team ).len() == 0 ) // if we can't find any enemy npcs, keep waiting
+			WaitFrame()
 
-	array<entity> points = GetNPCArrayOfEnemies( team )
-	
-	vector point
-	point = points[ RandomInt( points.len() ) ].GetOrigin()
-	
-	// Setup AI, first assault point
-	foreach ( guy in guys )
-	{
-		if ( IsAlive( guy ) )
+		// our waiting is end, check if any soldiers left
+		bool squadAlive = false
+		foreach ( entity guy in guys )
 		{
-			guy.EnableNPCFlag( NPC_ALLOW_PATROL | NPC_ALLOW_INVESTIGATE | NPC_ALLOW_HAND_SIGNALS | NPC_ALLOW_FLEE )
-			guy.AssaultPoint( point )
-			guy.AssaultSetGoalRadius( 1600 ) // 1600 is minimum for npc_stalker, works fine for others
+			if ( IsAlive( guy ) )
+				squadAlive = true
+			else
+				guys.removebyvalue( guy )
 		}
+		if ( !squadAlive )
+			return
 
-		//thread AITdm_CleanupBoredNPCThread( guy )
-	}
-	
-	// Every 5 - 15 secs change AssaultPoint
-	while ( true )
-	{	
+		array<entity> points = GetNPCArrayOfEnemies( team )
+		
+		vector point
+		point = points[ RandomInt( points.len() ) ].GetOrigin()
+		
+		// Setup AI, first assault point
 		foreach ( guy in guys )
 		{
-			// Check if alive
+			if ( IsAlive( guy ) )
+			{
+				guy.EnableNPCFlag( NPC_ALLOW_PATROL | NPC_ALLOW_INVESTIGATE | NPC_ALLOW_HAND_SIGNALS | NPC_ALLOW_FLEE )
+				guy.AssaultPoint( point )
+				guy.AssaultSetGoalRadius( 1600 ) // 1600 is minimum for npc_stalker, works fine for others
+			}
+
+			//thread AITdm_CleanupBoredNPCThread( guy )
+		}
+		
+		// Every 5 - 15 secs change AssaultPoint
+		while ( true )
+		{	
+			foreach ( guy in guys )
+			{
+				// Check if alive
+				if ( !IsAlive( guy ) )
+				{
+					guys.removebyvalue( guy )
+					continue
+				}
+				// Stop func if our squad has been killed off
+				if ( guys.len() == 0 )
+					return
+			}
+
+			// Get point and send our whole squad to it
+			points = GetNPCArrayOfEnemies( team )
+			if ( points.len() == 0 ) // can't find any points here
+			{
+				WaitFrame()
+				continue
+			}
+				
+			point = points[ RandomInt( points.len() ) ].GetOrigin()
+			
+			foreach ( guy in guys )
+			{
+				if ( IsAlive( guy ) )
+					guy.AssaultPoint( point )
+			}
+
+			wait RandomFloatRange(5.0,15.0)
+		}
+		return
+	}
+
+	// Frontline path: continuously push squads toward the current frontline goal
+	while ( true )
+	{
+		// prune dead entries and grab a representative alive member
+		entity firstAlive = null
+		foreach ( entity guy in guys )
+		{
 			if ( !IsAlive( guy ) )
 			{
 				guys.removebyvalue( guy )
 				continue
 			}
-			// Stop func if our squad has been killed off
-			if ( guys.len() == 0 )
-				return
+			if ( firstAlive == null )
+				firstAlive = guy
 		}
 
-		// Get point and send our whole squad to it
-		points = GetNPCArrayOfEnemies( team )
-		if ( points.len() == 0 ) // can't find any points here
+		if ( firstAlive == null )
+			return
+
+		var frontline = GetCurrentFrontline()
+		if ( frontline == null )
 		{
-			// Have to wait some amount of time before continuing
-			// because if we don't the server will continue checking this
-			// forever, aren't loops fun?
-			// This definitely didn't waste ~8 hours of my time reverting various
-			// launcher PRs before finding this mods PR that caused servers to
-			// freeze forever before having their process killed by the dedi watchdog
-			// without any logging. If anyone reads this, PLEASE add logging to your scripts
-			// for when weird edge cases happen, it can literally only help debugging. -Spoon
-			WaitFrame()
+			wait 0.5
 			continue
 		}
-			
-		point = points[ RandomInt( points.len() ) ].GetOrigin()
-		
-		foreach ( guy in guys )
+
+		// Determine if this squad is spectre-based without assuming the entity exposes IsSpectre()
+		local isSpectreSquad = false
+		if ( IsAlive( firstAlive ) && firstAlive.IsNPC() )
 		{
-			if ( IsAlive( guy ) )
-				guy.AssaultPoint( point )
+			string className = firstAlive.GetClassName()
+			isSpectreSquad = className == "npc_spectre"
+		}
+		int squadIndex = 0 // map squad index by chunking groups of size 3; keeps positions spread
+		if ( guys.len() )
+			squadIndex = firstAlive.entindex() % 3 // lightweight spread
+
+		local goalEnt = GetFrontlineGoal( squadIndex, team, isSpectreSquad )
+		local goal = goalEnt != null ? goalEnt.GetOrigin() : frontline.frontlineCenter
+		local dir = GetTeamCombatDir( frontline, team )
+		goal += dir * 256.0
+
+		foreach ( entity guy in guys )
+		{
+			if ( !IsAlive( guy ) )
+				continue
+			guy.EnableNPCFlag( NPC_ALLOW_PATROL | NPC_ALLOW_INVESTIGATE | NPC_ALLOW_HAND_SIGNALS | NPC_ALLOW_FLEE )
+			guy.AssaultPoint( goal )
+			guy.AssaultSetGoalRadius( 1600 )
 		}
 
-		wait RandomFloatRange(5.0,15.0)
+		wait RandomFloatRange( 4.0, 8.0 )
 	}
 }
 
