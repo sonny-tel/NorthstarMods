@@ -365,6 +365,9 @@ void function OnEntitiesDidLoad()
 					// Get droppod spawns within the camp
 					foreach ( entity spawnpoint in SpawnPoints_GetDropPod() )
 					{
+						if( !IsValidGamemodeSpawnpoint( spawnpoint ) )
+							continue
+
 						vector campPos = info_target.GetOrigin()
 						vector spawnPos = spawnpoint.GetOrigin()
 						if ( Distance( campPos, spawnPos ) < campStruct.radius )
@@ -374,6 +377,9 @@ void function OnEntitiesDidLoad()
 					// Get titan spawns within the camp
 					foreach ( entity spawnpoint in SpawnPoints_GetTitan() )
 					{
+						if( !IsValidGamemodeSpawnpoint( spawnpoint ) )
+							continue
+
 						vector campPos = info_target.GetOrigin()
 						vector spawnPos = spawnpoint.GetOrigin()
 						if ( Distance( campPos, spawnPos ) < campStruct.radius )
