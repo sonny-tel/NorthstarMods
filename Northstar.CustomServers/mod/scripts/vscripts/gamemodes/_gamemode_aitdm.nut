@@ -238,7 +238,9 @@ void function SpawnIntroBatch_Threaded( int team )
 
 	shipNodes = GetValidIntroDropShipSpawn( podNodes )
 
-
+    if ( file.disallowedDropshipMaps.contains( GetMapName() ) )
+        shipNodes = []
+		
 	// Spawn logic
 	int startIndex = 0
 	bool first = true
