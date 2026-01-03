@@ -18,6 +18,9 @@ global function RateSpawnpoints_Frontline
 global function RateSpawnpoints_SpawnZones
 global function DecideSpawnZone_Generic
 
+global function IsSpawnpointValid
+global function IsValidGamemodeSpawnpoint
+
 global struct spawnZoneProperties{
 	int controllingTeam = TEAM_UNASSIGNED
 	entity minimapEnt = null
@@ -349,17 +352,8 @@ entity function GetBestSpawnpoint( entity player, array<entity> spawnpoints, boo
 
 bool function IsSpawnpointValid( entity spawnpoint, int team )
 {
-	if ( !spawnpoint.HasKey( "ignoreGamemode" ) || spawnpoint.HasKey( "ignoreGamemode" ) && spawnpoint.kv.ignoreGamemode == "0" ) // used by script-spawned spawnpoints
-	{
-		if ( file.spawnpointGamemodeOverride != "" )
-		{
-			string gamemodeKey = "gamemode_" + file.spawnpointGamemodeOverride
-			if ( spawnpoint.HasKey( gamemodeKey ) && ( spawnpoint.kv[ gamemodeKey ] == "0" || spawnpoint.kv[ gamemodeKey ] == "" ) )
-				return false
-		}
-		else if ( GameModeRemove( spawnpoint ) )
-			return false
-	}
+	if ( !IsValidGamemodeSpawnpoint( spawnpoint ) ) // used by script-spawned spawnpoints
+		return false
 	
 	foreach ( bool functionref( entity, int ) customValidationRule in file.customSpawnpointValidationRules )
 		if ( !customValidationRule( spawnpoint, team ) )
@@ -391,6 +385,22 @@ bool function IsSpawnpointValid( entity spawnpoint, int team )
 	return !spawnpoint.IsVisibleToEnemies( team )
 }
 
+bool function IsValidGamemodeSpawnpoint( entity spawnpoint )
+{
+	if ( !spawnpoint.HasKey( "ignoreGamemode" ) || spawnpoint.HasKey( "ignoreGamemode" ) && spawnpoint.kv.ignoreGamemode == "0" ) // used by script-spawned spawnpoints
+	{
+		if ( file.spawnpointGamemodeOverride != "" )
+		{
+			string gamemodeKey = "gamemode_" + file.spawnpointGamemodeOverride
+			if ( spawnpoint.HasKey( gamemodeKey ) && ( spawnpoint.kv[ gamemodeKey ] == "0" || spawnpoint.kv[ gamemodeKey ] == "" ) )
+				return false
+		}
+		else if ( GameModeRemove( spawnpoint ) )
+			return false
+	}
+
+	return true
+}
 
 
 
