@@ -25,6 +25,7 @@ struct
 	array< array< string > > podEntities = [ [ "npc_soldier" ], [ "npc_soldier" ] ]
 	array< bool > reapers = [ false, false ]
 	table< int, float > reaperRespawnTimes = {}
+	array< string > disallowedDropshipMaps = [ "mp_grave" ]
 
 	// default settings
 	int squadsPerTeam = SQUADS_PER_TEAM 
@@ -102,17 +103,6 @@ void function AITdm_SetLevelReapers( int level )
 	file.levelReapers = level
 }
 //
-
-bool function IsSpawnPointValidForAITDM( entity point )
-{
-	string gamemodeKey = "gamemode_" + GetSpawnpointGamemodeOverride() 
-
-	if ( point.HasKey( gamemodeKey ) )
-		if ( point.kv[ gamemodeKey ] == "0" || point.kv[ gamemodeKey ] == "" )
-			return false
-
-	return true
-}
 
 // Starts skyshow, this also requiers AINs but doesn't crash if they're missing
 void function OnPrematchStart()
@@ -322,7 +312,7 @@ void function Spawner_Threaded( int team )
 
             foreach ( entity point in points )
             {
-                if ( IsSpawnPointValidForAITDM( point ) == false )
+                if ( IsSpawnpointValid( point, team ) == false )
                     continue
 
                 validPoints.append( point )
@@ -355,7 +345,7 @@ void function Spawner_Threaded( int team )
 
 			foreach ( entity point in points )
 			{
-				if ( IsSpawnPointValidForAITDM( point ) == false )
+				if ( IsSpawnpointValid( point, team ) == false )
 					continue
 
 				validPoints.append( point )
@@ -366,6 +356,9 @@ void function Spawner_Threaded( int team )
 				printt("WARNING: No valid dropship spawn points found, defaulting to all zipline dropship points" )
 				validPoints = points
 			}
+		
+			if( file.disallowedDropshipMaps.contains( GetMapName() ) )
+				validPoints = []
 
 			// Prefer dropship when spawning grunts
 			if ( ent == "npc_soldier" && validPoints.len() != 0 )
@@ -384,7 +377,7 @@ void function Spawner_Threaded( int team )
 
 			foreach ( entity point in points )
 			{
-				if ( IsSpawnPointValidForAITDM( point ) == false )
+				if ( IsSpawnpointValid( point, team ) == false )
 					continue
 
 				validPoints.append( point )
