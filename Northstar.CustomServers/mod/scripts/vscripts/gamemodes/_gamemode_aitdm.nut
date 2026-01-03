@@ -25,7 +25,6 @@ struct
 	array< array< string > > podEntities = [ [ "npc_soldier" ], [ "npc_soldier" ] ]
 	array< bool > reapers = [ false, false ]
 	table< int, float > reaperRespawnTimes = {}
-	array< string > disallowedDropshipMaps = [ "mp_grave" ]
 
 	// default settings
 	int squadsPerTeam = SQUADS_PER_TEAM 
@@ -237,9 +236,6 @@ void function SpawnIntroBatch_Threaded( int team )
 	}
 
 	shipNodes = GetValidIntroDropShipSpawn( podNodes )
-
-    if ( file.disallowedDropshipMaps.contains( GetMapName() ) )
-        shipNodes = []
 		
 	// Spawn logic
 	int startIndex = 0
@@ -359,7 +355,7 @@ void function Spawner_Threaded( int team )
 				validPoints = points
 			}
 		
-			if( file.disallowedDropshipMaps.contains( GetMapName() ) )
+			if( AllowingAIDropships() == false )
 				validPoints = []
 
 			// Prefer dropship when spawning grunts

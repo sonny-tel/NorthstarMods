@@ -7,18 +7,30 @@ global function AiGameModes_SpawnDropPod
 global function AiGameModes_SpawnReaper
 global function AiGameModes_SpawnTitan
 
+global function DisallowAIDropships
+global function AllowingAIDropships
 global function GetValidIntroDropShipSpawn
-
 
 const INTRO_DROPSHIP_CUTOFF = 2000
 
 struct
 {
 	table< string, array<string> > npcWeaponsTable // npcs have their default weapon in aisettings file
+	bool disallowDropships = false
 } file
 
 void function AiGameModes_Init()
 {
+}
+
+void function DisallowAIDropships()
+{
+	file.disallowDropships = true
+}
+
+bool function AllowingAIDropships()
+{
+	return !file.disallowDropships
 }
 
 //------------------------------------------------------
@@ -221,6 +233,9 @@ array<entity> function GetValidIntroDropShipSpawn( array<entity> introNodes )
 	if ( GetZiplineDropshipSpawns().len() == 0 )
 		return []
 	
+	if( AllowingAIDropships() == false )
+		return []
+
 	foreach ( node in introNodes )
 	{
 		entity closestNode = GetClosest( GetZiplineDropshipSpawns(), node.GetOrigin() )
