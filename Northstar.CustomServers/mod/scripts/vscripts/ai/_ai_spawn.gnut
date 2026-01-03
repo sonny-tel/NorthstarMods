@@ -166,6 +166,11 @@ void function AiSpawn_EntitiesDidLoad()
 		}
 	}
 
+	FlagInit( "FrontlineInitiated", false )
+	local initOk = InitFrontLine()
+	printl( "[frontline] OnPlaying InitFrontLine result=" + initOk )
+	if ( initOk )
+		FlagSet( "FrontlineInitiated" )
 }
 
 const ESCALATION_INCOMBAT_TIMEOUT 	= 180

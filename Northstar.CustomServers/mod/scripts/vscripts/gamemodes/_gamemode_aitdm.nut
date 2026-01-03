@@ -114,15 +114,6 @@ void function OnPlaying()
 	// don't run spawning code if ains and nms aren't up to date
 	if ( GetAINScriptVersion() == AIN_REV && GetNodeCount() != 0 )
 	{
-		FlagInit( "FrontlineInitiated", false )
-		local initOk = InitFrontLine()
-		printl( "[frontline] OnPlaying InitFrontLine result=" + initOk )
-		if ( initOk )
-		{
-			FlagSet( "FrontlineInitiated" )
-			GetFrontline( TEAM_IMC )
-		}
-
 		thread SpawnIntroBatch_Threaded( TEAM_MILITIA )
 		thread SpawnIntroBatch_Threaded( TEAM_IMC )
 	}
