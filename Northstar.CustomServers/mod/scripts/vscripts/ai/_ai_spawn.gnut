@@ -83,8 +83,8 @@ void function AiSpawn_Init()
 	// just to insure that ai settings are being setup properly.
 	InitNpcSettingsFileNamesForDevMenu()
 	SetupSpawnAIButtons( TEAM_MILITIA )
-	AddCallback_EntitiesDidLoad( AiSpawn_EntitiesDidLoad )
 	#endif
+	AddCallback_EntitiesDidLoad( AiSpawn_EntitiesDidLoad )
 }
 
 void function AiSpawn_EntitiesDidLoad()
