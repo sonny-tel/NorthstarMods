@@ -737,7 +737,7 @@ function SetFrontlineSides( frontline, winningTeam )
 		if ( player.IsPlayer() && !IsAlive( player ) )
 			continue
 
-		if ( player.IsPlayer() && player.IsTitan() && player.GetDoomedState() )
+		if ( player.IsTitan() && GetDoomedState( player ) )
 			continue
 
 		if ( IsPointInFrontofLine( player.GetOrigin(), center, combatDir ) )
