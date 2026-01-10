@@ -1099,7 +1099,7 @@ void function OnServerSelected_Threaded( string password = "" )
 
 
 	printt( "Trying to authenticate with server: " + NSGetServerIDFromIndex( file.lastSelectedServer.index ) )
-
+	TriggerConnectToServerCallbacks()
 	if( password == "" )
 		ClientCommand( "connectWithRemoteID " + NSGetServerIDFromIndex( file.lastSelectedServer.index ) + " 0 0" )
 	else
