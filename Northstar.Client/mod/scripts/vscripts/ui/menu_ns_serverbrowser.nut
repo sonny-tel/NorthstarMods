@@ -813,7 +813,7 @@ void function OnDirectConnectDialog()
         return
 
     file.cancelConnection = false
-
+	TriggerConnectToServerCallbacks()
 	ClientCommand( "connect " + ip  + " 0")
 }
 
