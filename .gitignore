@@ -352,3 +352,6 @@ MigrationBackup/
 # Ignore navmeshes
 *.ain
 *.nm
+
+/*/
+!/Northstar.*/
