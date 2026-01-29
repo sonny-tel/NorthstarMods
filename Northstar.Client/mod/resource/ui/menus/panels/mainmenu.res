@@ -47,7 +47,7 @@
         navUp					MainMenuButton6
         navDown					MainMenuButton1
 
-        pin_to_sibling			ButtonRow2x0
+        pin_to_sibling			ButtonRow3x0
         pin_corner_to_sibling	TOP_LEFT
         pin_to_sibling_corner	BOTTOM_LEFT
     }
@@ -148,7 +148,7 @@
     {
         ControlName				RuiPanel
         xpos					-12
-        ypos					-38
+        ypos					28
         wide					744
         tall					100
         rui                     "ui/service_status.rpak"
@@ -163,7 +163,7 @@
     {
         ControlName				RuiPanel
         xpos					-12
-        ypos					-38
+        ypos				    28
         wide					744
         tall					100
         rui                     "ui/service_status.rpak"

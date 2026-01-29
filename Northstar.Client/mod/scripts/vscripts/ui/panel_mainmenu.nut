@@ -19,6 +19,9 @@ struct
 	array<void functionref()> spButtonFuncs
 	var mpButton
 	var fdButton
+	var modsBrowseButton
+	var modsManageButton
+	var modsSettingsButton
 	void functionref() mpButtonActivateFunc = null
 	var buttonData
 	array<var> menuButtons
@@ -89,6 +92,7 @@ void function InitMainMenuPanel()
 	Hud_AddEventHandler( file.fdButton, UIE_CLICK, OnPlayNSButton_Activate )
 	Hud_SetLocked( file.fdButton, true )
 
+
 	headerIndex++
 	buttonIndex = 0
 	var settingsHeader = AddComboButtonHeader( comboStruct, headerIndex, "#MENU_HEADER_SETTINGS" )
@@ -103,6 +107,17 @@ void function InitMainMenuPanel()
 		var videoButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#VIDEO" )
 		Hud_AddEventHandler( videoButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "VideoMenu" ) ) )
 	#endif
+
+	headerIndex++
+	buttonIndex = 0
+	var modsHeader = AddComboButtonHeader( comboStruct, headerIndex, "#MENU_TITLE_MODS" )
+	file.modsBrowseButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MODS_BROWSE" )
+	Hud_AddEventHandler( file.modsBrowseButton, UIE_CLICK, OnPlayMPButton_Activate )
+	file.modsManageButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#MODS_MANAGE" )
+	Hud_AddEventHandler( file.modsManageButton, UIE_CLICK, OpenModsMenu )
+	file.modsSettingsButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#SETTINGS" )
+	Hud_AddEventHandler( file.modsSettingsButton, UIE_CLICK, OpenModSettingsMenu )
+	Hud_SetLocked( file.modsBrowseButton, true )
 
 	var spotlightLargeButton = Hud_GetChild( file.spotlightPanel, "SpotlightLarge" )
 	spotlightLargeButton.SetNavLeft( file.spButtons[0] )
@@ -1053,4 +1068,14 @@ void function SpotlightButton_Activate( var button )
 		else
 			LaunchExternalWebBrowser( link, WEBBROWSER_FLAG_MUTEGAME )
 	}
+}
+
+void function OpenModsMenu( var button )
+{
+    AdvanceMenu( GetMenu( "ModListMenu" ) )
+}
+
+void function OpenModSettingsMenu( var button )
+{
+    AdvanceMenu( GetMenu( "ModSettings" ) )
 }

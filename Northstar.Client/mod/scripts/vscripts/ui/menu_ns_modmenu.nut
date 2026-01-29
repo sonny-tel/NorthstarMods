@@ -46,7 +46,14 @@ void function AddNorthstarModMenu()
 void function AddNorthstarModMenu_MainMenuFooter()
 {
 	string controllerStr = PrependControllerPrompts( BUTTON_Y, "#MENU_TITLE_MODS" )
-	AddMenuFooterOption( GetMenu( "MainMenu" ), BUTTON_Y, controllerStr, "#MENU_TITLE_MODS", AdvanceToModListMenu )
+	AddMenuFooterOption( GetMenu( "MainMenu" ),
+		BUTTON_Y,
+		PrependControllerPrompts( BUTTON_Y, "#AUTHENTICATION_AGREEMENT" ),
+		"#AUTHENTICATION_AGREEMENT",
+		OnAuthenticationAgreementButtonPressed,
+        ShouldShowFooterButtons
+	)
+	// AddMenuFooterOption( GetMenu( "MainMenu" ), BUTTON_Y, controllerStr, "#MENU_TITLE_MODS", AdvanceToModListMenu )
 	AddMenuFooterOption( GetMenu( "MainMenu" ), BUTTON_SHOULDER_LEFT, "#MENU_DEMOS", "#MENU_DEMOS", OpenDemoPickerMenu, HasDemos )
 }
 
@@ -142,14 +149,6 @@ void function InitModMenu()
 		PrependControllerPrompts( BUTTON_X, "#RELOAD_MODS" ),
 		"#RELOAD_MODS",
 		OnReloadModsButtonPressed
-	)
-	AddMenuFooterOption(
-		file.menu,
-		BUTTON_BACK,
-		PrependControllerPrompts( BUTTON_Y, "#AUTHENTICATION_AGREEMENT" ),
-		"#AUTHENTICATION_AGREEMENT",
-		OnAuthenticationAgreementButtonPressed,
-        ShouldShowFooterButtons
 	)
 
 	// Nuke weird rui on filter switch
