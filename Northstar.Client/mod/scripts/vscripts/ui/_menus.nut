@@ -112,6 +112,7 @@ void function UICodeCallback_CloseAllMenus()
 void function UICodeCallback_ActivateMenus()
 {
 	thread ConnectionDialog_Think()
+	thread ModDownloadDialog_Think()
 
 	if ( IsConnected() )
 		return

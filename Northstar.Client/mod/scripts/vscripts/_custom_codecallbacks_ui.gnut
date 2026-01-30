@@ -6,9 +6,11 @@ global function NSUICodeCallback_DownloadingModsStarted
 global function NSUICodeCallback_DownloadingModsStopped
 global function NSUICodeCallback_ConfirmDownloadMods
 global function ConnectionDialog_Think
+global function ModDownloadDialog_Think
 
 struct {
     bool running = false
+    bool downloadDialogThinkRunning = false
     string message = ""
     bool active = false
     string error = ""
@@ -20,6 +22,29 @@ struct {
 
 const int MB = 1024*1000;
 
+void function UpdateModDownloadDialogText( var header, var body, ModInstallState state )
+{
+    switch( state.status )
+    {
+        case eModInstallStatus.DOWNLOADING:
+            Hud_SetText( header, Localize( "#DOWNLOADING_MOD_TITLE_W_PROGRESS", string( state.ratio ) ) )
+            Hud_SetText( body, Localize( "#DOWNLOADING_MOD_TEXT_W_PROGRESS", state.name, state.version, floor( state.progress / MB ), floor( state.total / MB ) ) )
+            break
+        case eModInstallStatus.CHECKSUMING:
+            Hud_SetText( header, Localize( "#CHECKSUMING_TITLE" ) )
+            Hud_SetText( body, Localize( "#CHECKSUMING_TEXT", state.name, state.version ) )
+            break
+        case eModInstallStatus.EXTRACTING:
+            Hud_SetText( header, Localize( "#EXTRACTING_MOD_TITLE", string( state.ratio ) ) )
+            Hud_SetText( body, Localize( "#EXTRACTING_MOD_TEXT", state.name, state.version, floor( state.progress / MB ), floor( state.total / MB ) ) )
+            break
+        default:
+            Hud_SetText( header, Localize( "#DOWNLOADING_MOD_TITLE" ) )
+            Hud_SetText( body, Localize( "#DOWNLOADING_MOD_TEXT", state.name, state.version ) )
+            break
+    }
+}
+
 void function NSUICodeCallback_ConnectionCallbacksInit()
 {
     RegisterSignal( "NSConnectionStarted" )
@@ -27,6 +52,7 @@ void function NSUICodeCallback_ConnectionCallbacksInit()
     RegisterSignal( "NSConnectionFailed" )
     RegisterSignal( "NSConnectionStartDialog" )
     RegisterSignal( "NSModsDownloadStarted" )
+    RegisterSignal( "NSModsDownloadStopped" )
     RegisterSignal( "NSModsRequestConfirmation" )
 }
 
@@ -76,6 +102,70 @@ void function NSUICodeCallback_DownloadingModsStarted()
 void function NSUICodeCallback_DownloadingModsStopped()
 {
     file.downloading = false
+    Signal( uiGlobal.signalDummy, "NSModsDownloadStopped" )
+}
+
+void function ModDownloadDialog_Think()
+{
+    if ( file.downloadDialogThinkRunning )
+        return
+
+    file.downloadDialogThinkRunning = true
+
+    for ( ;; )
+    {
+        WaitSignal( uiGlobal.signalDummy, "NSModsDownloadStarted" )
+
+        // If we're currently connecting, ConnectionRunning_Think already owns the dialog UI.
+        if ( file.active )
+            continue
+
+        thread ModDownloadRunning_Think()
+    }
+}
+
+void function ModDownloadRunning_Think()
+{
+    EndSignal( uiGlobal.signalDummy, "NSModsDownloadStopped" )
+    EndSignal( uiGlobal.signalDummy, "NSConnectionStartDialog" )
+    EndSignal( uiGlobal.signalDummy, "NSConnectionStarted" )
+
+    OnThreadEnd(
+        function() : ()
+        {
+            // Only close dialogs if we're not transitioning into a connection-owned dialog.
+            if ( !file.active )
+                CloseAllDialogs()
+        }
+    )
+
+    DialogData dialogData
+    dialogData.header = "#DOWNLOADING_MOD_TITLE"
+    dialogData.message = ""
+    dialogData.showSpinner = true
+    dialogData.forceChoice = false
+    AddDialogButton( dialogData, "#DISMISS" )
+    OpenDialog( dialogData )
+
+    var menu = GetMenu( "Dialog" )
+    var header = Hud_GetChild( menu, "DialogHeader" )
+    var body = GetSingleElementByClassname( menu, "DialogMessageClass" )
+
+    for ( ;; )
+    {
+        if ( file.downloading )
+        {
+            ModInstallState state = NSGetModInstallState()
+            UpdateModDownloadDialogText( header, body, state )
+        }
+        else
+        {
+            // If the flag flipped without a signal for any reason, stop showing the dialog.
+            return
+        }
+
+        WaitFrame()
+    }
 }
 
 void function NSUICodeCallback_ConfirmDownloadMods(int modCount, string serverName)
@@ -168,26 +258,7 @@ void function ConnectionRunning_Think()
             if(file.downloading)
             {
                 ModInstallState state = NSGetModInstallState()
-
-                switch( state.status )
-                {
-	                case eModInstallStatus.DOWNLOADING:
-	                	Hud_SetText( header, Localize( "#DOWNLOADING_MOD_TITLE_W_PROGRESS", string( state.ratio ) ) )
-	                	Hud_SetText( body, Localize( "#DOWNLOADING_MOD_TEXT_W_PROGRESS", state.name, state.version, floor( state.progress / MB ), floor( state.total / MB ) ) )
-	                	break
-	                case eModInstallStatus.CHECKSUMING:
-	                	Hud_SetText( header, Localize( "#CHECKSUMING_TITLE" ) )
-	                	Hud_SetText( body, Localize( "#CHECKSUMING_TEXT", state.name, state.version ) )
-	                	break
-	                case eModInstallStatus.EXTRACTING:
-	                	Hud_SetText( header, Localize( "#EXTRACTING_MOD_TITLE", string( state.ratio ) ) )
-	                	Hud_SetText( body, Localize( "#EXTRACTING_MOD_TEXT", state.name, state.version, floor( state.progress / MB ), floor( state.total / MB ) ) )
-	                	break
-                    default:
-                        Hud_SetText( header, Localize( "#DOWNLOADING_MOD_TITLE" ) )
-                        Hud_SetText( body, Localize( "#DOWNLOADING_MOD_TEXT", state.name, state.version ) )
-                        break
-                }
+                UpdateModDownloadDialogText( header, body, state )
             }
             else
             {
