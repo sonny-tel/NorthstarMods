@@ -75,6 +75,16 @@ void function InitNorthstarCustomMatchSettingsMenu()
 		// AddEventHandlerToButton( panel, "BtnSwch", UIE_CLICK, OnSettingButtonPressed )
 		AddEventHandlerToButton( panel, "BtnSwch", UIE_CHANGE, OnSettingButtonChanged )
 		AddEventHandlerToButton( panel, "BtnSlide", UIE_CHANGE, OnSliderChanged )
+
+		var slider = Hud_GetChild( panel, "BtnSlide" )
+		var dropButton = Hud_GetChild( slider, "BtnDropButton" )
+		if ( dropButton != null )
+		{
+			Hud_AddEventHandler( dropButton, UIE_CHANGE, void function( var _ ) : ( slider )
+			{
+				OnSliderChanged( slider )
+			} )
+		}
 		
 		var textEntry = Hud_GetChild( panel, "TextEntrySetting" )
 		Hud_AddEventHandler( textEntry, UIE_LOSE_FOCUS, OnTextEntryChanged )
@@ -370,6 +380,7 @@ void function UpdateVisibleSettings()
 		{
 			Hud_SetVisible( menuline, false )
 			Hud_SetVisible( button, true )
+			Hud_SetEnabled( button, true )
 			Hud_SetVisible( slider, false )
 			Hud_SetVisible( header, false )
 			SetButtonRuiText( button, Localize( entry.label ) + " ->" )
@@ -387,6 +398,8 @@ void function UpdateVisibleSettings()
 				Hud_SetVisible( button, false )
 				Hud_SetVisible( slider, true )
 				Hud_SetVisible( textEntry, true )
+				Hud_SetEnabled( slider, true )
+				Hud_SetEnabled( textEntry, true )
 				
 				string playlistVar
 				if ( setting.playlistVar in file.localOverrides )
@@ -394,12 +407,6 @@ void function UpdateVisibleSettings()
 				else
 					playlistVar = string( GetCurrentPlaylistVarOrUseValue( setting.playlistVar, setting.defaultValue ) )
 
-				if( setting.playlistVar.len() != 0 )
-				{
-					int gamemodeIdx = expect int( level.ui.privatematch_mode )
-					Hud_SetGamemodeIdx( slider, gamemodeIdx )
-					Hud_SetPlaylistVarName( slider, setting.playlistVar )
-				}
 
 				float val = float( playlistVar )
 
@@ -421,10 +428,13 @@ void function UpdateVisibleSettings()
 					SetButtonRuiText( dropButton, Localize( setting.localizedName ))
 					Hud_SetText( textEntry, displayValue )
 				}
+
+				Hud_HandleEvent( slider, UIE_CHANGE )
 			}
 			else
 			{
 				Hud_SetVisible( button, true )
+				Hud_SetEnabled( button, true )
 				Hud_SetVisible( slider, false )
 				
 				string displayValue = ""
@@ -480,7 +490,6 @@ void function UpdateVisibleSettings()
 		var panel = buttons[i]
 		var switchButton = Hud_GetChild( panel, "BtnSwch" )
 		var slider = Hud_GetChild( panel, "BtnSlide" )
-
 		var control = Hud_IsVisible( slider ) ? slider : switchButton
 		focusableControls.append( control )
 	}
@@ -643,6 +652,15 @@ void function ResetMatchSettingsToDefault( var button )
 {
 	ClientCommand( "ResetMatchSettingsToDefault" )
 	file.localOverrides.clear()
+	thread ResetMatchSettingsToDefault_RefreshUI()
+}
+
+// i don't like this
+void function ResetMatchSettingsToDefault_RefreshUI()
+{
+	Wait( 0.15 )
+	UpdateVisibleSettings()
+	Wait( 0.15 )
 	UpdateVisibleSettings()
 }
 
