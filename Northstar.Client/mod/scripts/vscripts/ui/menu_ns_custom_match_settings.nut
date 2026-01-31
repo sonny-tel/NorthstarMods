@@ -64,6 +64,9 @@ void function InitNorthstarCustomMatchSettingsMenu()
 	AddButtonEventHandler( Hud_GetChild( file.menu, "PageButtonU"), UIE_CLICK, OnUpArrowSelected )
 	AddButtonEventHandler( Hud_GetChild( file.menu, "PageButtonD"), UIE_CLICK, OnDownArrowSelected )
 
+	AddButtonEventHandler( Hud_GetChild( file.menu, "DummyTop" ), UIE_GET_FOCUS, OnHitDummyTop )
+	AddButtonEventHandler( Hud_GetChild( file.menu, "DummyBottom" ), UIE_GET_FOCUS, OnHitDummyBottom )
+
 	AddCallback_InputEvent( InputEventType.IE_AnalogValueChanged, OnAnalogueScroll )
 
 	array<var> buttons = GetElementsByClassname( file.menu, "MatchSettingPanel" )
@@ -110,6 +113,89 @@ void function OnNorthstarCustomMatchSettingsMenuClosed()
 	file.isMenuOpen = false
 	// DeregisterButtonPressedCallback( MOUSE_WHEEL_UP , OnScrollUp )
 	// DeregisterButtonPressedCallback( MOUSE_WHEEL_DOWN , OnScrollDown )
+}
+
+var function GetFirstFocusableSettingControl( array<var> panels )
+{
+	for ( int i = 0; i < ITEMS_PER_PAGE; i++ )
+	{
+		if ( i + file.scrollOffset >= file.settingsList.len() )
+			break
+
+		SettingsListEntry entry = file.settingsList[ i + file.scrollOffset ]
+		if ( entry.type == 0 )
+			continue
+
+		var panel = panels[i]
+		if ( !Hud_IsVisible( panel ) || !Hud_IsEnabled( panel ) )
+			continue
+
+		var switchButton = Hud_GetChild( panel, "BtnSwch" )
+		var slider = Hud_GetChild( panel, "BtnSlide" )
+		return Hud_IsVisible( slider ) ? slider : switchButton
+	}
+
+	return null
+}
+
+var function GetLastFocusableSettingControl( array<var> panels )
+{
+	for ( int i = ITEMS_PER_PAGE - 1; i >= 0; i-- )
+	{
+		if ( i + file.scrollOffset >= file.settingsList.len() )
+			continue
+
+		SettingsListEntry entry = file.settingsList[ i + file.scrollOffset ]
+		if ( entry.type == 0 )
+			continue
+
+		var panel = panels[i]
+		if ( !Hud_IsVisible( panel ) || !Hud_IsEnabled( panel ) )
+			continue
+
+		var switchButton = Hud_GetChild( panel, "BtnSwch" )
+		var slider = Hud_GetChild( panel, "BtnSlide" )
+		return Hud_IsVisible( slider ) ? slider : switchButton
+	}
+
+	return null
+}
+
+void function OnHitDummyTop( var button )
+{
+	file.scrollOffset -= 1
+	if ( file.scrollOffset < 0 )
+	{
+		file.scrollOffset = 0
+	}
+	else
+	{
+		UpdateVisibleSettings()
+	}
+
+	array<var> panels = GetElementsByClassname( file.menu, "MatchSettingPanel" )
+	var firstControl = GetFirstFocusableSettingControl( panels )
+	if ( firstControl != null )
+		Hud_SetFocused( firstControl )
+}
+
+void function OnHitDummyBottom( var button )
+{
+	file.scrollOffset += 1
+	int maxOffset = max( 0, file.settingsList.len() - ITEMS_PER_PAGE ).tointeger()
+	if ( file.scrollOffset > maxOffset )
+	{
+		file.scrollOffset = maxOffset
+	}
+	else
+	{
+		UpdateVisibleSettings()
+	}
+
+	array<var> panels = GetElementsByClassname( file.menu, "MatchSettingPanel" )
+	var lastControl = GetLastFocusableSettingControl( panels )
+	if ( lastControl != null )
+		Hud_SetFocused( lastControl )
 }
 
 int function GetCategoryPriority( string cat )
@@ -239,6 +325,8 @@ void function UpdateVisibleSettings()
 
 	var pageButtonUp = Hud_GetChild( file.menu, "PageButtonU" )
 	var pageButtonD = Hud_GetChild( file.menu, "PageButtonD" )
+	var dummyTop = Hud_GetChild( file.menu, "DummyTop" )
+	var dummyBottom = Hud_GetChild( file.menu, "DummyBottom" )
 
 	if ( file.scrollOffset <= 0 )
 		Hud_SetVisible( pageButtonUp, false )
@@ -259,6 +347,7 @@ void function UpdateVisibleSettings()
 		var button = Hud_GetChild( panel, "BtnSwch" )
 		var header = Hud_GetChild( panel, "Header" )
 		var menuline = Hud_GetChild( panel, "BottomLine" )
+
 		var slider = Hud_GetChild( panel, "BtnSlide" )
 		var textEntry = Hud_GetChild( panel, "TextEntrySetting" )
 
@@ -376,6 +465,41 @@ void function UpdateVisibleSettings()
 				}
 			}
 		}
+	}
+
+	array<var> focusableControls
+	for ( int i = 0; i < ITEMS_PER_PAGE; i++ )
+	{
+		if ( i + file.scrollOffset >= file.settingsList.len() )
+			break
+
+		SettingsListEntry entry = file.settingsList[ i + file.scrollOffset ]
+		if ( entry.type == 0 ) // headers are not focusable
+			continue
+
+		var panel = buttons[i]
+		var switchButton = Hud_GetChild( panel, "BtnSwch" )
+		var slider = Hud_GetChild( panel, "BtnSlide" )
+
+		var control = Hud_IsVisible( slider ) ? slider : switchButton
+		focusableControls.append( control )
+	}
+
+	for ( int i = 0; i < focusableControls.len(); i++ )
+	{
+		var current = focusableControls[i]
+		var prev = ( i > 0 ) ? focusableControls[i - 1] : null
+		var next = ( i < focusableControls.len() - 1 ) ? focusableControls[i + 1] : null
+
+		if ( prev != null )
+			current.SetNavUp( prev )
+		else
+			current.SetNavUp( dummyTop )
+
+		if ( next != null )
+			current.SetNavDown( next )
+		else
+			current.SetNavDown( dummyBottom )
 	}
 	UpdateListSliderPosition()
 	file.isUpdatingUI = false
