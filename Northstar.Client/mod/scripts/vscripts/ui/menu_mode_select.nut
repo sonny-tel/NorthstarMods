@@ -85,6 +85,9 @@ void function InitModesMenu()
 	AddButtonEventHandler( Hud_GetChild( file.menu, "PageButtonU"), UIE_CLICK, OnUpArrowSelected )
 	AddButtonEventHandler( Hud_GetChild( file.menu, "PageButtonD"), UIE_CLICK, OnDownArrowSelected )
 
+	AddButtonEventHandler( Hud_GetChild( file.menu, "DummyTop" ), UIE_GET_FOCUS, OnHitDummyTop )
+	AddButtonEventHandler( Hud_GetChild( file.menu, "DummyBottom" ), UIE_GET_FOCUS, OnHitDummyBottom )
+
 	AddButtonEventHandler( Hud_GetChild( file.menu, "BtnModeLabel"), UIE_CHANGE, FilterAndUpdateList )
 	AddButtonEventHandler( Hud_GetChild( file.menu, "BtnModeSearch"), UIE_CHANGE, FilterAndUpdateList )
 	AddButtonEventHandler( Hud_GetChild( file.menu, "SwtModeLabel"), UIE_CHANGE, FilterAndUpdateList )
@@ -106,7 +109,92 @@ void function InitModesMenu()
 	}
 
 	AddMenuFooterOption( file.menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
-	AddMenuFooterOption( file.menu, BUTTON_X, "#X_BUTTON_CLEAR_FILTERS", "#CLEAR_FILTERS", OnBtnFiltersClear_Activate )
+	AddMenuFooterOption( file.menu, BUTTON_X, PrependControllerPrompts( BUTTON_X, "#CLEAR_FILTERS" ), "#CLEAR_FILTERS", OnBtnFiltersClear_Activate )
+}
+
+var function GetFirstFocusableModeButton( array<var> panels )
+{
+	for ( int i = 0; i < MODES_PER_PAGE; i++ )
+	{
+		if ( i + file.scrollOffset >= file.sortedModes.len() )
+			break
+
+		string mode = file.sortedModes[ i + file.scrollOffset ]
+		if ( IsStringCategory( mode ) )
+			continue
+
+		var panel = panels[i]
+		if ( !Hud_IsVisible( panel ) || !Hud_IsEnabled( panel ) )
+			continue
+
+		var button = Hud_GetChild( panel, "BtnMode" )
+		if ( Hud_IsEnabled( button ) )
+			return button
+	}
+
+	return null
+}
+
+var function GetLastFocusableModeButton( array<var> panels )
+{
+	for ( int i = MODES_PER_PAGE - 1; i >= 0; i-- )
+	{
+		if ( i + file.scrollOffset >= file.sortedModes.len() )
+			continue
+
+		string mode = file.sortedModes[ i + file.scrollOffset ]
+		if ( IsStringCategory( mode ) )
+			continue
+
+		var panel = panels[i]
+		if ( !Hud_IsVisible( panel ) || !Hud_IsEnabled( panel ) )
+			continue
+
+		var button = Hud_GetChild( panel, "BtnMode" )
+		if ( Hud_IsEnabled( button ) )
+			return button
+	}
+
+	return null
+}
+
+void function OnHitDummyTop( var button )
+{
+	file.scrollOffset -= 1
+	if ( file.scrollOffset < 0 )
+	{
+		file.scrollOffset = 0
+	}
+	else
+	{
+		UpdateVisibleModes()
+		UpdateListSliderPosition( file.sortedModes.len() )
+	}
+
+	array<var> panels = GetElementsByClassname( file.menu, "ModeSelectorPanel" )
+	var firstButton = GetFirstFocusableModeButton( panels )
+	if ( firstButton != null )
+		Hud_SetFocused( firstButton )
+}
+
+void function OnHitDummyBottom( var button )
+{
+	file.scrollOffset += 1
+	int maxOffset = max( 0, file.sortedModes.len() - MODES_PER_PAGE ).tointeger()
+	if ( file.scrollOffset > maxOffset )
+	{
+		file.scrollOffset = maxOffset
+	}
+	else
+	{
+		UpdateVisibleModes()
+		UpdateListSliderPosition( file.sortedModes.len() )
+	}
+
+	array<var> panels = GetElementsByClassname( file.menu, "ModeSelectorPanel" )
+	var lastButton = GetLastFocusableModeButton( panels )
+	if ( lastButton != null )
+		Hud_SetFocused( lastButton )
 }
 
 void function NSSetModeCategory( string mode, int category )
@@ -135,6 +223,10 @@ void function OnBtnFiltersClear_Activate( var b )
 	UpdateListSliderHeight(float(file.sortedModes.len()))
 	UpdateListSliderPosition(file.sortedModes.len())
 	UpdateVisibleModes()
+	array<var> panels = GetElementsByClassname( file.menu, "ModeSelectorPanel" )
+	var firstButton = GetFirstFocusableModeButton( panels )
+	if ( firstButton != null )
+		Hud_SetFocused( firstButton )
 }
 
 void function FilterAndUpdateList( var n )
@@ -167,20 +259,10 @@ void function OnOpenModesMenu()
 	UpdateListSliderHeight(float(file.sortedModes.len()))
 	UpdateListSliderPosition(file.sortedModes.len())
 	UpdateVisibleModes()
-
-	// Set to the first mode if there's no mode focused
-	if ( level.ui.privatematch_mode == 0 )
-	{
-		array<var> panels = GetElementsByClassname( file.menu, "ModeSelectorPanel" )
-		foreach( var panel in panels )
-		{
-			if( Hud_IsEnabled( Hud_GetChild( panel, "BtnMode") ) )
-			{
-				Hud_SetFocused( Hud_GetChild( panel, "BtnMode") )
-				break
-			}
-		}
-	}
+	array<var> panels = GetElementsByClassname( file.menu, "ModeSelectorPanel" )
+	var firstButton = GetFirstFocusableModeButton( panels )
+	if ( firstButton != null )
+		Hud_SetFocused( firstButton )
 }
 
 void function OnCloseModesMenu()
@@ -541,6 +623,13 @@ void function UpdateVisibleModes()
 {
 	var pageButtonUp = Hud_GetChild( file.menu, "PageButtonU" )
 	var pageButtonD = Hud_GetChild( file.menu, "PageButtonD" )
+	var dummyTop = Hud_GetChild( file.menu, "DummyTop" )
+	var dummyBottom = Hud_GetChild( file.menu, "DummyBottom" )
+
+	bool canScrollUp = file.scrollOffset > 0
+	bool canScrollDown = ( file.scrollOffset + MODES_PER_PAGE ) < file.sortedModes.len()
+	Hud_SetEnabled( dummyTop, canScrollUp )
+	Hud_SetEnabled( dummyBottom, canScrollDown )
 
 	if ( file.scrollOffset <= 0 )
 		Hud_SetVisible( pageButtonUp, false )
@@ -606,6 +695,39 @@ void function UpdateVisibleModes()
 				SetButtonRuiText( button, mode )
 			}
 		}
+	}
+
+	array<var> focusableButtons
+	for ( int i = 0; i < MODES_PER_PAGE; i++ )
+	{
+		if ( i + file.scrollOffset >= file.sortedModes.len() )
+			break
+
+		string mode = file.sortedModes[ i + file.scrollOffset ]
+		if ( IsStringCategory( mode ) )
+			continue
+
+		var panel = buttons[i]
+		var button = Hud_GetChild( panel, "BtnMode" )
+		if ( Hud_IsEnabled( button ) )
+			focusableButtons.append( button )
+	}
+
+	for ( int i = 0; i < focusableButtons.len(); i++ )
+	{
+		var current = focusableButtons[i]
+		var prev = ( i > 0 ) ? focusableButtons[i - 1] : null
+		var next = ( i < focusableButtons.len() - 1 ) ? focusableButtons[i + 1] : null
+
+		if ( prev != null )
+			current.SetNavUp( prev )
+		else
+			current.SetNavUp( dummyTop )
+
+		if ( next != null )
+			current.SetNavDown( next )
+		else
+			current.SetNavDown( dummyBottom )
 	}
 }
 

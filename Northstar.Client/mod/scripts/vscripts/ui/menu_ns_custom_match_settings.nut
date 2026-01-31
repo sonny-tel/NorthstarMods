@@ -114,6 +114,10 @@ void function OnNorthstarCustomMatchSettingsMenuOpened()
 	file.scrollOffset = 0
 	UpdateVisibleSettings()
 	UpdateListSliderPosition()
+	array<var> panels = GetElementsByClassname( file.menu, "MatchSettingPanel" )
+	var firstControl = GetFirstFocusableSettingControl( panels )
+	if ( firstControl != null )
+		Hud_SetFocused( firstControl )
 	
 	thread SliderUpdateMonitor()
 }
@@ -337,6 +341,11 @@ void function UpdateVisibleSettings()
 	var pageButtonD = Hud_GetChild( file.menu, "PageButtonD" )
 	var dummyTop = Hud_GetChild( file.menu, "DummyTop" )
 	var dummyBottom = Hud_GetChild( file.menu, "DummyBottom" )
+
+	bool canScrollUp = file.scrollOffset > 0
+	bool canScrollDown = ( file.scrollOffset + ITEMS_PER_PAGE ) < file.settingsList.len()
+	Hud_SetEnabled( dummyTop, canScrollUp )
+	Hud_SetEnabled( dummyBottom, canScrollDown )
 
 	if ( file.scrollOffset <= 0 )
 		Hud_SetVisible( pageButtonUp, false )

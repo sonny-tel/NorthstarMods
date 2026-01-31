@@ -56,7 +56,7 @@ void function InitMapsMenu()
 
 	AddMenuFooterOption( file.menu, BUTTON_A, "#A_BUTTON_SELECT" )
 	AddMenuFooterOption( file.menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
-	AddMenuFooterOption( file.menu, BUTTON_X, "#X_BUTTON_CLEAR_FILTERS", "#CLEAR_FILTERS", OnBtnFiltersClear_Activate )
+	AddMenuFooterOption( file.menu, BUTTON_X, PrependControllerPrompts( BUTTON_X, "#CLEAR_FILTERS" ), "#CLEAR_FILTERS", OnBtnFiltersClear_Activate )
 
 	AddButtonEventHandler( Hud_GetChild( file.menu, "PageButtonU"), UIE_CLICK, OnUpArrowSelected )
 	AddButtonEventHandler( Hud_GetChild( file.menu, "PageButtonD"), UIE_CLICK, OnDownArrowSelected )
@@ -259,6 +259,9 @@ void function UpdateMapsGrid()
 
 	var pageButtonUp = Hud_GetChild( file.menu, "PageButtonU" )
 	var pageButtonD = Hud_GetChild( file.menu, "PageButtonD" )
+	var mapsGridPanel = Hud_GetChild( file.menu, "MapsGridPanel" )
+	var dummyTop = Hud_GetChild( mapsGridPanel, "DummyTop" )
+	var dummyBottom = Hud_GetChild( mapsGridPanel, "DummyBottom" )
 
 	if ( trueOffset <= 0 )
 		Hud_SetVisible( pageButtonUp, false )
@@ -269,6 +272,11 @@ void function UpdateMapsGrid()
 		Hud_SetVisible( pageButtonD, false )
 	else
 		Hud_SetVisible( pageButtonD, true )
+
+	bool canScrollUp = trueOffset > 0
+	bool canScrollDown = ( trueOffset + BUTTONS_PER_PAGE * 3 ) < mapsArray.len()
+	Hud_SetEnabled( dummyTop, canScrollUp )
+	Hud_SetEnabled( dummyBottom, canScrollDown )
 
 	foreach ( int _index,  var element in file.gridInfos )
 	{
