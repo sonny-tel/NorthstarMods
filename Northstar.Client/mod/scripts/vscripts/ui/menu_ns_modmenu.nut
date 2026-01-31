@@ -54,7 +54,7 @@ void function AddNorthstarModMenu_MainMenuFooter()
         ShouldShowFooterButtons
 	)
 	// AddMenuFooterOption( GetMenu( "MainMenu" ), BUTTON_Y, controllerStr, "#MENU_TITLE_MODS", AdvanceToModListMenu )
-	AddMenuFooterOption( GetMenu( "MainMenu" ), BUTTON_SHOULDER_LEFT, "#MENU_DEMOS", "#MENU_DEMOS", OpenDemoPickerMenu, HasDemos )
+	AddMenuFooterOption( GetMenu( "MainMenu" ), BUTTON_BACK, "#BACK_BUTTON_MENU_DEMOS" , "#MENU_DEMOS", OpenDemoPickerMenu, HasDemos )
 }
 
 void function AdvanceToModListMenu( var button )
@@ -134,6 +134,9 @@ void function InitModMenu()
 	AddButtonEventHandler( Hud_GetChild( file.menu, "PageButtonU"), UIE_CLICK, OnUpArrowSelected )
 	AddButtonEventHandler( Hud_GetChild( file.menu, "PageButtonD"), UIE_CLICK, OnDownArrowSelected )
 
+	AddButtonEventHandler( Hud_GetChild( file.menu, "DummyTop" ), UIE_GET_FOCUS, OnHitDummyTop )
+	AddButtonEventHandler( Hud_GetChild( file.menu, "DummyBottom" ), UIE_GET_FOCUS, OnHitDummyBottom )
+
 	// Footers
 	AddMenuFooterOption( file.menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
     AddMenuFooterOption(
@@ -187,6 +190,9 @@ void function OnModMenuOpened()
 	UpdateList()
 	UpdateListSliderHeight()
 	UpdateListSliderPosition()
+	var firstButton = GetFirstFocusableModButton()
+	if ( firstButton != null )
+		Hud_SetFocused( firstButton )
 
     try
     {
@@ -197,6 +203,80 @@ void function OnModMenuOpened()
         printt( "OnModMenuOpened error: " + ex )
     }
 
+}
+
+var function GetFirstFocusableModButton()
+{
+	foreach ( int i, var panel in file.panels )
+	{
+		if ( file.scrollOffset + i >= file.mods.len() )
+			break
+
+		panelContent c = file.mods[ file.scrollOffset + i ]
+		if ( c.isHeader )
+			continue
+
+		var button = Hud_GetChild( panel, "BtnMod" )
+		if ( Hud_IsVisible( button ) && Hud_IsEnabled( button ) )
+			return button
+	}
+
+	return null
+}
+
+var function GetLastFocusableModButton()
+{
+	for ( int i = file.panels.len() - 1; i >= 0; i-- )
+	{
+		if ( file.scrollOffset + i >= file.mods.len() )
+			continue
+
+		panelContent c = file.mods[ file.scrollOffset + i ]
+		if ( c.isHeader )
+			continue
+
+		var panel = file.panels[i]
+		var button = Hud_GetChild( panel, "BtnMod" )
+		if ( Hud_IsVisible( button ) && Hud_IsEnabled( button ) )
+			return button
+	}
+
+	return null
+}
+
+void function OnHitDummyTop( var button )
+{
+	file.scrollOffset -= 1
+	if ( file.scrollOffset < 0 )
+	{
+		file.scrollOffset = 0
+	}
+	else
+	{
+		ValidateScrollOffset()
+	}
+
+	var firstButton = GetFirstFocusableModButton()
+	if ( firstButton != null )
+		Hud_SetFocused( firstButton )
+}
+
+void function OnHitDummyBottom( var button )
+{
+	file.scrollOffset += 1
+	int maxOffset = max( 0, file.mods.len() - PANELS_LEN ).tointeger()
+	if ( file.scrollOffset > maxOffset )
+	{
+		file.scrollOffset = maxOffset
+	}
+	else
+	{
+		ValidateScrollOffset()
+	}
+
+	var lastButton = GetLastFocusableModButton()
+	if ( lastButton != null )
+		Hud_SetFocused( lastButton )
 }
 
 void function OnModMenuClosed()
@@ -464,21 +544,51 @@ void function UpdateList()
 {
 	var pageButtonUp = Hud_GetChild( file.menu, "PageButtonU" )
 	var pageButtonD = Hud_GetChild( file.menu, "PageButtonD" )
+	var dummyTop = Hud_GetChild( file.menu, "DummyTop" )
+	var dummyBottom = Hud_GetChild( file.menu, "DummyBottom" )
 
-	if ( file.scrollOffset <= 0 )
-		Hud_SetVisible( pageButtonUp, false )
-	else
-		Hud_SetVisible( pageButtonUp, true )
+	RefreshMods()
 
-	if ( file.scrollOffset  >= file.mods.len() )
-		Hud_SetVisible( pageButtonD, false )
-	else
-		Hud_SetVisible( pageButtonD, true )
+	bool canScrollList = file.mods.len() > PANELS_LEN
+	bool canScrollUp = file.scrollOffset > 0
+	bool canScrollDown = ( file.scrollOffset + PANELS_LEN ) < file.mods.len()
+
+	Hud_SetVisible( pageButtonUp, canScrollList && canScrollUp )
+	Hud_SetVisible( pageButtonD, canScrollList && canScrollDown )
+	Hud_SetEnabled( dummyTop, canScrollUp )
+	Hud_SetEnabled( dummyBottom, canScrollDown )
 
 
 	HideAllPanels()
-	RefreshMods()
 	DisplayModPanels()
+
+	array<var> focusableButtons
+	foreach ( int i, var panel in file.panels )
+	{
+		if ( file.scrollOffset + i >= file.mods.len() )
+			break
+		panelContent c = file.mods[ file.scrollOffset + i ]
+		if ( c.isHeader )
+			continue
+		var button = Hud_GetChild( panel, "BtnMod" )
+		if ( Hud_IsEnabled( button ) )
+			focusableButtons.append( button )
+	}
+
+	for ( int i = 0; i < focusableButtons.len(); i++ )
+	{
+		var current = focusableButtons[i]
+		var prev = ( i > 0 ) ? focusableButtons[i - 1] : null
+		var next = ( i < focusableButtons.len() - 1 ) ? focusableButtons[i + 1] : null
+		if ( prev != null )
+			current.SetNavUp( prev )
+		else
+			current.SetNavUp( dummyTop )
+		if ( next != null )
+			current.SetNavDown( next )
+		else
+			current.SetNavDown( dummyBottom )
+	}
 }
 
 void function RefreshMods()
@@ -812,8 +922,7 @@ void function ValidateScrollOffset()
 		file.scrollOffset = file.mods.len() - 15
 	if( file.scrollOffset < 0 )
 		file.scrollOffset = 0
-	HideAllPanels()
-	DisplayModPanels()
+	UpdateList()
 	UpdateListSliderHeight()
 	UpdateListSliderPosition()
 }

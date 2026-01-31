@@ -102,11 +102,14 @@ void function InitModMenu()
 	file.menu = GetMenu( "ModSettings" )
 	// DumpStack(2)
 	AddMenuFooterOption( file.menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
-	AddMenuFooterOption( file.menu, BUTTON_A, "#B_BUTTON_BACK", "#CLEAR_FILTERS", OnClearButtonPressed )
-	AddMenuFooterOption( file.menu, BUTTON_X, "#B_BUTTON_BACK", "#SEARCHBAR_LABEL" )
+	AddMenuFooterOption( file.menu, BUTTON_X, PrependControllerPrompts( BUTTON_X, "#CLEAR_FILTERS" ), "#CLEAR_FILTERS", OnClearButtonPressed )
+	AddMenuFooterOption( file.menu, BUTTON_Y, PrependControllerPrompts( BUTTON_Y, "#SEARCHBAR_LABEL" ), "#SEARCHBAR_LABEL", OnSearchFooterPressed )
 
 	AddButtonEventHandler( Hud_GetChild( file.menu, "DummyTop" ), UIE_GET_FOCUS, OnHitDummyTop )
 	AddButtonEventHandler( Hud_GetChild( file.menu, "DummyBottom" ), UIE_GET_FOCUS, OnHitDummyBottom )
+
+	AddButtonEventHandler( Hud_GetChild( file.menu, "BtnModListUpArrow" ), UIE_CLICK, OnScrollUp )
+	AddButtonEventHandler( Hud_GetChild( file.menu, "BtnModListDownArrow" ), UIE_CLICK, OnScrollDown )
 
 	file.previousSwitchUpdate = {}
 
@@ -482,6 +485,18 @@ void function UpdateList()
 
 	file.filteredList = filteredList
 
+	var dummyTop = Hud_GetChild( file.menu, "DummyTop" )
+	var dummyBottom = Hud_GetChild( file.menu, "DummyBottom" )
+	var upArrow = Hud_GetChild( file.menu, "BtnModListUpArrow" )
+	var upArrowPanel = Hud_GetChild( file.menu, "BtnModListUpArrowPanel" )
+	var downArrow = Hud_GetChild( file.menu, "BtnModListDownArrow" )
+	var downArrowPanel = Hud_GetChild( file.menu, "BtnModListDownArrowPanel" )
+	bool canScrollList = file.filteredList.len() > BUTTONS_PER_PAGE
+	bool canScrollUp = file.scrollOffset > 0
+	bool canScrollDown = ( file.scrollOffset + BUTTONS_PER_PAGE ) < file.filteredList.len()
+	Hud_SetEnabled( dummyTop, canScrollUp )
+	Hud_SetEnabled( dummyBottom, canScrollDown )
+
 	int j = int( min( file.filteredList.len() + file.scrollOffset, BUTTONS_PER_PAGE ) )
 	int len = file.modPanels.len()
 
@@ -494,39 +509,36 @@ void function UpdateList()
 			SetModMenuNameText( file.modPanels[i] )
 	}
 
+	array<var> focusableControls
 	for ( int i = 0; i < file.modPanels.len(); i++ )
 	{
-    	bool isTopButton = (i == 0);
-    	bool isBottomButton = (i == j - 1);
+		if ( !Hud_IsVisible( file.modPanels[i] ) || !Hud_IsEnabled( file.modPanels[i] ) )
+			continue
 
 		var slider = Hud_GetChild( file.modPanels[i], "Slider" )
 		var enumButton = Hud_GetChild( file.modPanels[i], "EnumSelectButton" )
 		var customButton = Hud_GetChild( file.modPanels[i], "OpenCustomMenu" )
 
 		string visibleElement = Hud_IsVisible( slider ) ? "Slider" : Hud_IsVisible( enumButton ) ? "EnumSelectButton" : Hud_IsVisible( customButton ) ? "OpenCustomMenu" : "TextEntrySetting"
-
-		var previousSlider = Hud_GetChild( file.modPanels[ int( PureModulo( i - 1, len ) ) ], "Slider" )
-		var previousEnumButton = Hud_GetChild( file.modPanels[ int( PureModulo( i - 1, len ) ) ], "EnumSelectButton" )
-		var previousCustomButton = Hud_GetChild( file.modPanels[ int( PureModulo( i - 1, len ) ) ], "OpenCustomMenu" )
-
-		var previousVisibleElement = Hud_IsVisible( previousSlider ) ? "Slider" : Hud_IsVisible( previousEnumButton ) ? "EnumSelectButton" : Hud_IsVisible( previousCustomButton ) ? "OpenCustomMenu" : "TextEntrySetting"
-
-		var nextSlider = Hud_GetChild( file.modPanels[ int( PureModulo( i + 1, len ) ) ], "Slider" )
-		var nextEnumButton = Hud_GetChild( file.modPanels[ int( PureModulo( i + 1, len ) ) ], "EnumSelectButton" )
-		var nextCustomButton = Hud_GetChild( file.modPanels[ int( PureModulo( i + 1, len ) ) ], "OpenCustomMenu" )
-
-		var nextVisibleElement = Hud_IsVisible( nextSlider ) ? "Slider" : Hud_IsVisible( nextEnumButton ) ? "EnumSelectButton" : Hud_IsVisible( nextCustomButton ) ? "OpenCustomMenu" : "TextEntrySetting"
-
 		var current = Hud_GetChild( file.modPanels[i], visibleElement )
-		if ( isTopButton )
+		focusableControls.append( current )
+	}
+
+	for ( int i = 0; i < focusableControls.len(); i++ )
+	{
+		var current = focusableControls[i]
+		var prev = ( i > 0 ) ? focusableControls[i - 1] : null
+		var next = ( i < focusableControls.len() - 1 ) ? focusableControls[i + 1] : null
+
+		if ( prev != null )
+			current.SetNavUp( prev )
+		else
 			current.SetNavUp( Hud_GetChild( file.menu, "DummyTop" ) )
+
+		if ( next != null )
+			current.SetNavDown( next )
 		else
-			current.SetNavUp( Hud_GetChild( file.modPanels[ int( PureModulo( i - 1, len ) ) ], previousVisibleElement ) )
-		
-		if ( isBottomButton )
 			current.SetNavDown( Hud_GetChild( file.menu, "DummyBottom" ) )
-		else
-			current.SetNavDown( Hud_GetChild( file.modPanels[ int( PureModulo( i + 1, len ) ) ], nextVisibleElement ) )
 	}
 
 	file.updatingList = false
@@ -1405,6 +1417,12 @@ void function OnClearButtonPressed( var button )
 	Hud_SetText( Hud_GetChild( file.menu, "BtnModsSearch" ), "" )
 
 	OnFiltersChange()
+}
+
+void function OnSearchFooterPressed( var button )
+{
+	var search = Hud_GetChild( file.menu, "BtnModsSearch" )
+	Hud_SetFocused( search )
 }
 
 string function SanitizeDisplayName( string displayName )
