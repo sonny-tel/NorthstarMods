@@ -185,7 +185,7 @@ void function InitServerBrowserMenu()
 	AddMenuEventHandler( file.menu, eUIEvent.MENU_OPEN, OnServerBrowserMenuOpened )
 	AddMenuFooterOption( file.menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
 	AddMenuFooterOption( file.menu, BUTTON_Y, PrependControllerPrompts( BUTTON_Y, "#REFRESH_SERVERS" ), "#REFRESH_SERVERS", RefreshServers )
-    AddMenuFooterOption( file.menu, BUTTON_X, "#X_BUTTON_DIRECT_CONNECT", "#DIALOG_TITLE_DIRECT_CONNECT", OnDirectConnectButton )
+    AddMenuFooterOption( file.menu, BUTTON_X, PrependControllerPrompts( BUTTON_X, "#DIALOG_TITLE_DIRECT_CONNECT" ), "#DIALOG_TITLE_DIRECT_CONNECT", OnDirectConnectButton )
 	AddCallback_InputEvent( InputEventType.IE_AnalogValueChanged, OnAnalogueScroll )
 
 	// Setup server buttons
@@ -976,6 +976,9 @@ void function OnServerButtonFocused( var button )
 void function OnServerButtonClicked(var button)
 {
 	int scriptID = int ( Hud_GetScriptID( button ) )
+	file.serverButtonFocusedID = scriptID
+	if ( file.filteredServers.len() > 0 )
+		file.focusedServer = file.filteredServers[ file.scrollOffset + scriptID ]
 
 	DisplayFocusedServerInfo( scriptID )
 	CheckDoubleClick( scriptID, true )
@@ -987,6 +990,14 @@ void function CheckDoubleClick( int scriptID, bool wasClickNav )
 
 
 	int serverIndex = file.scrollOffset + scriptID
+	if ( IsControllerModeActive() )
+	{
+		file.serverSelectedTimeLast = file.serverSelectedTime
+		file.serverSelectedTime = Time()
+		file.lastSelectedServer = file.filteredServers[ serverIndex ]
+		OnServerSelected( 0 )
+		return
+	}
 
 	bool sameServer = false
 	if ( file.lastSelectedServer == file.filteredServers[ serverIndex ] ) sameServer = true
