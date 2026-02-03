@@ -26,6 +26,10 @@ void function UpdateModDownloadDialogText( var header, var body, ModInstallState
 {
     switch( state.status )
     {
+        case eModInstallStatus.CHECKING_DETAILS:
+            Hud_SetText( header, Localize( "#CHECKING_DETAILS_TITLE" ) )
+            Hud_SetText( body, Localize( "#CHECKING_DETAILS_TEXT" ) )
+            break
         case eModInstallStatus.DOWNLOADING:
             Hud_SetText( header, Localize( "#DOWNLOADING_MOD_TITLE_W_PROGRESS", string( state.ratio ) ) )
             Hud_SetText( body, Localize( "#DOWNLOADING_MOD_TEXT_W_PROGRESS", state.name, state.version, floor( state.progress / MB ), floor( state.total / MB ) ) )
@@ -69,7 +73,15 @@ void function NSUICodeCallback_ConnectionStarted(bool scriptManaged)
     Signal( uiGlobal.signalDummy, "NSConnectionStarted" )
 
     if (scriptManaged)
+    {
         Signal( uiGlobal.signalDummy, "NSConnectionStartDialog" )
+    }
+    else
+    {
+        var topMenu = GetTopNonDialogMenu()
+        if ( topMenu != null )
+            Signal( uiGlobal.signalDummy, "NSConnectionStartDialog" )
+    }
 }
 
 void function NSUICodeCallback_ConnectionMessage(string message)
@@ -96,12 +108,14 @@ void function NSUICodeCallback_ConnectionStopped(string error)
 void function NSUICodeCallback_DownloadingModsStarted()
 {
     file.downloading = true
+    printt("Mod downloading started.")
     Signal( uiGlobal.signalDummy, "NSModsDownloadStarted" )
 }
 
 void function NSUICodeCallback_DownloadingModsStopped()
 {
     file.downloading = false
+    printt("Mod downloading stopped.")
     Signal( uiGlobal.signalDummy, "NSModsDownloadStopped" )
 }
 
@@ -135,7 +149,18 @@ void function ModDownloadRunning_Think()
         {
             // Only close dialogs if we're not transitioning into a connection-owned dialog.
             if ( !file.active )
-                CloseAllDialogs()
+            {
+                ModInstallState state = NSGetModInstallState()
+                if ( state.status >= eModInstallStatus.FAILED )
+                {
+                    CloseAllDialogs()
+                    DisplayModDownloadErrorDialog( state.name )
+                }
+                else
+                {
+                    CloseAllDialogs()
+                }
+            }
         }
     )
 

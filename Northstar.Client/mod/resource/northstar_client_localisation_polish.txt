@@ -294,8 +294,8 @@ Naciśnij Tak jeżeli wyrażasz zgodę. Wybór może zostać zmieniony w menu Mo
 		"SWITCH_ANY" "Dowolnie"
 
 		"CONNECTING" "Łączenie..."
-		"INGAME_PLAYERS" "Gracze: ^6BA6C400%s1"
-		"TOTAL_SERVERS" "Serwery: ^C46C6C00%s1"
+		"INGAME_PLAYERS" "Gracze: %s1"
+		"TOTAL_SERVERS" "Serwery: %s1"
 
 		// Mods menu
 		"SHOW" "Pokaż"
@@ -373,8 +373,8 @@ Naciśnij Tak jeżeli wyrażasz zgodę. Wybór może zostać zmieniony w menu Mo
 		"WRONG_MOD_VERSION"					"Serwer ma Moda \"%s1\" v%s2 podczas gdy ty masz v%s3"
 		"MOD_NOT_VERIFIED"					"(Mod nie został zweryfikowany i nie mógł być pobrany automatycznie)"
 		"MOD_DL_DISABLED"					"(Automatyczne pobieranie modów jest wyłączone)"
-		"MANIFESTO_FETCHING_TITLE"			"Przygotowywanie do pobierania Moda"
-		"MANIFESTO_FETCHING_TEXT"			"Zdobywanie listy zweryfikowanych modów..."
+		"MANIFEST_FETCHING_TITLE"			"Przygotowywanie do pobierania Moda"
+		"MANIFEST_FETCHING_TEXT"			"Zdobywanie listy zweryfikowanych modów..."
 		"DOWNLOADING_MOD_TITLE"				"Pobieranie"
 		"DOWNLOADING_MOD_TITLE_W_PROGRESS" 	"Pobieranie (%s1%)"
 		"DOWNLOADING_MOD_TEXT"				"Pobieranie %s1 v%s2..."

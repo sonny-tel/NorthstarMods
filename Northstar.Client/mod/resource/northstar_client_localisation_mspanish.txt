@@ -293,8 +293,8 @@ Si estas de acuerdo con esto, presiona SI. Esta decision puede ser cambiada en e
 		"SWITCH_ANY" "Cualquiera"
 
 		"CONNECTING" "Conectando..."
-		"INGAME_PLAYERS" "Jugadores: ^6BA6C400%s1"
-		"TOTAL_SERVERS" "Servidores: ^C46C6C00%s1"
+		"INGAME_PLAYERS" "Jugadores: %s1"
+		"TOTAL_SERVERS" "Servidores: %s1"
 
 		// Mods menu
 		"SHOW" "Mostrar"

@@ -293,8 +293,8 @@ Premi Sì se sei d'accordo. Questa scelta può essere modificata in qualsiasi mo
 
 		"CONNECTING" "Connessione in corso..."
 
-		"INGAME_PLAYERS" "Players: ^6BA6C400%s1"
-		"TOTAL_SERVERS" "Server: ^C46C6C00%s1"
+		"INGAME_PLAYERS" "Players: %s1"
+		"TOTAL_SERVERS" "Server: %s1"
 
 		// Mods menu
 		"SHOW", "Mostra"
@@ -412,8 +412,8 @@ Premi Sì se sei d'accordo. Questa scelta può essere modificata in qualsiasi mo
 		"PROGRESSION_DISABLED_HEADER"		"Progressione Disabilitata!"
 		"PROGRESSION_DISABLED_BODY"		"^CCCC0000La progressione è stata disabilitata.^\n\nTitan, Armi, Fazioni, Skin, etc. saranno sbloccate e utilizzabili in qualsiasi momento.\n\nQuesto può essere cambiato in qualsiasi momento nella lobby multigiocatore."
 		"WRONG_MOD_VERSION"		"Il server ha la mod \"%s1\" v%s2 mentre tu hai v%s3"
-		"MANIFESTO_FETCHING_TITLE"		"Iniziando download mod"
-		"MANIFESTO_FETCHING_TEXT"		"Recuperando lista delle mod verificate..."
+		"MANIFEST_FETCHING_TITLE"		"Iniziando download mod"
+		"MANIFEST_FETCHING_TEXT"		"Recuperando lista delle mod verificate..."
 		"PROGRESSION_TOGGLE_ENABLED_BODY"		"Titan, Armi, Fazioni, Skin, etc. saranno tutti sbloccati e utilizzabili in ogni momento.\n\nQuesto può essere cambiato in qualsiasi momento nella lobby Multigiocatore."
 		"PROGRESSION_TOGGLE_DISABLED_BODY"		"Titan, Armi, Factions, Skin, etc. avranno bisogno di essere sbloccate livellando, o comprate con i Meriti.\n\nQuesto può essere cambiato in ogni momento nella lobby Multiplayer.\n\n^CC000000Attenzione: se al momento hai equipaggiato degli item che non hai sbloccato, verranno resettati!"
 		"PROGRESSION_ANNOUNCEMENT_BODY"		"^CCCC0000La progressione può essere abilitata ora!^\n\nNorthstar ora supporta la progressione vanilla, ciò significa che puoi scegliere di sbloccare Armi, Skin, Titan, etc. attraverso i livelli e le sfide.\n\nPuoi abilitare la progressione cliccando il pulsante in basso nella schermata lobby.\n\nQuesto può essere cambiato in qualsiasi momento."

@@ -284,8 +284,8 @@ Drücke Ja, um zuzustimmen. Du kannst diese Entscheidung jederzeit im Modmenü �
 		"SWITCH_ANY" "Jegliche"
 
 		"CONNECTING" "Verbinde..."
-		"INGAME_PLAYERS" "Spieler: ^6BA6C400%s1"
-		"TOTAL_SERVERS" "Server: ^C46C6C00%s1"
+		"INGAME_PLAYERS" "Spieler: %s1"
+		"TOTAL_SERVERS" "Server: %s1"
 
 		// Mods menu
 		"SHOW" "Anzeigen"
@@ -376,8 +376,8 @@ Drücke Ja, um zuzustimmen. Du kannst diese Entscheidung jederzeit im Modmenü �
 		"SCOREBOARD_BANKRUPTS"             "Bankrott Kills"
 		"sns_offhand_kill_value"             "Freihand Killwert"
 		"PROGRESSION_ANNOUNCEMENT_BODY"             "^CCCC0000Fortschritt kann jetzt aktiviert werden!^\n\nNorthstar unterstützt nun den standardmäßigen Fortschritt, was bedeutet, dass Sie Waffen, Skins, Titans usw. durch Levelaufstieg und das Abschließen von Herausforderungen freischalten können.\n\nSie können den Fortschritt mit dem Button am unteren Rand des Lobbybildschirms aktivieren.\n\nDies kann jederzeit geändert werden."
-		"MANIFESTO_FETCHING_TEXT"             "Abrufen der Liste der verifizierten Mods..."
-		"MANIFESTO_FETCHING_TITLE"             "Mod download wird aufgesetzt"
+		"MANIFEST_FETCHING_TEXT"             "Abrufen der Liste der verifizierten Mods..."
+		"MANIFEST_FETCHING_TITLE"             "Mod download wird aufgesetzt"
 		"MODE_MENU_FFA"             "FFA"
 		"MODE_MENU_PVPVE"             "PvPvE"
 		"MODE_MENU_OTHER"             "Andere"

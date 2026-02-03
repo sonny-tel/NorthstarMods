@@ -120,6 +120,58 @@ bool function FloatsEqual( float arg1, float arg2, float epsilon )
 	return false
 }
 
+bool function IsServerBrowserFooterValid()
+{
+	return uiGlobal.activeMenu == file.menu
+}
+
+string function GetServerBrowserPlayerCountString()
+{
+	int totalPlayers = 0
+	array<ServerInfo> servers = NSGetGameServers()
+
+	foreach ( ServerInfo server in servers )
+	{
+		totalPlayers += server.playerCount
+	}
+
+	string totalPlayersStr = string( totalPlayers ) + ( totalPlayers == 1 ? " " : ""  ) + ( totalPlayers < 10 ? " " : ""  )
+	return Localize( "#INGAME_PLAYERS", totalPlayersStr )
+}
+
+string function GetServerBrowserServerCountString()
+{
+	int serverCount = NSGetServerCount()
+	string serverCountStr = string( serverCount ) + ( serverCount == 1 ? " " : "" ) + ( serverCount < 10 ? " " : ""  )
+	return Localize( "#TOTAL_SERVERS", serverCountStr )
+}
+
+void function UpdateServerBrowserPlayersFooter( InputDef data )
+{
+	EndSignal( uiGlobal.signalDummy, "EndFooterUpdateFuncs" )
+
+	int index = int( Hud_GetScriptID( data.vguiElem ) )
+
+	while ( data.conditionCheckFunc() )
+	{
+		SetFooterText( file.menu, index, GetServerBrowserPlayerCountString() )
+		WaitFrame()
+	}
+}
+
+void function UpdateServerBrowserServersFooter( InputDef data )
+{
+	EndSignal( uiGlobal.signalDummy, "EndFooterUpdateFuncs" )
+
+	int index = int( Hud_GetScriptID( data.vguiElem ) )
+
+	while ( data.conditionCheckFunc() )
+	{
+		SetFooterText( file.menu, index, GetServerBrowserServerCountString() )
+		WaitFrame()
+	}
+}
+
 
 ////////////////////////////
 // Init
@@ -186,6 +238,8 @@ void function InitServerBrowserMenu()
 	AddMenuFooterOption( file.menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
 	AddMenuFooterOption( file.menu, BUTTON_Y, PrependControllerPrompts( BUTTON_Y, "#REFRESH_SERVERS" ), "#REFRESH_SERVERS", RefreshServers )
     AddMenuFooterOption( file.menu, BUTTON_X, PrependControllerPrompts( BUTTON_X, "#DIALOG_TITLE_DIRECT_CONNECT" ), "#DIALOG_TITLE_DIRECT_CONNECT", OnDirectConnectButton )
+	AddMenuFooterOption( file.menu, BUTTON_SHOULDER_RIGHT, "#B_BUTTON_BACK", "#B_BUTTON_BACK", null, IsServerBrowserFooterValid, UpdateServerBrowserPlayersFooter )
+	AddMenuFooterOption( file.menu, BUTTON_TRIGGER_RIGHT, "#B_BUTTON_BACK", "#B_BUTTON_BACK", null, IsServerBrowserFooterValid, UpdateServerBrowserServersFooter )
 	AddCallback_InputEvent( InputEventType.IE_AnalogValueChanged, OnAnalogueScroll )
 
 	// Setup server buttons
@@ -432,8 +486,8 @@ void function OnCloseServerBrowserMenu()
 
 void function OnServerBrowserMenuOpened()
 {
-	Hud_SetText( Hud_GetChild( file.menu, "InGamePlayerLabel" ), Localize( "#INGAME_PLAYERS", "0" ) )
-	Hud_SetText( Hud_GetChild( file.menu, "TotalServerLabel" ),  Localize( "#TOTAL_SERVERS", "0" ) )
+	Hud_SetVisible( Hud_GetChild( file.menu, "InGamePlayerLabel" ), false )
+	Hud_SetVisible( Hud_GetChild( file.menu, "TotalServerLabel" ), false )
 	UpdatePrivateMatchModesAndMaps()
 	Hud_SetText( Hud_GetChild( file.menu, "Title" ), "#MENU_TITLE_SERVER_BROWSER" )
 	UI_SetPresentationType( ePresentationType.KNOWLEDGEBASE_MAIN )
@@ -446,8 +500,8 @@ void function OnServerBrowserMenuOpened()
 		NSRequestServerList()
 	}
 
-	Hud_SetVisible( Hud_GetChild( file.menu, "InGamePlayerLabel" ), true )
-	Hud_SetVisible( Hud_GetChild( file.menu, "TotalServerLabel" ), true )
+	Hud_SetVisible( Hud_GetChild( file.menu, "InGamePlayerLabel" ), false )
+	Hud_SetVisible( Hud_GetChild( file.menu, "TotalServerLabel" ), false )
 
 	filterDirection.sortingBy = sortingBy.DEFAULT
 
@@ -908,12 +962,7 @@ void function FilterServerList()
 		file.filteredServers.append( server )
 	}
 	
-	// Update player and server count
-	int ServerCount = NSGetServerCount()
-	string totalPlayersStr = string( totalPlayers ) + ( totalPlayers == 1 ? " " : ""  ) + ( totalPlayers < 10 ? " " : ""  )
-	string serverCountStr = string( ServerCount ) + ( ServerCount == 1 ? " " : "" ) + ( ServerCount < 10 ? " " : ""  )
-	Hud_SetText( Hud_GetChild( file.menu, "InGamePlayerLabel" ), Localize( "#INGAME_PLAYERS", totalPlayersStr ) )
-	Hud_SetText( Hud_GetChild( file.menu, "TotalServerLabel" ),  Localize( "#TOTAL_SERVERS", serverCountStr ) )
+	// counts handled by footer buttons
 }
 
 

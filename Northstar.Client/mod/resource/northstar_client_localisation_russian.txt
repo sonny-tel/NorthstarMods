@@ -236,8 +236,8 @@
 		"SWITCH_ANY" "Любой"
 
 		"CONNECTING" "Соединение..."
-		"INGAME_PLAYERS" "Игроков: ^6BA6C400%s1"
-		"TOTAL_SERVERS" "Серверов: ^C46C6C00%s1"
+		"INGAME_PLAYERS" "Игроков: %s1"
+		"TOTAL_SERVERS" "Серверов: %s1"
 
 		// In-game chat
 		"HUD_CHAT_WHISPER_PREFIX" "[ЛИЧНОЕ]"
@@ -365,8 +365,8 @@
 		"MOD_CORRUPTED"                    "Файл архива мода повреждён: контрольная сумма не совпадает."
 		"NO_DISK_SPACE_AVAILABLE"                    "Недостаточно места на диске."
 		"MOD_FETCHING_FAILED_GENERAL"                    "Ошибка распаковки мода. Проверьте файл лога, чтобы узнать подробности."
-		"MANIFESTO_FETCHING_TEXT"                    "Скачиваем список проверенных модов..."
-		"MANIFESTO_FETCHING_TITLE"                    "Начало загрузки модов"
+		"MANIFEST_FETCHING_TEXT"                    "Скачиваем список проверенных модов..."
+		"MANIFEST_FETCHING_TITLE"                    "Начало загрузки модов"
 		"MODE_MENU_FFA"                    "Все против всех"
 		"MODE_MENU_OTHER"                    "Другое"
 		"MODE_MENU_CUSTOM"                    "Свой"

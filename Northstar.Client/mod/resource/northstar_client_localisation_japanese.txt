@@ -321,8 +321,8 @@
 		"SWITCH_ANY" "全て"
 
 		"CONNECTING" "接続中..."
-		"INGAME_PLAYERS" "プレイヤー数: ^6BA6C400%s1"
-		"TOTAL_SERVERS" "サーバー数: ^C46C6C00%s1"
+		"INGAME_PLAYERS" "プレイヤー数: %s1"
+		"TOTAL_SERVERS" "サーバー数: %s1"
 
 		// Mods menu
 		"SHOW" "表示"

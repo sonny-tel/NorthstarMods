@@ -13,7 +13,6 @@
 		"DISABLE" "Disable"
 		"MODS_REVERSE" "Order:"
 
-		"AITDM_UI_SCORE" ""
 		"SETTING_INDICATOR_INCOMING" "Incoming Only"
 		"SETTING_INDICATOR_OUTGOING" "Outgoing Only"
 		"SETTING_INDICATOR_ALL"	"All"
@@ -326,8 +325,8 @@ Press Yes if you agree to this. This choice can be changed in the mods menu at a
 		"SWITCH_ANY" "Any"
 
 		"CONNECTING" "Connecting..."
-		"INGAME_PLAYERS" "Players: ^6BA6C400%s1"
-		"TOTAL_SERVERS" "Servers: ^C46C6C00%s1"
+		"INGAME_PLAYERS" "Players: %s1"
+		"TOTAL_SERVERS" "Servers: %s1"
 
 		// Mods menu
 		"SHOW" "Show:"
@@ -428,8 +427,10 @@ Press Yes if you agree to this. This choice can be changed in the mods menu at a
 		"WRONG_MOD_VERSION"					"Server has mod \"%s1\" v%s2 while you have v%s3"
 		"MOD_NOT_VERIFIED"					"(mod is not verified, and couldn't be downloaded automatically)"
 		"MOD_DL_DISABLED"					"(automatic mod downloading is disabled)"
-		"MANIFESTO_FETCHING_TITLE"			"Setting up mod download"
-		"MANIFESTO_FETCHING_TEXT"			"Retrieving the list of verified mods..."
+		"MANIFEST_FETCHING_TITLE"			"Preparing download"
+		"MANIFEST_FETCHING_TEXT"			"Retrieving the list of verified mods..."
+		"CHECKING_DETAILS_TITLE"			"Fetching details"
+		"CHECKING_DETAILS_TEXT"				"Retrieving package information..."
 		"DOWNLOADING_MOD_TITLE"				"Downloading mod"
 		"DOWNLOADING_MOD_TITLE_W_PROGRESS" 	"Downloading mod (%s1%)"
 		"DOWNLOADING_MOD_TEXT"				"Downloading %s1 v%s2..."

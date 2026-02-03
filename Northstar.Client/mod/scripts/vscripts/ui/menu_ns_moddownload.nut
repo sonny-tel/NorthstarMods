@@ -4,7 +4,8 @@ global function FetchVerifiedModsManifesto
 
 global enum eModInstallStatus
 {
-    MANIFESTO_FETCHING,
+    MANIFEST_FETCHING,
+	CHECKING_DETAILS,
     DOWNLOADING,
     CHECKSUMING,
     EXTRACTING,
@@ -16,6 +17,7 @@ global enum eModInstallStatus
     MOD_FETCHING_FAILED,
     MOD_CORRUPTED,
     NO_DISK_SPACE_AVAILABLE,
+	INVALID_DEPENDENCY,
     NOT_FOUND
 }
 
@@ -28,8 +30,8 @@ void function FetchVerifiedModsManifesto()
 
 	// Fetching UI
 	DialogData dialogData
-	dialogData.header = Localize( "#MANIFESTO_FETCHING_TITLE" )
-	dialogData.message = Localize( "#MANIFESTO_FETCHING_TEXT" )
+	dialogData.header = Localize( "#MANIFEST_FETCHING_TITLE" )
+	dialogData.message = Localize( "#MANIFEST_FETCHING_TEXT" )
 	dialogData.showSpinner = true;
 
 	// Prevent user from closing dialog
@@ -40,7 +42,7 @@ void function FetchVerifiedModsManifesto()
 	NSFetchVerifiedModsManifesto()
 
 	ModInstallState state = NSGetModInstallState()
-	while ( state.status == eModInstallStatus.MANIFESTO_FETCHING )
+	while ( state.status == eModInstallStatus.MANIFEST_FETCHING )
 	{
 		state = NSGetModInstallState()
 		WaitFrame()
@@ -102,9 +104,13 @@ void function UpdateModDownloadDialog( RequiredModInfo mod, ModInstallState stat
 {
 	switch ( state.status )
 	{
-	case eModInstallStatus.MANIFESTO_FETCHING:
-		Hud_SetText( header, Localize( "#MANIFESTO_FETCHING_TITLE" ) )
-		Hud_SetText( body, Localize( "#MANIFESTO_FETCHING_TEXT" ) )
+	case eModInstallStatus.MANIFEST_FETCHING:
+		Hud_SetText( header, Localize( "#MANIFEST_FETCHING_TITLE" ) )
+		Hud_SetText( body, Localize( "#MANIFEST_FETCHING_TEXT" ) )
+		break
+	case eModInstallStatus.CHECKING_DETAILS:
+		Hud_SetText( header, Localize( "#CHECKING_DETAILS_TITLE" ) )
+		Hud_SetText( body, Localize( "#CHECKING_DETAILS_TEXT", mod.name, mod.version ) )
 		break
 	case eModInstallStatus.DOWNLOADING:
 		Hud_SetText( header, Localize( "#DOWNLOADING_MOD_TITLE_W_PROGRESS", string( state.ratio ) ) )
@@ -154,6 +160,9 @@ void function DisplayModDownloadErrorDialog( string modName )
     case eModInstallStatus.NO_DISK_SPACE_AVAILABLE:
 		dialogData.message = Localize( "#NO_DISK_SPACE_AVAILABLE" )
 		break
+	case eModInstallStatus.INVALID_DEPENDENCY:
+		dialogData.message = Localize( "#INVALID_DEPENDENCY" )
+		break;
     case eModInstallStatus.NOT_FOUND:
 		dialogData.message = Localize( "#NOT_FOUND" )
 		break
