@@ -255,6 +255,10 @@ void function ConnectionRunning_Think()
     OnThreadEnd(
         function() : ()
         {
+        if( Hud_HasChild( uiGlobal.activeMenu, "DarkenBackground" ) )
+            Hud_SetVisible( Hud_GetChild( uiGlobal.activeMenu, "DarkenBackground" ), false )
+
+
             if( file.failed )
                 OpenErrorDialog( file.error )
             else if( file.serverModCount > 0 )
@@ -263,6 +267,10 @@ void function ConnectionRunning_Think()
                 CloseAllDialogs()
         }
     )
+
+
+    if( Hud_HasChild( uiGlobal.activeMenu, "DarkenBackground" ) )
+        Hud_SetVisible( Hud_GetChild( uiGlobal.activeMenu, "DarkenBackground" ), true )
 
     DialogData dialogData
     dialogData.header = "#MATCHMAKING_TITLE_CONNECTING"

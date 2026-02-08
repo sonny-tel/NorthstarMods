@@ -286,8 +286,6 @@ void function InitServerBrowserMenu()
 	AddButtonEventHandler( Hud_GetChild( file.menu, "BtnServerDescription"), UIE_CLICK, ShowServerDescription )
 	AddButtonEventHandler( Hud_GetChild( file.menu, "BtnServerMods"), UIE_CLICK, ShowServerMods )
 
-	AddButtonEventHandler( Hud_GetChild( file.menu, "ConnectingButton"), UIE_CLICK, ConnectingButton_Activate )
-
 	// Hidden cause no need, if server descriptions become too long use this
 	Hud_SetEnabled( Hud_GetChild( file.menu, "BtnServerDescription"), false )
 	Hud_SetEnabled( Hud_GetChild( file.menu, "BtnServerMods"), false )
@@ -301,9 +299,6 @@ void function InitServerBrowserMenu()
 	RuiSetString( Hud_GetRui( Hud_GetChild( file.menu, "SwtBtnHideProtected") ), "buttonText", "" )
 	RuiSetString( Hud_GetRui( Hud_GetChild( file.menu, "SwtBtnSelectMap") ), "buttonText", "" )
 	RuiSetString( Hud_GetRui( Hud_GetChild( file.menu, "SwtBtnSelectGamemode") ), "buttonText", "" )
-
-
-	ToggleConnectingHUD(false)
 
 	// UI was cut off on some aspect ratios; not perfect
 	UpdateServerInfoBasedOnRes()
@@ -420,24 +415,6 @@ void function OnScrollUp( var button )
 	}
 	UpdateShownPage()
 	UpdateListSliderPosition( file.filteredServers.len() )
-}
-
-////////////////////////////
-// Connecting pop-up
-////////////////////////////
-void function ToggleConnectingHUD( bool vis )
-{
-	foreach (e in GetElementsByClassname( file.menu, "connectingHUD" ) ) {
-		Hud_SetEnabled( e, vis )
-		Hud_SetVisible( e, vis )
-	}
-
-	if ( vis ) Hud_SetFocused( Hud_GetChild( file.menu, "ConnectingButton" ) )
-}
-
-void function ConnectingButton_Activate( var button )
-{
-	file.cancelConnection = true
 }
 
 ////////////////////////////
@@ -669,7 +646,7 @@ void function OnKeyRPressed( arg )
 
 void function OnKeyEscPressed( arg ) 
 {
-	file.cancelConnection = true
+	NSCancelConnection()
 }
 
 bool function IsServerButtonFocused() 
@@ -866,7 +843,6 @@ void function OnDirectConnectDialog()
     if( ip == "" )
         return
 
-    file.cancelConnection = false
 	TriggerConnectToServerCallbacks()
 	ClientCommand( "connect " + ip  + " 0")
 }
@@ -1129,7 +1105,6 @@ void function OnServerSelected_Threaded( string password = "" )
 	if ( NSIsRequestingServerList() || NSGetServerCount() == 0 || file.serverListRequestFailed )
 		return
 	
-	file.cancelConnection = false
 
 	NSClearServerRequestedMods()
 
@@ -1149,8 +1124,6 @@ void function OnServerSelected_Threaded( string password = "" )
         OpenHiddenTextEntryDialog( dialogData )
 		return
 	}
-
-	// ToggleConnectingHUD( true )
 
 	ClientPreCacheLevel( file.lastSelectedServer.map )
 
@@ -1177,11 +1150,6 @@ void function OnPasswordTextEntry()
         return
 
     thread OnServerSelected_Threaded( password )
-}
-
-void function CancelAuthToServer()
-{
-    file.cancelConnection = true
 }
 
 //////////////////////////////////////
