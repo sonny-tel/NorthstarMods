@@ -468,6 +468,7 @@ void function OnServerBrowserMenuOpened()
 	UpdatePrivateMatchModesAndMaps()
 	Hud_SetText( Hud_GetChild( file.menu, "Title" ), "#MENU_TITLE_SERVER_BROWSER" )
 	UI_SetPresentationType( ePresentationType.KNOWLEDGEBASE_MAIN )
+	Hud_SetVisible( Hud_GetChild( file.menu, "DarkenBackground" ), false )
 
 	file.scrollOffset = 0
 	// dont rerequest if we came from the connect menu
