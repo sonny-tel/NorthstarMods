@@ -882,9 +882,14 @@ void function WaitForServerListRequest()
 	}
 }
 
-bool function SkipColorCode( string s, int i )
+bool function IsHexDigitChar( int c )
 {
-    if ( i + 9 > s.len() )
+    return ( c >= '0' && c <= '9' ) || ( c >= 'A' && c <= 'F' ) || ( c >= 'a' && c <= 'f' )
+}
+
+bool function IsNameColorCodeAt( string s, int i )
+{
+    if ( i + 9 > s.len() ) // '^' + 8 hex chars
         return false
     if ( s[i] != '^' )
         return false
@@ -892,7 +897,7 @@ bool function SkipColorCode( string s, int i )
     for ( int j = 1; j <= 8; j++ )
     {
         int c = expect int( s[i + j].tointeger() )
-        if ( ( c >= '0' && c <= '9' ) || ( c >= 'A' && c <= 'F' ) || ( c >= 'a' && c <= 'f' ) )
+        if ( !IsHexDigitChar( c ) )
             return false
     }
     return true
@@ -903,7 +908,7 @@ string function StripColorCodes( string s )
     string clean = ""
     for ( int i = 0; i < s.len(); )
     {
-        if ( SkipColorCode( s, i ) )
+        if ( IsNameColorCodeAt( s, i ) )
         {
             i += 9
             continue
