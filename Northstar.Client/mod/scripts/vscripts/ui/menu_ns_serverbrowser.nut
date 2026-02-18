@@ -882,7 +882,38 @@ void function WaitForServerListRequest()
 	}
 }
 
+bool function SkipColorCode( string s, int i )
+{
+    if ( i + 9 > s.len() )
+        return false
+    if ( s[i] != '^' )
+        return false
 
+    for ( int j = 1; j <= 8; j++ )
+    {
+        int c = expect int( s[i + j].tointeger() )
+        if ( ( c >= '0' && c <= '9' ) || ( c >= 'A' && c <= 'F' ) || ( c >= 'a' && c <= 'f' ) )
+            return false
+    }
+    return true
+}
+
+string function StripColorCodes( string s )
+{
+    string clean = ""
+    for ( int i = 0; i < s.len(); )
+    {
+        if ( SkipColorCode( s, i ) )
+        {
+            i += 9
+            continue
+        }
+
+        clean += format( "%c", expect int( s[i].tointeger() ) )
+        i++
+    }
+    return clean
+}
 
 void function FilterServerList()
 {
@@ -915,7 +946,8 @@ void function FilterServerList()
 		if ( filterArguments.useSearch )
 		{	
 			array<string> sName
-			sName.append( server.name.tolower() )
+			string cleanName = StripColorCodes( server.name )
+			sName.append( cleanName.tolower() )
 			sName.append( Localize( GetMapDisplayName( server.map ) ).tolower() )
 			sName.append( server.map.tolower() )
 			sName.append( server.playlist.tolower() )
