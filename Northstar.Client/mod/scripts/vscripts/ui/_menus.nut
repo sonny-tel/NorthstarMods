@@ -117,6 +117,9 @@ void function UICodeCallback_ActivateMenus()
 	if ( IsConnected() )
 		return
 
+	ClientCommand( "setplaylist tdm" )
+	ClientCommand( "mp_gamemode tdm" )
+
 	printt( "UICodeCallback_ActivateMenus:", uiGlobal.activeMenu && Hud_GetHudName( uiGlobal.activeMenu ) )
 
 	if ( uiGlobal.menuStack.len() == 0 )
