@@ -898,13 +898,13 @@ void function AddCallback_OnPlayerInventoryChanged( void functionref( entity ) c
 	file.playerInventoryChangedCallbacks.append( callbackFunc )
 }
 
-void function AddCallback_OnWeaponAttackCallback( void functionref( entity player, string weaponClassName, int attackIndex ) callbackFunc )
+void function AddCallback_OnWeaponAttackCallback( void functionref( entity player, entity weapon, string weaponName, int attackIndex ) callbackFunc )
 {
 	Assert( !file.weaponAttackCallbacks.contains( callbackFunc ), "Already added " + string( callbackFunc ) + " with AddCallback_OnWeaponAttackCallback" )
 	file.weaponAttackCallbacks.append( callbackFunc )
 }
 
-void function RemoveCallback_OnWeaponAttackCallback( void functionref( entity player, string weaponClassName, int attackIndex ) callbackFunc )
+void function RemoveCallback_OnWeaponAttackCallback( void functionref( entity player, entity weapon, string weaponName, int attackIndex ) callbackFunc )
 {
 	Assert( file.weaponAttackCallbacks.contains( callbackFunc ), "Tried to remove " + string( callbackFunc ) + " with RemoveCallback_OnWeaponAttackCallback but it was not found" )
 	file.weaponAttackCallbacks.fastremovebyvalue( callbackFunc )
@@ -912,6 +912,7 @@ void function RemoveCallback_OnWeaponAttackCallback( void functionref( entity pl
 
 void function CodeCallback_OnWeaponAttack(entity player, entity weapon, string weaponName,int shotsFired)
 {
+	printt("CodeCallback_OnWeaponAttack: ", player, weapon, weaponName, shotsFired)
 	foreach ( callbackFunc in file.weaponAttackCallbacks )
 	{
 		callbackFunc( player, weapon, weaponName, shotsFired )
