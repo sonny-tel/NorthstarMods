@@ -74,8 +74,8 @@ global function CodeCallback_OnPlayerEndWallhang
 
 
 global function CodeCallback_OnWeaponAttack
-global function AddCallback_OnWeaponAttackCallback
-global function RemoveCallback_OnWeaponAttackCallback
+global function AddCallback_OnWeaponAttack
+global function RemoveCallback_OnWeaponAttack
 
 struct
 {
