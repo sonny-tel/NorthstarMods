@@ -36,6 +36,7 @@ void function Stats_Init()
 	AddCallback_OnNPCKilled( OnPlayerOrNPCKilled )
 	AddCallback_OnPlayerRespawned( OnPlayerRespawned )
 	AddCallback_OnClientConnected( OnClientConnected )
+	AddCallback_OnWeaponAttack( Stats_OnPlayerAttack )
 	AddCallback_OnClientDisconnected( OnClientDisconnected )
 
 	thread HandleDistanceAndTimeStats_Threaded()
@@ -203,6 +204,11 @@ void function PostScoreEventUpdateStats( entity attacker, entity ent )
 			return
 		Stats_IncrementStat( attacker, "weapon_kill_stats", "killingSprees", weapon.GetWeaponClassName(), 1.0 )
 	}
+}
+
+void function Stats_OnPlayerAttack( entity player, entity weapon, string weaponName, int shotsFired )
+{
+	Stats_IncrementStat( player, "weapon_stats", "shotsFired", weaponName, 1.0 )
 }
 
 void function Stats_OnPlayerDidDamage( entity victim, var damageInfo )
