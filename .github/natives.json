@@ -401,6 +401,12 @@
       "argTypes": ""
     },
     {
+      "name": "NSSetModDownloadReady",
+      "helpText": "",
+      "returnTypeString": "void",
+      "argTypes": ""
+    },
+    {
       "name": "NSRequestCustomMainMenuPromos",
       "helpText": "",
       "returnTypeString": "void",
