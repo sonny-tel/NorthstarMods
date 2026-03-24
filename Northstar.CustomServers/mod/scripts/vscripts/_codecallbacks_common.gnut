@@ -912,7 +912,6 @@ void function RemoveCallback_OnWeaponAttack( void functionref( entity player, en
 
 void function CodeCallback_OnWeaponAttack(entity player, entity weapon, string weaponName,int shotsFired)
 {
-
 	foreach ( callbackFunc in file.weaponAttackCallbacks )
 	{
 		callbackFunc( player, weapon, weaponName, shotsFired )
