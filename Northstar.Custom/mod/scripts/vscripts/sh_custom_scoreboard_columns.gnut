@@ -1,5 +1,3 @@
-// Shared
-
 // Contains data about a custom scoreboard column data.
 global struct ScoreboardColumnData
 {
@@ -131,7 +129,7 @@ void function Server_AddCustomScoreboardColumn( string title, int scoreType, int
 }
 
 /**
- * Replaces a scoreboard column by absolute index (base + custom columns).
+ * Replaces a scoreboard column by index.
  * Replacements are tracked and replayed to late joiners.
  */
 void function Server_ReplaceCustomScoreboardColumn( int columnIndex, string title, int scoreType, int digits )
