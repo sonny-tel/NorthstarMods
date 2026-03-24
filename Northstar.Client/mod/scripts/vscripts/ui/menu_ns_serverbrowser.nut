@@ -896,10 +896,6 @@ int function GetNameColorCodeLengthAt( string s, int i )
     if ( remaining <= 0 )
         return 0
 
-    int c1 = expect int( s[i + 1].tointeger() )
-    if ( c1 >= '0' && c1 <= '9' )
-        return 2
-
     if ( remaining >= 8 )
     {
         bool ok = true
@@ -931,6 +927,10 @@ int function GetNameColorCodeLengthAt( string s, int i )
         if ( ok )
             return 7
     }
+
+    int c1 = expect int( s[i + 1].tointeger() )
+    if ( c1 >= '0' && c1 <= '9' )
+        return 2
 
     return 0
 }
@@ -984,8 +984,9 @@ void function FilterServerList()
 		if ( filterArguments.useSearch )
 		{	
 			array<string> sName
+			printt( "Original name: " + server.name )
 			string cleanName = StripColorCodes( server.name )
-			
+			printt( "Clean name: " + cleanName )
 			sName.append( cleanName.tolower() )
 			sName.append( Localize( GetMapDisplayName( server.map ) ).tolower() )
 			sName.append( server.map.tolower() )
