@@ -208,7 +208,7 @@ void function PostScoreEventUpdateStats( entity attacker, entity ent )
 
 void function Stats_OnPlayerAttack( entity player, entity weapon, string weaponName, int shotsFired )
 {
-	Stats_IncrementStat( player, "weapon_stats", "shotsFired", weaponName, 1.0 )
+	// Stats_IncrementStat( player, "weapon_stats", "shotsFired", weaponName, 1.0 )
 }
 
 void function Stats_OnPlayerDidDamage( entity victim, var damageInfo )
