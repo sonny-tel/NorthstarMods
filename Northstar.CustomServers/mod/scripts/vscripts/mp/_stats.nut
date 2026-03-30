@@ -36,7 +36,7 @@ void function Stats_Init()
 	AddCallback_OnNPCKilled( OnPlayerOrNPCKilled )
 	AddCallback_OnPlayerRespawned( OnPlayerRespawned )
 	AddCallback_OnClientConnected( OnClientConnected )
-	AddCallback_OnWeaponAttack( Stats_OnPlayerAttack )
+	// AddCallback_OnWeaponAttack( Stats_OnPlayerAttack )
 	AddCallback_OnClientDisconnected( OnClientDisconnected )
 
 	thread HandleDistanceAndTimeStats_Threaded()
