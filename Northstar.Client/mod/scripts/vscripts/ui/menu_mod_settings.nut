@@ -29,7 +29,8 @@ enum eEmptySpaceType
 	BottomBar
 }
 
-struct ConVarData {
+struct ConVarData
+{
 	string displayName
 	bool isEnumSetting = false
 	string conVar
@@ -59,7 +60,8 @@ struct ConVarData {
 	bool hasCustomMenu = false
 }
 
-struct {
+struct
+{
 	var menu
 	int scrollOffset = 0
 	bool updatingList = false
@@ -79,17 +81,18 @@ struct {
 	table<string, string> previousSwitchUpdate
 } file
 
-struct {
+struct
+{
 	int deltaX = 0
 	int deltaY = 0
 } mouseDeltaBuffer
 
 struct Color
 {
-    int r
-    int g
-    int b
-    int a
+	int r
+	int g
+	int b
+	int a
 }
 
 void function AddModSettingsMenu()
@@ -113,9 +116,9 @@ void function InitModMenu()
 
 	file.previousSwitchUpdate = {}
 
-	/////////////////////////////
+	// ///////////////////////////
 	// BASE NORTHSTAR SETTINGS //
-	/////////////////////////////
+	// ///////////////////////////
 
 	/*
 	ModSettings_AddModTitle( "^FF000000EXAMPLE" )
@@ -125,7 +128,7 @@ void function InitModMenu()
 		print( "HELLOOOOOO" )
 	} )
 	ModSettings_AddEnumSetting( "filter_mods", "Very Huge Enum Example", split( "Never gonna give you up Never gonna let you down Never gonna run around and desert you Never gonna make you cry Never gonna say goodbye Never gonna tell a lie and hurt you", " " ) )
-	*/
+*/
 	// Nuke weird rui on filter switch :D
 	// RuiSetString( Hud_GetRui( Hud_GetChild( file.menu, "SwtBtnShowFilter" ) ), "buttonText", "" )
 
@@ -134,14 +137,13 @@ void function InitModMenu()
 	AddMenuEventHandler( file.menu, eUIEvent.MENU_OPEN, OnModMenuOpened )
 	AddMenuEventHandler( file.menu, eUIEvent.MENU_CLOSE, OnModMenuClosed )
 	AddCallback_InputEvent( InputEventType.IE_AnalogValueChanged, OnAnalogueScroll )
-	
+
 	int len = file.modPanels.len()
 	for ( int i = 0; i < len; i++ )
 	{
-
 		// AddButtonEventHandler( button, UIE_CHANGE, OnSettingButtonPressed  )
 		// get panel
-		var panel = file.modPanels[i]
+		var panel = file.modPanels[ i ]
 
 		// reset to default nav
 		var child = Hud_GetChild( panel, "BtnMod" )
@@ -159,27 +161,34 @@ void function InitModMenu()
 		// reset button nav
 
 		child = Hud_GetChild( panel, "ResetModToDefault" )
-		Hud_AddEventHandler( child, UIE_GET_FOCUS, void function( var child ) : (panel)
-		{
-			Hud_SetColor( Hud_GetChild( panel, "ResetModImage" ), 0, 0, 0, 255 )
-		})
-		Hud_AddEventHandler( child, UIE_LOSE_FOCUS, void function( var child ) : (panel)
-		{
-			Hud_SetColor( Hud_GetChild( panel, "ResetModImage" ), 180, 180, 180, 180 )
-		})
+		Hud_AddEventHandler(
+			child,
+			UIE_GET_FOCUS,
+			void function( var child ) : ( panel )
+			{
+				Hud_SetColor( Hud_GetChild( panel, "ResetModImage" ), 0, 0, 0, 255 )
+			}
+		)
+		Hud_AddEventHandler(
+			child,
+			UIE_LOSE_FOCUS,
+			void function( var child ) : ( panel )
+			{
+				Hud_SetColor( Hud_GetChild( panel, "ResetModImage" ), 180, 180, 180, 180 )
+			}
+		)
 
 		// child.SetNavUp( Hud_GetChild( file.modPanels[ int( PureModulo( i - 1, len ) ) ], "ResetModToDefault" ) )
 		// child.SetNavDown( Hud_GetChild( file.modPanels[ int( PureModulo( i + 1, len ) ) ], "ResetModToDefault" ) )
 
 		Hud_AddEventHandler( child, UIE_CLICK, ResetConVar )
-		file.resetModButtons.append(child)
+		file.resetModButtons.append( child )
 
 		// color nav
 		child = Hud_GetChild( panel, "ColorPickerButton" )
 		Hud_AddEventHandler( child, UIE_CLICK, ColorButtonPressed )
 		child.SetNavUp( Hud_GetChild( file.modPanels[ int( PureModulo( i - 1, len ) ) ], "ColorPickerButton" ) )
 		child.SetNavDown( Hud_GetChild( file.modPanels[ int( PureModulo( i + 1, len ) ) ], "ColorPickerButton" ) )
-
 
 		// text field nav
 		child = Hud_GetChild( panel, "TextEntrySetting" )
@@ -208,11 +217,15 @@ void function InitModMenu()
 	// mouse delta
 	// AddMouseMovementCaptureHandler( file.menu, UpdateMouseDeltaBuffer )
 
-	Hud_AddEventHandler( Hud_GetChild( file.menu, "BtnModsSearch" ), UIE_CHANGE, void function ( var inputField ) : ()
-	{
-		file.filterText = Hud_GetUTF8Text( inputField )
-		OnFiltersChange()
-	} )
+	Hud_AddEventHandler(
+		Hud_GetChild( file.menu, "BtnModsSearch" ),
+		UIE_CHANGE,
+		void function( var inputField ) : ()
+		{
+			file.filterText = Hud_GetUTF8Text( inputField )
+			OnFiltersChange()
+		}
+	)
 }
 
 // "PureModulo"
@@ -231,12 +244,16 @@ float function PureModulo( int a, int b )
 
 void function ResetConVar( var button )
 {
-	ConVarData conVar = file.filteredList[ int ( Hud_GetScriptID( Hud_GetParent( button ) ) ) + file.scrollOffset ]
+	ConVarData conVar = file.filteredList[ int( Hud_GetScriptID( Hud_GetParent( button ) ) ) + file.scrollOffset ]
 
 	if ( conVar.isCategoryName )
-		ShowAreYouSureDialog( "#ARE_YOU_SURE", ResetAllConVarsForModEventHandler( conVar.catName ), "#WILL_RESET_ALL_SETTINGS"  )
+		ShowAreYouSureDialog( "#ARE_YOU_SURE", ResetAllConVarsForModEventHandler( conVar.catName ), "#WILL_RESET_ALL_SETTINGS" )
 	else
-		ShowAreYouSureDialog( "#ARE_YOU_SURE", ResetConVarEventHandler( int ( Hud_GetScriptID( Hud_GetParent( button ) ) ) + file.scrollOffset ), Localize( "#WILL_RESET_SETTING", Localize( conVar.displayName ) ) )
+		ShowAreYouSureDialog(
+			"#ARE_YOU_SURE",
+			ResetConVarEventHandler( int( Hud_GetScriptID( Hud_GetParent( button ) ) ) + file.scrollOffset ),
+			Localize( "#WILL_RESET_SETTING", Localize( conVar.displayName ) )
+		)
 }
 
 void function ShowAreYouSureDialog( string header, void functionref() func, string details )
@@ -271,11 +288,14 @@ void functionref() function ResetAllConVarsForModEventHandler( string catName )
 
 			if ( min( BUTTONS_PER_PAGE - 1, max( 0, index - file.scrollOffset ) ) == index - file.scrollOffset )
 			{
-				Hud_SetText( Hud_GetChild( file.modPanels[ index - file.scrollOffset ], "TextEntrySetting" ), c.isEnumSetting ? c.values[ GetConVarInt( c.conVar ) ] : GetConVarString( c.conVar ) )
-				if( c.sliderEnabled )
+				Hud_SetText(
+					Hud_GetChild( file.modPanels[ index - file.scrollOffset ], "TextEntrySetting" ),
+					c.isEnumSetting ? c.values[ GetConVarInt( c.conVar ) ] : GetConVarString( c.conVar )
+				)
+				if ( c.sliderEnabled )
 					MS_Slider_SetValue( file.sliders[ index - file.scrollOffset ], GetConVarFloat( c.conVar ) )
 
-				if( c.isEnumSetting )
+				if ( c.isEnumSetting )
 				{
 					var enumButton = Hud_GetChild( file.modPanels[ index - file.scrollOffset ], "EnumSelectButton" )
 					Hud_SetDialogListSelectionIndex( enumButton, GetConVarInt( c.conVar ) )
@@ -293,8 +313,11 @@ void functionref() function ResetConVarEventHandler( int modIndex )
 		SetConVarToDefault( c.conVar )
 		if ( min( BUTTONS_PER_PAGE - 1, max( 0, modIndex - file.scrollOffset ) ) == modIndex - file.scrollOffset )
 		{
-			Hud_SetText( Hud_GetChild( file.modPanels[ modIndex - file.scrollOffset ], "TextEntrySetting" ), c.isEnumSetting ? c.values[ GetConVarInt( c.conVar ) ] : GetConVarString( c.conVar ) )
-			if( c.sliderEnabled )
+			Hud_SetText(
+				Hud_GetChild( file.modPanels[ modIndex - file.scrollOffset ], "TextEntrySetting" ),
+				c.isEnumSetting ? c.values[ GetConVarInt( c.conVar ) ] : GetConVarString( c.conVar )
+			)
+			if ( c.sliderEnabled )
 				MS_Slider_SetValue( file.sliders[ modIndex - file.scrollOffset ], GetConVarFloat( c.conVar ) )
 			if ( c.type == "color" )
 			{
@@ -306,7 +329,10 @@ void functionref() function ResetConVarEventHandler( int modIndex )
 				}
 				catch ( ex )
 				{
-					ThrowInvalidValue( "This setting is a color, and only accepts a four of numbers(each number should be a integer between 0 and 255) - you put something we could not parse!\n\n( Input like \"255 255 255 255\", not \"" + c.conVar + "\". )\n Press reset button or change the default value in mod.json. Or inform the mod author." )
+					ThrowInvalidValue(
+						"This setting is a color, and only accepts a four of numbers(each number should be a integer between 0 and 255) - you put something we could not parse!\n\n( Input like \"255 255 255 255\", not \""
+							+ c.conVar + "\". )\n Press reset button or change the default value in mod.json. Or inform the mod author."
+					)
 					Hud_SetColor( colorVGUI, 0, 0, 0, 0 )
 				}
 			}
@@ -319,9 +345,9 @@ void functionref() function ResetConVarEventHandler( int modIndex )
 	}
 }
 
-////////////
+// //////////
 // slider //
-////////////
+// //////////
 void function UpdateMouseDeltaBuffer( int x, int y )
 {
 	mouseDeltaBuffer.deltaX += x
@@ -350,19 +376,21 @@ void function SliderBarUpdate()
 
 	Hud_SetFocused( sliderButton )
 
-	float minYPos = -40.0 * ( GetScreenSize()[1] / 1080.0 ) // why the hardcoded positions?!?!?!?!?!
-	float maxHeight = 615.0  * ( GetScreenSize()[1] / 1080.0 )
+	float minYPos = -40.0 * ( GetScreenSize()[ 1 ] / 1080.0 ) // why the hardcoded positions?!?!?!?!?!
+	float maxHeight = 615.0 * ( GetScreenSize()[ 1 ] / 1080.0 )
 	float maxYPos = minYPos - ( maxHeight - Hud_GetHeight( sliderPanel ) )
 	float useableSpace = ( maxHeight - Hud_GetHeight( sliderPanel ) )
 
 	float jump = minYPos - ( useableSpace / ( float( file.filteredList.len() ) ) )
 
-	int pos = expect int( expect array( Hud_GetPos( sliderButton ) )[1] )
+	int pos = expect int( expect array( Hud_GetPos( sliderButton ) )[ 1 ] )
 	float newPos = float( pos - mouseDeltaBuffer.deltaY )
 	FlushMouseDeltaBuffer()
 
-	if ( newPos < maxYPos ) newPos = maxYPos
-	if ( newPos > minYPos ) newPos = minYPos
+	if ( newPos < maxYPos )
+		newPos = maxYPos
+	if ( newPos > minYPos )
+		newPos = minYPos
 
 	Hud_SetPos( sliderButton, 40, newPos )
 	Hud_SetPos( sliderPanel, 40, newPos )
@@ -378,15 +406,17 @@ void function UpdateListSliderHeight()
 	var sliderPanel = Hud_GetChild( file.menu, "BtnModListSliderPanel" )
 	var movementCapture = Hud_GetChild( file.menu, "MouseMovementCapture" )
 
-	float mods = float ( file.filteredList.len() )
+	float mods = float( file.filteredList.len() )
 
-	float maxHeight = 615.0 * ( GetScreenSize()[1] / 1080.0 ) // why the hardcoded 320/80???
-	float minHeight = 80.0 * ( GetScreenSize()[1] / 1080.0 )
+	float maxHeight = 615.0 * ( GetScreenSize()[ 1 ] / 1080.0 ) // why the hardcoded 320/80???
+	float minHeight = 80.0 * ( GetScreenSize()[ 1 ] / 1080.0 )
 
 	float height = maxHeight * ( float( BUTTONS_PER_PAGE ) / mods )
 
-	if ( height > maxHeight ) height = maxHeight
-	if ( height < minHeight ) height = minHeight
+	if ( height > maxHeight )
+		height = maxHeight
+	if ( height < minHeight )
+		height = minHeight
 
 	Hud_SetHeight( sliderButton, height )
 	Hud_SetHeight( sliderPanel, height )
@@ -404,7 +434,7 @@ void function UpdateList()
 	array<ConVarData> list = file.conVarList
 	if ( filters.len() <= 0 )
 		filters.append( "" )
-	foreach( string f in filters )
+	foreach ( string f in filters )
 	{
 		string filter = strip( f )
 		string lastCatNameInFilter = ""
@@ -414,7 +444,7 @@ void function UpdateList()
 		for ( int i = 0; i < list.len(); i++ )
 		{
 			ConVarData prev = list[ maxint( 0, i - 1 ) ]
-			ConVarData c = list[i]
+			ConVarData c = list[ i ]
 			ConVarData next = list[ minint( list.len() - 1, i + 1 ) ]
 			if ( c.isEmptySpace )
 				continue
@@ -436,9 +466,10 @@ void function UpdateList()
 				{
 					lastModNameInFilter = c.modName
 					array<ConVarData> modVars = GetAllVarsInMod( list, c.modName )
-					if ( filteredList.len() <= 0 && modVars[0].spaceType == eEmptySpaceType.None )
+					if ( filteredList.len() <= 0 && modVars[ 0 ].spaceType == eEmptySpaceType.None )
 						filteredList.extend( modVars.slice( 1, modVars.len() ) )
-					else filteredList.extend( modVars )
+					else
+						filteredList.extend( modVars )
 
 					i += modVars.len() - 1
 				}
@@ -447,9 +478,10 @@ void function UpdateList()
 					if ( lastModNameInFilter != c.modName )
 					{
 						array<ConVarData> modVars = GetModConVarDatas( list, curModTitleIndex )
-						if ( filteredList.len() <= 0 && modVars[0].spaceType == eEmptySpaceType.None )
+						if ( filteredList.len() <= 0 && modVars[ 0 ].spaceType == eEmptySpaceType.None )
 							filteredList.extend( modVars.slice( 1, modVars.len() ) )
-						else filteredList.extend( modVars )
+						else
+							filteredList.extend( modVars )
 
 						lastModNameInFilter = c.modName
 					}
@@ -462,9 +494,10 @@ void function UpdateList()
 					if ( lastModNameInFilter != c.modName )
 					{
 						array<ConVarData> modVars = GetModConVarDatas( list, curModTitleIndex )
-						if ( filteredList.len() <= 0 && modVars[0].spaceType == eEmptySpaceType.None )
+						if ( filteredList.len() <= 0 && modVars[ 0 ].spaceType == eEmptySpaceType.None )
 							filteredList.extend( modVars.slice( 1, modVars.len() ) )
-						else filteredList.extend( modVars )
+						else
+							filteredList.extend( modVars )
 
 						lastModNameInFilter = c.modName
 					}
@@ -481,7 +514,6 @@ void function UpdateList()
 		filteredList = []
 	}
 	filteredList = list
-
 
 	file.filteredList = filteredList
 
@@ -502,33 +534,35 @@ void function UpdateList()
 
 	for ( int i = 0; i < BUTTONS_PER_PAGE; i++ )
 	{
-		Hud_SetEnabled( file.modPanels[i], i < j )
-		Hud_SetVisible( file.modPanels[i], i < j )
+		Hud_SetEnabled( file.modPanels[ i ], i < j )
+		Hud_SetVisible( file.modPanels[ i ], i < j )
 
 		if ( i < j )
-			SetModMenuNameText( file.modPanels[i] )
+			SetModMenuNameText( file.modPanels[ i ] )
 	}
 
 	array<var> focusableControls
 	for ( int i = 0; i < file.modPanels.len(); i++ )
 	{
-		if ( !Hud_IsVisible( file.modPanels[i] ) || !Hud_IsEnabled( file.modPanels[i] ) )
+		if ( !Hud_IsVisible( file.modPanels[ i ] ) || !Hud_IsEnabled( file.modPanels[ i ] ) )
 			continue
 
-		var slider = Hud_GetChild( file.modPanels[i], "Slider" )
-		var enumButton = Hud_GetChild( file.modPanels[i], "EnumSelectButton" )
-		var customButton = Hud_GetChild( file.modPanels[i], "OpenCustomMenu" )
+		var slider = Hud_GetChild( file.modPanels[ i ], "Slider" )
+		var enumButton = Hud_GetChild( file.modPanels[ i ], "EnumSelectButton" )
+		var customButton = Hud_GetChild( file.modPanels[ i ], "OpenCustomMenu" )
 
-		string visibleElement = Hud_IsVisible( slider ) ? "Slider" : Hud_IsVisible( enumButton ) ? "EnumSelectButton" : Hud_IsVisible( customButton ) ? "OpenCustomMenu" : "TextEntrySetting"
-		var current = Hud_GetChild( file.modPanels[i], visibleElement )
+		string visibleElement = Hud_IsVisible( slider )
+			? "Slider"
+			: Hud_IsVisible( enumButton ) ? "EnumSelectButton" : Hud_IsVisible( customButton ) ? "OpenCustomMenu" : "TextEntrySetting"
+		var current = Hud_GetChild( file.modPanels[ i ], visibleElement )
 		focusableControls.append( current )
 	}
 
 	for ( int i = 0; i < focusableControls.len(); i++ )
 	{
-		var current = focusableControls[i]
-		var prev = ( i > 0 ) ? focusableControls[i - 1] : null
-		var next = ( i < focusableControls.len() - 1 ) ? focusableControls[i + 1] : null
+		var current = focusableControls[ i ]
+		var prev = ( i > 0 ) ? focusableControls[ i - 1 ] : null
+		var next = ( i < focusableControls.len() - 1 ) ? focusableControls[ i + 1 ] : null
 
 		if ( prev != null )
 			current.SetNavUp( prev )
@@ -578,10 +612,10 @@ array<ConVarData> function GetAllVarsInCategory( array<ConVarData> arr, string c
 	array<ConVarData> vars = []
 	for ( int i = 0; i < arr.len(); i++ )
 	{
-		ConVarData c = arr[i]
+		ConVarData c = arr[ i ]
 		if ( c.catName == catName )
 		{
-			vars.append( arr[i] )
+			vars.append( arr[ i ] )
 		}
 	}
 	return vars
@@ -592,10 +626,10 @@ array<ConVarData> function GetAllVarsInMod( array<ConVarData> arr, string modNam
 	array<ConVarData> vars = []
 	for ( int i = 0; i < arr.len(); i++ )
 	{
-		ConVarData c = arr[i]
+		ConVarData c = arr[ i ]
 		if ( c.modName == modName )
 		{
-			vars.append( arr[i] )
+			vars.append( arr[ i ] )
 		}
 	}
 	return vars
@@ -603,10 +637,10 @@ array<ConVarData> function GetAllVarsInMod( array<ConVarData> arr, string modNam
 
 void function SetModMenuNameText( var button )
 {
-	int index = int ( Hud_GetScriptID( button ) ) + file.scrollOffset
-	ConVarData conVar = file.filteredList[ int ( Hud_GetScriptID( button ) ) + file.scrollOffset ]
+	int index = int( Hud_GetScriptID( button ) ) + file.scrollOffset
+	ConVarData conVar = file.filteredList[ int( Hud_GetScriptID( button ) ) + file.scrollOffset ]
 
-	var panel = file.modPanels[ int ( Hud_GetScriptID( button ) ) ]
+	var panel = file.modPanels[ int( Hud_GetScriptID( button ) ) ]
 
 	var label = Hud_GetChild( panel, "BtnMod" )
 	var textField = Hud_GetChild( panel, "TextEntrySetting" )
@@ -616,14 +650,13 @@ void function SetModMenuNameText( var button )
 	var bottomLine = Hud_GetChild( panel, "BottomLine" )
 	var topLine = Hud_GetChild( panel, "TopLine" )
 	var modTitle = Hud_GetChild( panel, "ModTitle" )
-	var customMenuButton = Hud_GetChild( panel, "OpenCustomMenu")
+	var customMenuButton = Hud_GetChild( panel, "OpenCustomMenu" )
 	var slider = Hud_GetChild( panel, "Slider" )
 	var dropButton = Hud_GetChild( slider, "BtnDropButton" )
 	var header = Hud_GetChild( panel, "Header" )
 
 	var colorButton = Hud_GetChild( panel, "ColorPickerButton" )
 	var colorVGUI = Hud_GetChild( panel, "ColorPickerImage" )
-
 
 	Hud_SetVisible( slider, false )
 	Hud_SetEnabled( slider, true )
@@ -632,14 +665,14 @@ void function SetModMenuNameText( var button )
 
 	Hud_DialogList_RemoveListItems( enumButton )
 
-	for( int i = 0; i < conVar.values.len(); i++ )
-		Hud_DialogList_AddListItem( enumButton, conVar.values[i], string( i ) )
+	for ( int i = 0; i < conVar.values.len(); i++ )
+		Hud_DialogList_AddListItem( enumButton, conVar.values[ i ], string( i ) )
 
-    Hud_ChangeDialogListConVar( enumButton, conVar.conVar )
+	Hud_ChangeDialogListConVar( enumButton, conVar.conVar )
 
-	if( conVar.isEnumSetting ) 
-		Hud_SetDialogListSelectionValue( enumButton, string( GetConVarInt( conVar.conVar ) ) )	
-	
+	if ( conVar.isEnumSetting )
+		Hud_SetDialogListSelectionValue( enumButton, string( GetConVarInt( conVar.conVar ) ) )
+
 	Hud_SetVisible( colorButton, false )
 	Hud_SetVisible( colorVGUI, false )
 	Hud_SetEnabled( colorButton, false )
@@ -679,12 +712,12 @@ void function SetModMenuNameText( var button )
 	Hud_SetVisible( enumButton, !conVar.isCategoryName && conVar.isEnumSetting )
 	Hud_SetVisible( modTitle, conVar.isModName )
 	Hud_SetVisible( customMenuButton, false )
-	float scaleX = GetScreenSize()[1] / 1080.0
-	float scaleY = GetScreenSize()[1] / 1080.0
+	float scaleX = GetScreenSize()[ 1 ] / 1080.0
+	float scaleY = GetScreenSize()[ 1 ] / 1080.0
 	if ( conVar.sliderEnabled )
 	{
 		// Hud_SetSize( slider, int( 320 * scaleX ), int( 45 * scaleY ) )
-		MS_Slider s = file.sliders[ int ( Hud_GetScriptID( button ) ) ]
+		MS_Slider s = file.sliders[ int( Hud_GetScriptID( button ) ) ]
 		MS_Slider_SetMin( s, conVar.min )
 		MS_Slider_SetMax( s, conVar.max )
 		MS_Slider_SetStepSize( s, conVar.stepSize )
@@ -730,19 +763,23 @@ void function SetModMenuNameText( var button )
 
 		Hud_SetSize( resetButton, int( scaleX * 90 ), int( scaleY * 40 ) )
 	}
-	else {
+	else
+	{
 		Hud_SetVisible( slider, conVar.sliderEnabled )
-		if (conVar.type == "float")
-			Hud_SetText( textField, string( GetConVarFloat(conVar.conVar) ) )
-		else Hud_SetText( textField, conVar.isEnumSetting ? conVar.values[ GetConVarInt( conVar.conVar ) ] : GetConVarString( conVar.conVar ) )
-		Hud_SetPos( label, int(scaleX * 25), 0 )
-		Hud_SetText( resetButton, "" )
-		if (conVar.sliderEnabled)
-			Hud_SetSize( label, int(scaleX * (375 + 85)), int(scaleY * 40) )
-		else Hud_SetSize( label, int(scaleX * (375 + 405)), int(scaleY * 40) )
 		if ( conVar.type == "float" )
 			Hud_SetText( textField, string( GetConVarFloat( conVar.conVar ) ) )
-		else Hud_SetText( textField, conVar.isEnumSetting ? conVar.values[ GetConVarInt( conVar.conVar ) ] : GetConVarString( conVar.conVar ) )
+		else
+			Hud_SetText( textField, conVar.isEnumSetting ? conVar.values[ GetConVarInt( conVar.conVar ) ] : GetConVarString( conVar.conVar ) )
+		Hud_SetPos( label, int( scaleX * 25 ), 0 )
+		Hud_SetText( resetButton, "" )
+		if ( conVar.sliderEnabled )
+			Hud_SetSize( label, int( scaleX * ( 375 + 85 ) ), int( scaleY * 40 ) )
+		else
+			Hud_SetSize( label, int( scaleX * ( 375 + 405 ) ), int( scaleY * 40 ) )
+		if ( conVar.type == "float" )
+			Hud_SetText( textField, string( GetConVarFloat( conVar.conVar ) ) )
+		else
+			Hud_SetText( textField, conVar.isEnumSetting ? conVar.values[ GetConVarInt( conVar.conVar ) ] : GetConVarString( conVar.conVar ) )
 		Hud_SetPos( label, int( scaleX * 25 ), 0 )
 		Hud_SetText( resetButton, "" )
 		Hud_SetSize( resetButton, int( scaleX * 90 ), int( scaleY * 40 ) )
@@ -753,7 +790,7 @@ void function SetModMenuNameText( var button )
 			Hud_SetVisible( resetButton, true )
 			Hud_SetVisible( resetVGUI, true )
 		}
-		else 
+		else
 		{
 			Hud_SetSize( label, int( scaleX * ( 375 + 405 ) ), int( scaleY * 40 ) )
 			Hud_SetVisible( textField, false )
@@ -766,46 +803,49 @@ void function SetModMenuNameText( var button )
 
 		Hud_SetVisible( label, false )
 
-
 		// color
-		if (conVar.type == "color")
+		if ( conVar.type == "color" )
 		{
-			try {
-				Color color = StringToColors( GetConVarString(conVar.conVar) )
+			try
+			{
+				Color color = StringToColors( GetConVarString( conVar.conVar ) )
 				Hud_SetVisible( colorButton, true )
 				Hud_SetVisible( colorVGUI, true )
 				Hud_SetEnabled( colorButton, true )
 				Hud_SetEnabled( colorVGUI, true )
 				Hud_SetText( colorButton, conVar.displayName )
-				Hud_SetSize( label, int(scaleX * (375 + 85)), int(scaleY * 40) )
-				Hud_SetSize( colorVGUI, int( scaleX * ( 100  ) ), int( scaleY * 30 ) )
-				Hud_SetSize( colorButton, int( scaleX * ( 700  ) ), int( scaleY * 40 ) )
+				Hud_SetSize( label, int( scaleX * ( 375 + 85 ) ), int( scaleY * 40 ) )
+				Hud_SetSize( colorVGUI, int( scaleX * ( 100 ) ), int( scaleY * 30 ) )
+				Hud_SetSize( colorButton, int( scaleX * ( 700 ) ), int( scaleY * 40 ) )
 				Hud_SetVisible( resetButton, true )
 				Hud_SetVisible( resetVGUI, true )
-				Hud_SetColor(colorVGUI, color.r, color.g, color.b, color.a)
+				Hud_SetColor( colorVGUI, color.r, color.g, color.b, color.a )
 				// Hud_ColorOverTime(colorVGUI, color.r, color.g, color.b, color.a, 1, 1)
 			}
 			catch ( ex )
 			{
-				printt(ex)
-				ThrowInvalidValue("This setting is a color, and only accepts a four of numbers(each number should be a integer between 0 and 255) - you put something we could not parse!\n\n( Input like \"255 255 255 255\", not \"" + conVar.conVar + "\". )\n Press reset button or change the default value in mod.json. Or inform the mod author.")
+				printt( ex )
+				ThrowInvalidValue(
+					"This setting is a color, and only accepts a four of numbers(each number should be a integer between 0 and 255) - you put something we could not parse!\n\n( Input like \"255 255 255 255\", not \""
+						+ conVar.conVar + "\". )\n Press reset button or change the default value in mod.json. Or inform the mod author."
+				)
 
 				Hud_SetSize( colorVGUI, 0, int( 40 * scaleY ) )
 				Hud_SetSize( colorButton, 0, int( 40 * scaleY ) )
 				Hud_SetEnabled( colorButton, false )
 				Hud_SetEnabled( colorVGUI, false )
-				Hud_SetColor(colorVGUI, 0, 0, 0, 0)
+				Hud_SetColor( colorVGUI, 0, 0, 0, 0 )
 			}
 		}
-		else if (conVar.type == "alpha") {
+		else if ( conVar.type == "alpha" )
+		{
 			Hud_SetVisible( colorVGUI, true )
 			Hud_SetEnabled( colorVGUI, true )
-			Hud_SetSize( colorVGUI, int( scaleX * ( 20  ) ), int( scaleY * 20 ) )
+			Hud_SetSize( colorVGUI, int( scaleX * ( 20 ) ), int( scaleY * 20 ) )
 
-			float alpha = GetConVarFloat(conVar.conVar)
-			Hud_SetColor(colorVGUI, 124, 252, 0, 255)
-			Hud_SetAlpha(colorVGUI, int(alpha * 255))
-
+			float alpha = GetConVarFloat( conVar.conVar )
+			Hud_SetColor( colorVGUI, 124, 252, 0, 255 )
+			Hud_SetAlpha( colorVGUI, int( alpha * 255 ) )
 		}
 		else
 		{
@@ -813,11 +853,10 @@ void function SetModMenuNameText( var button )
 			Hud_SetSize( colorButton, 0, int( 40 * scaleY ) )
 			Hud_SetEnabled( colorButton, false )
 			Hud_SetEnabled( colorVGUI, false )
-			Hud_SetColor(colorVGUI, 0, 0, 0, 0)
-
+			Hud_SetColor( colorVGUI, 0, 0, 0, 0 )
 		}
 
-		if( conVar.isSimpleSetting )
+		if ( conVar.isSimpleSetting )
 		{
 			Hud_SetVisible( textField, true )
 			Hud_SetText( label, conVar.displayName )
@@ -840,22 +879,20 @@ void function ColorButtonPressed( var button )
 	// c.onPress()
 	// printt(c.displayName, c.type, c.conVar)
 
-	thread OpenColorPickerMenu(c.conVar, c.displayName)
-
-
+	thread OpenColorPickerMenu( c.conVar, c.displayName )
 	// UpdateList()
 }
 
 void function OnAnalogueScroll( int eventType, int nTick, int nData, int nData2, int nData3 )
 {
-	if ( uiGlobal.activeMenu != file.menu ) 
+	if ( uiGlobal.activeMenu != file.menu )
 		return
 
 	if ( nData == AnalogCode.MOUSE_WHEEL )
 	{
 		int scrollDirection = nData3
 
-		if( scrollDirection > 0 )
+		if ( scrollDirection > 0 )
 		{
 			OnScrollUp( null )
 		}
@@ -868,7 +905,8 @@ void function OnAnalogueScroll( int eventType, int nTick, int nData, int nData2,
 
 void function OnScrollDown( var button )
 {
-	if ( file.filteredList.len() <= BUTTONS_PER_PAGE ) return
+	if ( file.filteredList.len() <= BUTTONS_PER_PAGE )
+		return
 	file.scrollOffset += 1
 	if ( file.scrollOffset + BUTTONS_PER_PAGE > file.filteredList.len() )
 	{
@@ -891,76 +929,78 @@ void function OnScrollUp( var button )
 
 void function UpdateListSliderPosition()
 {
-	var sliderButton = Hud_GetChild( file.menu , "BtnModListSlider" )
-	var sliderPanel = Hud_GetChild( file.menu , "BtnModListSliderPanel" )
-	var movementCapture = Hud_GetChild( file.menu , "MouseMovementCapture" )
+	var sliderButton = Hud_GetChild( file.menu, "BtnModListSlider" )
+	var sliderPanel = Hud_GetChild( file.menu, "BtnModListSliderPanel" )
+	var movementCapture = Hud_GetChild( file.menu, "MouseMovementCapture" )
 
-	float mods = float ( file.filteredList.len() )
+	float mods = float( file.filteredList.len() )
 
-	float minYPos = -40.0 * ( GetScreenSize()[1] / 1080.0 )
-	float useableSpace = ( 615.0 * ( GetScreenSize()[1] / 1080.0 ) - Hud_GetHeight( sliderPanel ) )
+	float minYPos = -40.0 * ( GetScreenSize()[ 1 ] / 1080.0 )
+	float useableSpace = ( 615.0 * ( GetScreenSize()[ 1 ] / 1080.0 ) - Hud_GetHeight( sliderPanel ) )
 
 	float jump = minYPos - ( useableSpace / ( mods - float( BUTTONS_PER_PAGE ) ) * file.scrollOffset )
 
+	if ( jump > minYPos )
+		jump = minYPos
 
-	if ( jump > minYPos ) jump = minYPos
-
-	Hud_SetPos( sliderButton , 40, jump )
-	Hud_SetPos( sliderPanel , 40, jump )
-	Hud_SetPos( movementCapture , 40, jump )
+	Hud_SetPos( sliderButton, 40, jump )
+	Hud_SetPos( sliderPanel, 40, jump )
+	Hud_SetPos( movementCapture, 40, jump )
 }
 
 void function OnModMenuOpened()
 {
-	if( !file.isOpen )
+	if ( !file.isOpen )
 	{
 		file.scrollOffset = 0
 		file.filterText = ""
 
 		// RegisterButtonPressedCallback( MOUSE_WHEEL_UP , OnScrollUp )
 		// RegisterButtonPressedCallback( MOUSE_WHEEL_DOWN , OnScrollDown )
-		RegisterButtonPressedCallback( MOUSE_LEFT , OnClick )
+		RegisterButtonPressedCallback( MOUSE_LEFT, OnClick )
 
 		OnFiltersChange()
 		file.isOpen = true
 	}
 
-    var firstVisibleElement = null;
-    var firstVisiblePanel = null;
-	
-    for( int i = 0; i < file.modPanels.len(); i++ )
-    {
-        var firstSlider = Hud_GetChild( file.modPanels[ i ], "Slider" );
-        var firstEnumButton = Hud_GetChild( file.modPanels[ i ], "EnumSelectButton" );
-        var firstCustomButton = Hud_GetChild( file.modPanels[ i ], "OpenCustomMenu" );
+	var firstVisibleElement = null
+	var firstVisiblePanel = null
 
-        firstVisibleElement = Hud_IsVisible( firstSlider ) ? "Slider" : Hud_IsVisible( firstEnumButton ) ? "EnumSelectButton" : Hud_IsVisible( firstCustomButton ) ? "OpenCustomMenu" : null;
-        firstVisiblePanel = file.modPanels[ i ];
+	for ( int i = 0; i < file.modPanels.len(); i++ )
+	{
+		var firstSlider = Hud_GetChild( file.modPanels[ i ], "Slider" )
+		var firstEnumButton = Hud_GetChild( file.modPanels[ i ], "EnumSelectButton" )
+		var firstCustomButton = Hud_GetChild( file.modPanels[ i ], "OpenCustomMenu" )
 
-        if ( firstVisibleElement != null && Hud_IsVisible(firstVisiblePanel) && Hud_IsEnabled(firstVisiblePanel) )
-            break;
-    }
+		firstVisibleElement =
+			Hud_IsVisible( firstSlider )
+				? "Slider"
+				: Hud_IsVisible( firstEnumButton ) ? "EnumSelectButton" : Hud_IsVisible( firstCustomButton ) ? "OpenCustomMenu" : null
+		firstVisiblePanel = file.modPanels[ i ]
 
-    Hud_SetFocused( Hud_GetChild(firstVisiblePanel, firstVisibleElement ) );
+		if ( firstVisibleElement != null && Hud_IsVisible( firstVisiblePanel ) && Hud_IsEnabled( firstVisiblePanel ) )
+			break
+	}
 
+	Hud_SetFocused( Hud_GetChild( firstVisiblePanel, firstVisibleElement ) )
 }
 
 void function OnClick( var button )
 {
-	if (file.resetModButtons.contains(GetFocus()))
-		thread CheckFocus(GetFocus())
-	if (GetFocus() == Hud_GetChild(file.menu, "NoResultLabel"))
-		thread CheckFocus(GetFocus())
+	if ( file.resetModButtons.contains( GetFocus() ) )
+		thread CheckFocus( GetFocus() )
+	if ( GetFocus() == Hud_GetChild( file.menu, "NoResultLabel" ) )
+		thread CheckFocus( GetFocus() )
 }
 
 void function CheckFocus( var button )
 {
 	wait 0.05
-	if (file.resetModButtons.contains(GetFocus()))
+	if ( file.resetModButtons.contains( GetFocus() ) )
 	{
-		thread ResetConVar(GetFocus())
+		thread ResetConVar( GetFocus() )
 	}
-	if (GetFocus() == Hud_GetChild(file.menu, "NoResultLabel"))
+	if ( GetFocus() == Hud_GetChild( file.menu, "NoResultLabel" ) )
 		LaunchExternalWebBrowser( "https://northstar.thunderstore.io/", WEBBROWSER_FLAG_FORCEEXTERNAL )
 }
 
@@ -977,7 +1017,7 @@ void function OnModMenuClosed()
 {
 	// DeregisterButtonPressedCallback( MOUSE_WHEEL_UP , OnScrollUp )
 	// DeregisterButtonPressedCallback( MOUSE_WHEEL_DOWN , OnScrollDown )
-	DeregisterButtonPressedCallback( MOUSE_LEFT , OnClick )
+	DeregisterButtonPressedCallback( MOUSE_LEFT, OnClick )
 
 	file.scrollOffset = 0
 	UpdateListSliderPosition()
@@ -1001,13 +1041,11 @@ void function ModSettings_AddModTitle( string modName, int stackPos = 2 )
 	topBar.modName = modName
 	topBar.spaceType = eEmptySpaceType.TopBar
 
-
 	ConVarData modData
 
 	modData.modName = modName
 	modData.displayName = modName
 	modData.isModName = true
-
 
 	ConVarData botBar
 	botBar.isEmptySpace = true
@@ -1093,13 +1131,12 @@ void function AddConVarSetting( string conVar, string displayName, string type =
 	ModSettings_AddSetting( conVar, displayName, type, stackPos + 1 )
 }
 
-void function ModSettings_AddColorSetting(string conVar, string buttonLabel, void functionref() onPress = null, int stackPos = 2)
+void function ModSettings_AddColorSetting( string conVar, string buttonLabel, void functionref() onPress = null, int stackPos = 2 )
 {
 	if ( !( getstackinfos( stackPos )[ "func" ] in file.setFuncs ) || !file.setFuncs[ expect string( getstackinfos( stackPos )[ "func" ] ) ] )
 		throw getstackinfos( stackPos )[ "src" ] + " #" + getstackinfos( stackPos )[ "line" ] + "\nCannot add a button before a category and mod title!"
 
 	ConVarData data
-
 
 	data.conVar = conVar
 	data.type = "color"
@@ -1112,7 +1149,7 @@ void function ModSettings_AddColorSetting(string conVar, string buttonLabel, voi
 	file.conVarList.append( data )
 }
 
-void function ModSettings_AddAlphaSetting(string conVar, string displayName, int stackPos = 2)
+void function ModSettings_AddAlphaSetting( string conVar, string displayName, int stackPos = 2 )
 {
 	if ( !( getstackinfos( stackPos )[ "func" ] in file.setFuncs ) || !file.setFuncs[ expect string( getstackinfos( stackPos )[ "func" ] ) ] )
 		throw getstackinfos( stackPos )[ "src" ] + " #" + getstackinfos( stackPos )[ "line" ] + "\nCannot add a button before a category and mod title!"
@@ -1212,7 +1249,7 @@ void function OnSliderChange( var button )
 
 	Hud_SetText( textPanel, string( GetConVarFloat( c.conVar ) ) )
 
-	if (c.type == "alpha")
+	if ( c.type == "alpha" )
 	{
 		var colorVGUI = Hud_GetChild( Hud_GetParent( textPanel ), "ColorPickerImage" )
 
@@ -1227,7 +1264,8 @@ void function SendTextPanelChanges( var textPanel )
 	var colorButton = Hud_GetChild( Hud_GetParent( textPanel ), "ColorPickerButton" )
 	var colorVGUI = Hud_GetChild( Hud_GetParent( textPanel ), "ColorPickerImage" )
 
-	if ( c.conVar == "" ) return
+	if ( c.conVar == "" )
+		return
 	// enums don't need to do this
 	if ( !c.isEnumSetting )
 	{
@@ -1246,6 +1284,7 @@ void function SendTextPanelChanges( var textPanel )
 					Hud_SetText( textPanel, GetConVarString( c.conVar ) )
 				}
 				break
+
 			case "bool":
 				if ( newSetting != "0" && newSetting != "1" )
 				{
@@ -1258,6 +1297,7 @@ void function SendTextPanelChanges( var textPanel )
 				}
 				SetConVarBool( c.conVar, newSetting == "1" )
 				break
+
 			case "float":
 				try
 				{
@@ -1271,11 +1311,12 @@ void function SendTextPanelChanges( var textPanel )
 				if ( c.sliderEnabled )
 				{
 					var panel = Hud_GetParent( textPanel )
-					MS_Slider s = file.sliders[ int ( Hud_GetScriptID( panel ) ) ]
+					MS_Slider s = file.sliders[ int( Hud_GetScriptID( panel ) ) ]
 
 					MS_Slider_SetValue( s, GetConVarFloat( c.conVar ) )
 				}
 				break
+
 			case "float2":
 				try
 				{
@@ -1286,17 +1327,20 @@ void function SendTextPanelChanges( var textPanel )
 						Hud_SetText( textPanel, GetConVarString( c.conVar ) )
 						break
 					}
-					vector settingTest = < split[0].tofloat(), split[1].tofloat(), 0 >
+					vector settingTest = < split[ 0 ].tofloat(), split[ 1 ].tofloat(), 0 >
 
 					SetConVarString( c.conVar, newSetting )
 				}
 				catch ( ex )
 				{
-					ThrowInvalidValue( "This setting is a float2, and only accepts a pair of numbers - you put something we could not parse!\n\n( Use \".\" for the floating point, not \",\". )" )
+					ThrowInvalidValue(
+						"This setting is a float2, and only accepts a pair of numbers - you put something we could not parse!\n\n( Use \".\" for the floating point, not \",\". )"
+					)
 					Hud_SetText( textPanel, GetConVarString( c.conVar ) )
 				}
 				break
-			// idk sometimes it's called Float3 most of the time it's called vector, I am not complaining.
+				// idk sometimes it's called Float3 most of the time it's called vector, I am not complaining.
+
 			case "vector":
 			case "float3":
 				try
@@ -1308,40 +1352,45 @@ void function SendTextPanelChanges( var textPanel )
 						Hud_SetText( textPanel, GetConVarString( c.conVar ) )
 						break
 					}
-					vector settingTest = < split[0].tofloat(), split[1].tofloat(), 0 >
+					vector settingTest = < split[ 0 ].tofloat(), split[ 1 ].tofloat(), 0 >
 
 					SetConVarString( c.conVar, newSetting )
 				}
 				catch ( ex )
 				{
-					ThrowInvalidValue( "This setting is a float3, and only accepts a trio of numbers - you put something we could not parse!\n\n( Use \".\" for the floating point, not \",\". )" )
+					ThrowInvalidValue(
+						"This setting is a float3, and only accepts a trio of numbers - you put something we could not parse!\n\n( Use \".\" for the floating point, not \",\". )"
+					)
 					Hud_SetText( textPanel, GetConVarString( c.conVar ) )
 				}
 				break
+
 			case "color":
-				try {
+				try
+				{
 					array<string> split = split( newSetting, " " )
-					if ( split.len() < 3 || split.len() > 4)
+					if ( split.len() < 3 || split.len() > 4 )
 					{
 						throw ""
 					}
 
 					array<int> color
 					string clampedNewSetting = ""
-					foreach (string val in split) {
-						int c = int( clamp( val.tointeger(), 0 ,255 ) )
+					foreach ( string val in split )
+					{
+						int c = int( clamp( val.tointeger(), 0, 255 ) )
 						color.append( c )
 
 						clampedNewSetting += c + " "
 					}
 
-					if (split.len() == 3)
+					if ( split.len() == 3 )
 					{
 						color.append( 255 )
 						clampedNewSetting += " 255"
 					}
 
-					Hud_SetColor( colorVGUI, color[0], color[1], color[2], color[3] )
+					Hud_SetColor( colorVGUI, color[ 0 ], color[ 1 ], color[ 2 ], color[ 3 ] )
 					Hud_SetText( textPanel, clampedNewSetting )
 					SetConVarString( c.conVar, clampedNewSetting )
 				}
@@ -1352,9 +1401,13 @@ void function SendTextPanelChanges( var textPanel )
 					Hud_SetColor( colorVGUI, color.r, color.g, color.b, color.a )
 
 					printt( "Failed to send textField change, because:" + ex )
-					ThrowInvalidValue( "This setting is a color, and only accepts a four of numbers(each number should be a integer between 0 and 255) - you put something we could not parse!\n\n( Input like \"255 255 255 255\", not \"" + newSetting + "\". )" )
+					ThrowInvalidValue(
+						"This setting is a color, and only accepts a four of numbers(each number should be a integer between 0 and 255) - you put something we could not parse!\n\n( Input like \"255 255 255 255\", not \""
+							+ newSetting + "\". )"
+					)
 				}
 				break
+
 			case "alpha":
 				try
 				{
@@ -1366,23 +1419,27 @@ void function SendTextPanelChanges( var textPanel )
 				catch ( ex )
 				{
 					printt( ex )
-					ThrowInvalidValue( "This setting is a alpha(float), and only accepts a number - we could not parse this!\n\n( Use \".\" for the floating point, not \",\". )" )
+					ThrowInvalidValue(
+						"This setting is a alpha(float), and only accepts a number - we could not parse this!\n\n( Use \".\" for the floating point, not \",\". )"
+					)
 				}
 
 				if ( c.sliderEnabled )
 				{
 					var panel = Hud_GetParent( textPanel )
-					MS_Slider s = file.sliders[ int ( Hud_GetScriptID( panel ) ) ]
+					MS_Slider s = file.sliders[ int( Hud_GetScriptID( panel ) ) ]
 
 					MS_Slider_SetValue( s, GetConVarFloat( c.conVar ) )
 				}
 				break
+
 			default:
 				SetConVarString( c.conVar, newSetting )
-				break;
+				break
 		}
 	}
-	else Hud_SetText( textPanel, Localize( c.values[ GetConVarInt( c.conVar ) ] ) )
+	else
+		Hud_SetText( textPanel, Localize( c.values[ GetConVarInt( c.conVar ) ] ) )
 }
 
 void function ThrowInvalidValue( string desc )
@@ -1430,7 +1487,7 @@ string function SanitizeDisplayName( string displayName )
 	array<string> parts = split( displayName, "^" )
 	string result = ""
 	if ( parts.len() == 1 )
-		return parts[0]
+		return parts[ 0 ]
 	foreach ( string p in parts )
 	{
 		if ( p == "" )
@@ -1441,138 +1498,148 @@ string function SanitizeDisplayName( string displayName )
 		int i = 0
 		for ( i = 0; i < 8 && i < p.len(); i++ )
 		{
-			var c = p[i]
+			var c = p[ i ]
 			if ( ( c < 'a' || c > 'f' ) && ( c < 'A' || c > 'F' ) && ( c < '0' || c > '9' ) )
 				break
 		}
 		if ( i == 0 )
 			result += p
-		else result += p.slice( i, p.len() )
+		else
+			result += p.slice( i, p.len() )
 	}
 	return result
 }
 
 void function OnHitDummyTop( var button )
 {
-    file.scrollOffset -= 1
+	file.scrollOffset -= 1
 
-    if ( file.scrollOffset < 0 )
-    {
-        // was at top already
-        file.scrollOffset = 0;
-        // Find first visible/enabled panel
-        var firstVisibleElement = null;
-        var firstVisiblePanel = null;
-        for( int i = 0; i < file.modPanels.len(); i++ )
-        {
-            var firstSlider = Hud_GetChild( file.modPanels[ i ], "Slider" );
-            var firstEnumButton = Hud_GetChild( file.modPanels[ i ], "EnumSelectButton" );
-            var firstCustomButton = Hud_GetChild( file.modPanels[ i ], "OpenCustomMenu" );
+	if ( file.scrollOffset < 0 )
+	{
+		// was at top already
+		file.scrollOffset = 0
+		// Find first visible/enabled panel
+		var firstVisibleElement = null
+		var firstVisiblePanel = null
+		for ( int i = 0; i < file.modPanels.len(); i++ )
+		{
+			var firstSlider = Hud_GetChild( file.modPanels[ i ], "Slider" )
+			var firstEnumButton = Hud_GetChild( file.modPanels[ i ], "EnumSelectButton" )
+			var firstCustomButton = Hud_GetChild( file.modPanels[ i ], "OpenCustomMenu" )
 
-            firstVisibleElement = Hud_IsVisible( firstSlider ) ? "Slider" : Hud_IsVisible( firstEnumButton ) ? "EnumSelectButton" : Hud_IsVisible( firstCustomButton ) ? "OpenCustomMenu" : null;
-            firstVisiblePanel = file.modPanels[ i ];
+			firstVisibleElement =
+				Hud_IsVisible( firstSlider )
+					? "Slider"
+					: Hud_IsVisible( firstEnumButton ) ? "EnumSelectButton" : Hud_IsVisible( firstCustomButton ) ? "OpenCustomMenu" : null
+			firstVisiblePanel = file.modPanels[ i ]
 
-            if ( firstVisibleElement != null && Hud_IsVisible(firstVisiblePanel) && Hud_IsEnabled(firstVisiblePanel) )
-                break;
-        }
-        Hud_SetFocused( Hud_GetChild(firstVisiblePanel, firstVisibleElement ) );
-    }
-    else 
-    {
-        // only update if list position changed
-        UpdateList();
-        UpdateListSliderPosition();
+			if ( firstVisibleElement != null && Hud_IsVisible( firstVisiblePanel ) && Hud_IsEnabled( firstVisiblePanel ) )
+				break
+		}
+		Hud_SetFocused( Hud_GetChild( firstVisiblePanel, firstVisibleElement ) )
+	}
+	else
+	{
+		// only update if list position changed
+		UpdateList()
+		UpdateListSliderPosition()
 
-        // Find first visible/enabled panel AFTER update
-        var firstVisibleElement = null;
-        var firstVisiblePanel = null;
-        for( int i = 0; i < file.modPanels.len(); i++ )
-        {
-            var firstSlider = Hud_GetChild( file.modPanels[ i ], "Slider" );
-            var firstEnumButton = Hud_GetChild( file.modPanels[ i ], "EnumSelectButton" );
-            var firstCustomButton = Hud_GetChild( file.modPanels[ i ], "OpenCustomMenu" );
+		// Find first visible/enabled panel AFTER update
+		var firstVisibleElement = null
+		var firstVisiblePanel = null
+		for ( int i = 0; i < file.modPanels.len(); i++ )
+		{
+			var firstSlider = Hud_GetChild( file.modPanels[ i ], "Slider" )
+			var firstEnumButton = Hud_GetChild( file.modPanels[ i ], "EnumSelectButton" )
+			var firstCustomButton = Hud_GetChild( file.modPanels[ i ], "OpenCustomMenu" )
 
-            firstVisibleElement = Hud_IsVisible( firstSlider ) ? "Slider" : Hud_IsVisible( firstEnumButton ) ? "EnumSelectButton" : Hud_IsVisible( firstCustomButton ) ? "OpenCustomMenu" : null;
-            firstVisiblePanel = file.modPanels[ i ];
+			firstVisibleElement =
+				Hud_IsVisible( firstSlider )
+					? "Slider"
+					: Hud_IsVisible( firstEnumButton ) ? "EnumSelectButton" : Hud_IsVisible( firstCustomButton ) ? "OpenCustomMenu" : null
+			firstVisiblePanel = file.modPanels[ i ]
 
-            if ( firstVisibleElement != null && Hud_IsVisible(firstVisiblePanel) && Hud_IsEnabled(firstVisiblePanel) )
-                break;
-        }
-        Hud_SetFocused( Hud_GetChild(firstVisiblePanel, firstVisibleElement ) );
-    }
+			if ( firstVisibleElement != null && Hud_IsVisible( firstVisiblePanel ) && Hud_IsEnabled( firstVisiblePanel ) )
+				break
+		}
+		Hud_SetFocused( Hud_GetChild( firstVisiblePanel, firstVisibleElement ) )
+	}
 }
 
 void function OnHitDummyBottom( var button )
 {
-    file.scrollOffset += 1
+	file.scrollOffset += 1
 
-    int maxOffset = max(0, file.filteredList.len() - BUTTONS_PER_PAGE).tointeger();
-    if ( file.scrollOffset > maxOffset )
-    {
-        // was at bottom already
-        file.scrollOffset = maxOffset;
-        // Find last visible/enabled panel
-        var lastVisibleElement = null;
-        var lastVisiblePanel = null;
-        for( int i = file.modPanels.len() - 1; i >= 0; i-- )
-        {
-            var lastSlider = Hud_GetChild( file.modPanels[ i ], "Slider" );
-            var lastEnumButton = Hud_GetChild( file.modPanels[ i ], "EnumSelectButton" );
-            var lastCustomButton = Hud_GetChild( file.modPanels[ i ], "OpenCustomMenu" );
+	int maxOffset = max( 0, file.filteredList.len() - BUTTONS_PER_PAGE ).tointeger()
+	if ( file.scrollOffset > maxOffset )
+	{
+		// was at bottom already
+		file.scrollOffset = maxOffset
+		// Find last visible/enabled panel
+		var lastVisibleElement = null
+		var lastVisiblePanel = null
+		for ( int i = file.modPanels.len() - 1; i >= 0; i-- )
+		{
+			var lastSlider = Hud_GetChild( file.modPanels[ i ], "Slider" )
+			var lastEnumButton = Hud_GetChild( file.modPanels[ i ], "EnumSelectButton" )
+			var lastCustomButton = Hud_GetChild( file.modPanels[ i ], "OpenCustomMenu" )
 
-            lastVisibleElement = Hud_IsVisible( lastSlider ) ? "Slider" : Hud_IsVisible( lastEnumButton ) ? "EnumSelectButton" : Hud_IsVisible( lastCustomButton ) ? "OpenCustomMenu" : null;
-            lastVisiblePanel = file.modPanels[ i ];
+			lastVisibleElement =
+				Hud_IsVisible( lastSlider ) ? "Slider" : Hud_IsVisible( lastEnumButton ) ? "EnumSelectButton" : Hud_IsVisible( lastCustomButton ) ? "OpenCustomMenu" : null
+			lastVisiblePanel = file.modPanels[ i ]
 
-            if ( lastVisibleElement != null && Hud_IsVisible(lastVisiblePanel) && Hud_IsEnabled(lastVisiblePanel) )
-                break;
-        }
-        Hud_SetFocused( Hud_GetChild(lastVisiblePanel, lastVisibleElement ) );
-    }
-    else
-    {
-        // only update if list position changed
-        UpdateList();
-        UpdateListSliderPosition();
+			if ( lastVisibleElement != null && Hud_IsVisible( lastVisiblePanel ) && Hud_IsEnabled( lastVisiblePanel ) )
+				break
+		}
+		Hud_SetFocused( Hud_GetChild( lastVisiblePanel, lastVisibleElement ) )
+	}
+	else
+	{
+		// only update if list position changed
+		UpdateList()
+		UpdateListSliderPosition()
 
-        // Find last visible/enabled panel AFTER update
-        var lastVisibleElement = null;
-        var lastVisiblePanel = null;
-        for( int i = file.modPanels.len() - 1; i >= 0; i-- )
-        {
-            var lastSlider = Hud_GetChild( file.modPanels[ i ], "Slider" );
-            var lastEnumButton = Hud_GetChild( file.modPanels[ i ], "EnumSelectButton" );
-            var lastCustomButton = Hud_GetChild( file.modPanels[ i ], "OpenCustomMenu" );
+		// Find last visible/enabled panel AFTER update
+		var lastVisibleElement = null
+		var lastVisiblePanel = null
+		for ( int i = file.modPanels.len() - 1; i >= 0; i-- )
+		{
+			var lastSlider = Hud_GetChild( file.modPanels[ i ], "Slider" )
+			var lastEnumButton = Hud_GetChild( file.modPanels[ i ], "EnumSelectButton" )
+			var lastCustomButton = Hud_GetChild( file.modPanels[ i ], "OpenCustomMenu" )
 
-            lastVisibleElement = Hud_IsVisible( lastSlider ) ? "Slider" : Hud_IsVisible( lastEnumButton ) ? "EnumSelectButton" : Hud_IsVisible( lastCustomButton ) ? "OpenCustomMenu" : null;
-            lastVisiblePanel = file.modPanels[ i ];
+			lastVisibleElement =
+				Hud_IsVisible( lastSlider ) ? "Slider" : Hud_IsVisible( lastEnumButton ) ? "EnumSelectButton" : Hud_IsVisible( lastCustomButton ) ? "OpenCustomMenu" : null
+			lastVisiblePanel = file.modPanels[ i ]
 
-            if ( lastVisibleElement != null && Hud_IsVisible(lastVisiblePanel) && Hud_IsEnabled(lastVisiblePanel) )
-                break;
-        }
-        Hud_SetFocused( Hud_GetChild(lastVisiblePanel, lastVisibleElement ) );
-    }
+			if ( lastVisibleElement != null && Hud_IsVisible( lastVisiblePanel ) && Hud_IsEnabled( lastVisiblePanel ) )
+				break
+		}
+		Hud_SetFocused( Hud_GetChild( lastVisiblePanel, lastVisibleElement ) )
+	}
 }
 Color function StringToColors( string colorString, string delimiter = " " )
 {
 	Color color
 	array<string> tokens = split( colorString, " " )
-	if ( tokens.len() < 3 || tokens.len() > 4)
+	if ( tokens.len() < 3 || tokens.len() > 4 )
 	{
 		throw "The length of tokens should be 3 or 4, but it is " + tokens.len()
 	}
 
-	color.r = int(clamp(int(tokens[0]), 0, 255))
-	color.g = int(clamp(int(tokens[1]), 0, 255))
-	color.b = int(clamp(int(tokens[2]), 0, 255))
+	color.r = int( clamp( int( tokens[ 0 ] ), 0, 255 ) )
+	color.g = int( clamp( int( tokens[ 1 ] ), 0, 255 ) )
+	color.b = int( clamp( int( tokens[ 2 ] ), 0, 255 ) )
 
 	if ( tokens.len() == 4 )
-		color.a = int(clamp(int(tokens[3]), 0, 255))
+		color.a = int( clamp( int( tokens[ 3 ] ), 0, 255 ) )
 	else
 		color.a = 255
 
 	return color
 }
 
-void function TryUpdateModSettingLists() {
+void function TryUpdateModSettingLists()
+{
 	UpdateList()
 }

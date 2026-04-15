@@ -8,12 +8,12 @@ UIPresenceStruct function DiscordRPC_GenerateUIPresence( UIPresenceStruct uis )
 	if ( uiGlobal.isLoading )
 	{
 		ClearJoinSecret()
-		uis.gameState = eDiscordGameState.LOADING;
+		uis.gameState = eDiscordGameState.LOADING
 	}
 	else if ( uiGlobal.loadedLevel == "" )
 	{
 		ClearJoinSecret()
-		uis.gameState = eDiscordGameState.MAINMENU;
+		uis.gameState = eDiscordGameState.MAINMENU
 	}
 	else if ( IsLobby() || uiGlobal.loadedLevel == "mp_lobby" )
 	{
@@ -22,7 +22,7 @@ UIPresenceStruct function DiscordRPC_GenerateUIPresence( UIPresenceStruct uis )
 			if ( partySub != "" && !Demo_IsPlayingBack() )
 				SetJoinSecret( true )
 		}
-		uis.gameState = eDiscordGameState.LOBBY;
+		uis.gameState = eDiscordGameState.LOBBY
 	}
 	else if ( IsMultiplayer() )
 	{
@@ -31,8 +31,7 @@ UIPresenceStruct function DiscordRPC_GenerateUIPresence( UIPresenceStruct uis )
 			if ( partySub != "" && !Demo_IsPlayingBack() )
 				SetJoinSecret( true )
 		}
-		uis.gameState = eDiscordGameState.INGAME;
-
+		uis.gameState = eDiscordGameState.INGAME
 	}
 
 	if ( GetPartySize() > 1 )
@@ -44,12 +43,12 @@ UIPresenceStruct function DiscordRPC_GenerateUIPresence( UIPresenceStruct uis )
 	uis.party_size = GetPartySize()
 
 	string playlists = GetNextAutoMatchmakingPlaylist()
-	if( IsFullyConnected() && IsMultiplayer() )
+	if ( IsFullyConnected() && IsMultiplayer() )
 	{
 		int smallestMaxplayers = GetGamemodeVarOrUseValue( "private_match", "max_players", "16" ).tointeger()
 		array<string> playlistNames = split( playlists, "," )
 
-		foreach( playlistName in playlistNames )
+		foreach ( playlistName in playlistNames )
 		{
 			int maxPlayers = GetGamemodeVarOrUseValue( playlistName, "max_players", "16" ).tointeger()
 
@@ -61,7 +60,8 @@ UIPresenceStruct function DiscordRPC_GenerateUIPresence( UIPresenceStruct uis )
 			uis.party_max_players = smallestMaxplayers / 2
 		else
 			uis.party_max_players = GetCurrentPlaylistVarInt( "max_players", 16 )
-	} else
+	}
+	else
 		uis.party_max_players = GetCurrentPlaylistVarInt( "max_players", 16 )
 
 	return uis

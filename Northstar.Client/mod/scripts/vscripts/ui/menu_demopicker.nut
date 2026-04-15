@@ -9,13 +9,13 @@ struct
 {
 	var menu
 	GridMenuData gridData
-    array<string> demoNames
-    array<string> demoPaths
-    array<string> dateAndTime
+	array<string> demoNames
+	array<string> demoPaths
+	array<string> dateAndTime
 	int selectedElemNum
 
-    string lastPickedDemo
-    string lastPickedDemoPrettyName
+	string lastPickedDemo
+	string lastPickedDemoPrettyName
 } file
 
 void function AddDemopickerMenu()
@@ -44,14 +44,14 @@ void function InitDemopickerMenu()
 	file.gridData.panelBottomPadding = 64
 	file.gridData.forceHeaderAndFooterLayoutForSinglePage = true
 
-    file.lastPickedDemo = ""
-    file.lastPickedDemoPrettyName = "?"
+	file.lastPickedDemo = ""
+	file.lastPickedDemoPrettyName = "?"
 
 	Grid_AutoAspectSettings( menu, file.gridData )
 
 	AddMenuEventHandler( menu, eUIEvent.MENU_OPEN, OnDemopickerMenu_Open )
 
-    AddMenuFooterOption( menu, BUTTON_A, "#A_BUTTON_SELECT" )
+	AddMenuFooterOption( menu, BUTTON_A, "#A_BUTTON_SELECT" )
 	AddMenuFooterOption( menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
 }
 
@@ -64,11 +64,11 @@ void function OnDemopickerMenu_Open()
 
 	file.gridData.currentPage = 0
 
-    GetAndFormatDemoNames()
+	GetAndFormatDemoNames()
 
 	while ( GetTopNonDialogMenu() == file.menu )
 	{
-        numDemos = file.demoNames.len()
+		numDemos = file.demoNames.len()
 
 		if ( numDemos != lastNumDemos )
 		{
@@ -93,7 +93,7 @@ void function OnDemopickerMenu_Open()
 
 bool function DemoButton_Init( var button, int elemNum )
 {
-	string name = file.demoNames[elemNum]
+	string name = file.demoNames[ elemNum ]
 
 	var rui = Hud_GetRui( button )
 	RuiSetString( rui, "buttonText", name )
@@ -103,32 +103,32 @@ bool function DemoButton_Init( var button, int elemNum )
 
 void function GetAndFormatDemoNames()
 {
-    file.demoNames.clear()
-    file.demoPaths.clear()
+	file.demoNames.clear()
+	file.demoPaths.clear()
 
-    //demo_2024-6-9_95-25-41_550_p2452__mp_colony02.dem
-    foreach( string demo in Demo_GetDemoFiles() )
-    {
+	// demo_2024-6-9_95-25-41_550_p2452__mp_colony02.dem
+	foreach ( string demo in Demo_GetDemoFiles() )
+	{
 		string orig = demo
 		string mapName = "mp_lobby"
-	
-        array<string> toks = split(demo, "_")
 
-		foreach(string map in GetPrivateMatchMaps())
+		array<string> toks = split( demo, "_" )
+
+		foreach ( string map in GetPrivateMatchMaps() )
 		{
-			if(orig.find(map))
+			if ( orig.find( map ) )
 				mapName = map
 		}
 
-        if(mapName == "mp_lobby")
-            continue
+		if ( mapName == "mp_lobby" )
+			continue
 
-        array<string> hoursMinsSecs = split( toks[2], "-" )
-        string newTime = hoursMinsSecs[0] + ":" + hoursMinsSecs[1]
+		array<string> hoursMinsSecs = split( toks[ 2 ], "-" )
+		string newTime = hoursMinsSecs[ 0 ] + ":" + hoursMinsSecs[ 1 ]
 
-        file.demoNames.append( toks[1] + " " + newTime + " " + Localize( GetMapDisplayName( mapName ) ) )
-        file.demoPaths.append(demo)
-    }
+		file.demoNames.append( toks[ 1 ] + " " + newTime + " " + Localize( GetMapDisplayName( mapName ) ) )
+		file.demoPaths.append( demo )
+	}
 }
 
 void function DemoButton_Activate( var button, int elemNum )
@@ -136,12 +136,12 @@ void function DemoButton_Activate( var button, int elemNum )
 	if ( Hud_IsLocked( button ) )
 		return
 
-    file.lastPickedDemo = file.demoPaths[elemNum]
-    file.lastPickedDemoPrettyName = file.demoNames[elemNum]    
+	file.lastPickedDemo = file.demoPaths[ elemNum ]
+	file.lastPickedDemoPrettyName = file.demoNames[ elemNum ]
 
 	file.selectedElemNum = elemNum
-	ClientCommand( "stopdemo")
-    ClientCommand( "playdemo " + file.demoPaths[elemNum] )
+	ClientCommand( "stopdemo" )
+	ClientCommand( "playdemo " + file.demoPaths[ elemNum ] )
 }
 
 void function DemoButton_GetFocus( var button, int elemNum )
@@ -151,10 +151,10 @@ void function DemoButton_GetFocus( var button, int elemNum )
 
 string function GetDemoNameFromPicker()
 {
-    return file.lastPickedDemoPrettyName
+	return file.lastPickedDemoPrettyName
 }
 
 string function GetDemoFileFromPicker()
 {
-    return file.lastPickedDemo
+	return file.lastPickedDemo
 }

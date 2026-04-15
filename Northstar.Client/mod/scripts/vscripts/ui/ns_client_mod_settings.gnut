@@ -9,30 +9,30 @@ void function NSClientModSettings()
 	ModSettings_AddEnumSetting( "hide_subtext", "Mod Subtitle", [ "#SETTING_ENABLED", "#SETTING_DISABLED" ] )
 	ModSettings_AddEnumSetting( "hide_version", "Version", [ "#SETTING_ENABLED", "#SETTING_DISABLED" ] )
 	ModSettings_AddModCategory( "Demos" )
-    ModSettings_AddEnumSetting( "demo_autoRecord", "Automatically record Demos", [ "#SETTING_OFF", "#SETTING_ON"] )
-    ModSettings_AddModCategory( "Video" )
-    ModSettings_AddEnumSetting( "mat_disable_bloom", "Bloom", [ "#SETTING_ENABLED", "#SETTING_DISABLED" ] )
-    ModSettings_AddModCategory( "Communities" )
-    ModSettings_AddSliderSetting( "openinvite_duration_default", "Network Invite Duration", 0.0, 120.0, 1.0 )
-    ModSettings_AddEnumSetting( "openInvites_filterByLanguage", "Filter Invites by: Language", [ "#SETTING_OFF", "#SETTING_ON" ] )
-    ModSettings_AddEnumSetting( "openInvites_filterByRegion", "Filter Invites by: Region", [ "#SETTING_OFF", "#SETTING_ON" ] )
+	ModSettings_AddEnumSetting( "demo_autoRecord", "Automatically record Demos", [ "#SETTING_OFF", "#SETTING_ON" ] )
+	ModSettings_AddModCategory( "Video" )
+	ModSettings_AddEnumSetting( "mat_disable_bloom", "Bloom", [ "#SETTING_ENABLED", "#SETTING_DISABLED" ] )
+	ModSettings_AddModCategory( "Communities" )
+	ModSettings_AddSliderSetting( "openinvite_duration_default", "Network Invite Duration", 0.0, 120.0, 1.0 )
+	ModSettings_AddEnumSetting( "openInvites_filterByLanguage", "Filter Invites by: Language", [ "#SETTING_OFF", "#SETTING_ON" ] )
+	ModSettings_AddEnumSetting( "openInvites_filterByRegion", "Filter Invites by: Region", [ "#SETTING_OFF", "#SETTING_ON" ] )
 
-    array< ModInfo > modInfo = NSGetModsInformation()
+	array<ModInfo> modInfo = NSGetModsInformation()
 
-    foreach( ModInfo mod in modInfo )
-    {
-        if( mod.name == "Northstar.Custom" )
-        {
-            if ( mod.enabled )
-            {
-	            ModSettings_AddModCategory( "Event Models" )
-	            ModSettings_AddEnumSetting( "ns_show_event_models", "Show Event Models", [ "#SETTING_OFF", "#SETTING_ON" ] )
-            }
-        }
-    }
+	foreach ( ModInfo mod in modInfo )
+	{
+		if ( mod.name == "Northstar.Custom" )
+		{
+			if ( mod.enabled )
+			{
+				ModSettings_AddModCategory( "Event Models" )
+				ModSettings_AddEnumSetting( "ns_show_event_models", "Show Event Models", [ "#SETTING_OFF", "#SETTING_ON" ] )
+			}
+		}
+	}
 
-    ModSettings_AddModCategory( "Fun" )
-    ModSettings_AddButton( "Fight sans", OpenSans )
+	ModSettings_AddModCategory( "Fun" )
+	ModSettings_AddButton( "Fight sans", OpenSans )
 }
 
 void function OpenSans()

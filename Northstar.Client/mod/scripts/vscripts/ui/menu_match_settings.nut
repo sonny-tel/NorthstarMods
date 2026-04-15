@@ -5,7 +5,7 @@ global function InitMatchSettingsMenu
 global function UpdateMatchSettingsForGamemode
 global function MatchSettings_FormatPlaylistVarValue
 
-global const table< string, string > MatchSettings_PlaylistVarLabels = {
+global const table<string, string> MatchSettings_PlaylistVarLabels = {
 	match_visibility = "#PM_MATCH_VISIBILITY",
 	roundscorelimit = "#PM_SCORE_LIMIT",
 	scorelimit = "#PM_SCORE_LIMIT",
@@ -19,47 +19,48 @@ global const table< string, string > MatchSettings_PlaylistVarLabels = {
 	riff_titan_availability = "#PM_TITAN_AVAILABILITY",
 	earn_meter_titan_multiplier = "#PM_TITAN_EARN",
 
-	// enable_spectre_hacking = "#PM_SPECTRE_HACKING",
-	// skyshow_enabled = "#PM_SKYSHOW_ENABLED",
-	// loadout_selection_enabled = "#PM_LOADOUT_SELECTION_ENABLED",
-	// always_enable_autotitans = "#PM_ALWAYS_ENABLE_AUTOTITANS",
-	// enable_titanfalls = "#PM_ENABLE_TITANFALLS",
-	// max_players = "#PM_MAX_PLAYERS",
-	// max_teams = "#PM_MAX_TEAMS",
-	// riff_ai_lethality = "#PM_RIFF_AI_LETHALITY",
-	// riff_allow_npcs = "#PM_RIFF_ALLOW_NPCS",
-	// riff_ammo_limit = "#PM_RIFF_AMMO_LIMIT",
-	// riff_elimination = "#PM_RIFF_ELIMINATION",
-	// riff_minimap_state = "#PM_RIFF_MINIMAP_STATE",
-	// riff_osp = "#PM_RIFF_OSP",
-	// riff_spawn_as_titan = "#PM_RIFF_SPAWN_AS_TITAN",
-	// riff_titan_exit_enabled = "#PM_RIFF_TITAN_EXIT_ENABLED",
-	// rodeo_battery_disembark_to_pickup = "#PM_RODEO_BATTERY_DISEMBARK_TO_PICKUP",
-	// run_evac = "#PM_RUN_EVAC",
-	// titan_build_credit_enabled = "#PM_TITAN_BUILD_CREDIT_ENABLED",
-	// titan_build_time = "#PM_TITAN_BUILD_TIME",
-	// titan_core_build_time = "#PM_TITAN_CORE_BUILD_TIME",
-	// titan_core_from_titan_damage = "#PM_TITAN_CORE_FROM_TITAN_DAMAGE",
-	// titan_doomstate_variation = "#PM_TITAN_DOOMSTATE_VARIATION",
-	// titan_mode_change_allowed = "#PM_TITAN_MODE_CHANGE_ALLOWED",
-	// titan_rebuild_time = "#PM_TITAN_REBUILD_TIME",
-	// titan_shield_decay = "#PM_TITAN_SHIELD_DECAY",
-	// titan_spawn_deploy_enabled = "#PM_TITAN_SPAWN_DEPLOY_ENABLED",
-	// vortex_blocks_melee = "#PM_VORTEX_BLOCKS_MELEE",
-	// minimap_sonar_pulse_on_respawn = "#PM_MINIMAP_SONAR_PULSE_ON_RESPAWN",
-	// loadout_grace_period = "#PM_LOADOUT_GRACE_PERIOD",
+// enable_spectre_hacking = "#PM_SPECTRE_HACKING",
+// skyshow_enabled = "#PM_SKYSHOW_ENABLED",
+// loadout_selection_enabled = "#PM_LOADOUT_SELECTION_ENABLED",
+// always_enable_autotitans = "#PM_ALWAYS_ENABLE_AUTOTITANS",
+// enable_titanfalls = "#PM_ENABLE_TITANFALLS",
+// max_players = "#PM_MAX_PLAYERS",
+// max_teams = "#PM_MAX_TEAMS",
+// riff_ai_lethality = "#PM_RIFF_AI_LETHALITY",
+// riff_allow_npcs = "#PM_RIFF_ALLOW_NPCS",
+// riff_ammo_limit = "#PM_RIFF_AMMO_LIMIT",
+// riff_elimination = "#PM_RIFF_ELIMINATION",
+// riff_minimap_state = "#PM_RIFF_MINIMAP_STATE",
+// riff_osp = "#PM_RIFF_OSP",
+// riff_spawn_as_titan = "#PM_RIFF_SPAWN_AS_TITAN",
+// riff_titan_exit_enabled = "#PM_RIFF_TITAN_EXIT_ENABLED",
+// rodeo_battery_disembark_to_pickup = "#PM_RODEO_BATTERY_DISEMBARK_TO_PICKUP",
+// run_evac = "#PM_RUN_EVAC",
+// titan_build_credit_enabled = "#PM_TITAN_BUILD_CREDIT_ENABLED",
+// titan_build_time = "#PM_TITAN_BUILD_TIME",
+// titan_core_build_time = "#PM_TITAN_CORE_BUILD_TIME",
+// titan_core_from_titan_damage = "#PM_TITAN_CORE_FROM_TITAN_DAMAGE",
+// titan_doomstate_variation = "#PM_TITAN_DOOMSTATE_VARIATION",
+// titan_mode_change_allowed = "#PM_TITAN_MODE_CHANGE_ALLOWED",
+// titan_rebuild_time = "#PM_TITAN_REBUILD_TIME",
+// titan_shield_decay = "#PM_TITAN_SHIELD_DECAY",
+// titan_spawn_deploy_enabled = "#PM_TITAN_SPAWN_DEPLOY_ENABLED",
+// vortex_blocks_melee = "#PM_VORTEX_BLOCKS_MELEE",
+// minimap_sonar_pulse_on_respawn = "#PM_MINIMAP_SONAR_PULSE_ON_RESPAWN",
+// loadout_grace_period = "#PM_LOADOUT_GRACE_PERIOD",
 }
 
 struct PlaylistVarValueFormat
 {
 	string localizeStr
 	string formatStr
-	table< int, string > enumStrs
+	table<int, string> enumStrs
 }
 
 const string FORMAT_PERCENTAGE = "%d%%"
 
-struct {
+struct
+{
 	var menu = null
 	var matchVisibilityButton = null
 	var scoreLimitButton = null
@@ -81,70 +82,30 @@ struct {
 	var matchSettingDescLabel = null
 	string modeSettingsName
 	bool isModeRoundBased
-	table< string, PlaylistVarValueFormat > playlistVarValueFormats
+	table<string, PlaylistVarValueFormat> playlistVarValueFormats
 } file
 
 struct
 {
-	table< string, float > timelimit = {
-		min = 1.0,
-		max = 40.0,
-		step = 1.0,
-	}
+	table<string, float> timelimit = { min = 1.0, max = 40.0, step = 1.0, }
 
 	// pilot
-	table< string, float > pilot_health_multiplier = {
-		min = 0.25,
-		max = 5.0,
-		step = 0.25,
-	}
+	table<string, float> pilot_health_multiplier = { min = 0.25, max = 5.0, step = 0.25, }
 
-	table< string, float > respawn_delay = {
-		min = 0.0,
-		max = 40.0,
-		step = 0.5,
-	}
+	table<string, float> respawn_delay = { min = 0.0, max = 40.0, step = 0.5, }
 
-	table< string, float > earn_meter_pilot_multiplier = {
-		min = 0.25,
-		max = 5.0,
-		step = 0.25,
-	}
+	table<string, float> earn_meter_pilot_multiplier = { min = 0.25, max = 5.0, step = 0.25, }
 
 	// titan
-	table< string, float > earn_meter_titan_multiplier = {
-		min = 0.25,
-		max = 5.0,
-		step = 0.25,
-	}
+	table<string, float> earn_meter_titan_multiplier = { min = 0.25, max = 5.0, step = 0.25, }
 
 	// gamemode
-	table< string, table< string, float > > scorelimit = {
-		at = {
-			min = 4000.0,
-			max = 6000.0,
-			step = 200.0,
-		}
-		ctf = {
-			min = 2.0,
-			max = 10.0,
-			step = 1.0,
-		},
-		lts = {
-			min = 2.0,
-			max = 9.0,
-			step = 1.0,
-		},
-		cp = {
-			min = 150.0,
-			max = 750.0,
-			step = 50.0,
-		},
-		mfd = {
-			min = 1.0,
-			max = 25.0,
-			step = 2.0,
-		},
+	table<string, table<string, float> > scorelimit = {
+		at = { min = 4000.0, max = 6000.0, step = 200.0, }
+		ctf = { min = 2.0, max = 10.0, step = 1.0, },
+		lts = { min = 2.0, max = 9.0, step = 1.0, },
+		cp = { min = 150.0, max = 750.0, step = 50.0, },
+		mfd = { min = 1.0, max = 25.0, step = 2.0, },
 	}
 } customMatchSettings
 
@@ -159,65 +120,47 @@ void function InitMatchSettingsMenu()
 	AddMenuEventHandler( menu, eUIEvent.MENU_NAVIGATE_BACK, OnMatchSettingsMenu_NavigateBack )
 
 	file.matchVisibilityButton = Hud_GetChild( menu, "BtnMatchVisibility" )
-	SetButtonRuiText( file.matchVisibilityButton, MatchSettings_PlaylistVarLabels["match_visibility"] )
+	SetButtonRuiText( file.matchVisibilityButton, MatchSettings_PlaylistVarLabels[ "match_visibility" ] )
 	PlaylistVarValueFormat matchVisibilityFormat = {
-		enumStrs = {
-			[MATCHVISIBILITY_PRIVATE] = "#MATCH_VISIBILITY_PRIVATE",
-			[MATCHVISIBILITY_LOCKED] = "#MATCH_VISIBILITY_LOCKED",
-		},
+		enumStrs = { [MATCHVISIBILITY_PRIVATE] = "#MATCH_VISIBILITY_PRIVATE", [MATCHVISIBILITY_LOCKED] = "#MATCH_VISIBILITY_LOCKED", },
 		...
 	}
-	file.playlistVarValueFormats["match_visibility"] <- matchVisibilityFormat
+	file.playlistVarValueFormats[ "match_visibility" ] <- matchVisibilityFormat
 	foreach ( int enum_, string val in matchVisibilityFormat.enumStrs )
 		Hud_DialogList_AddListItem( file.matchVisibilityButton, val, string( enum_ ) )
 
 	file.scoreLimitButton = Hud_GetChild( menu, "BtnScoreLimit" )
 	Hud_AddEventHandler( file.scoreLimitButton, UIE_CHANGE, SetScoreLimitText )
-	SetButtonRuiText( Hud_GetChild( file.scoreLimitButton, "BtnDropButton" ), MatchSettings_PlaylistVarLabels["scorelimit"] )
+	SetButtonRuiText( Hud_GetChild( file.scoreLimitButton, "BtnDropButton" ), MatchSettings_PlaylistVarLabels[ "scorelimit" ] )
 	file.scoreLimitLabel = Hud_GetChild( menu, "LblScoreLimit" )
-	PlaylistVarValueFormat roundScoreLimitFormat = {
-		localizeStr = "#N_ROUND_WINS",
-		...
-	}
-	file.playlistVarValueFormats["roundscorelimit"] <- roundScoreLimitFormat
-	PlaylistVarValueFormat scoreLimitFormat = {
-		localizeStr = "#N_POINTS",
-		...
-	}
-	file.playlistVarValueFormats["scorelimit"] <- scoreLimitFormat
+	PlaylistVarValueFormat roundScoreLimitFormat = { localizeStr = "#N_ROUND_WINS", ... }
+	file.playlistVarValueFormats[ "roundscorelimit" ] <- roundScoreLimitFormat
+	PlaylistVarValueFormat scoreLimitFormat = { localizeStr = "#N_POINTS", ... }
+	file.playlistVarValueFormats[ "scorelimit" ] <- scoreLimitFormat
 
 	file.timeLimitButton = Hud_GetChild( menu, "BtnTimeLimit" )
 	Hud_AddEventHandler( file.timeLimitButton, UIE_CHANGE, SetTimeLimitText )
-	SetButtonRuiText( Hud_GetChild( file.timeLimitButton, "BtnDropButton" ), MatchSettings_PlaylistVarLabels["timelimit"] )
+	SetButtonRuiText( Hud_GetChild( file.timeLimitButton, "BtnDropButton" ), MatchSettings_PlaylistVarLabels[ "timelimit" ] )
 	file.timeLimitLabel = Hud_GetChild( menu, "LblTimeLimit" )
-	PlaylistVarValueFormat roundTimeLimitFormat = {
-		localizeStr = "#N_MINUTE_ROUNDS",
-		...
-	}
-	file.playlistVarValueFormats["roundtimelimit"] <- roundTimeLimitFormat
-	PlaylistVarValueFormat timeLimitFormat = {
-		localizeStr = "#N_MINUTES",
-		...
-	}
-	file.playlistVarValueFormats["timelimit"] <- timeLimitFormat
+	PlaylistVarValueFormat roundTimeLimitFormat = { localizeStr = "#N_MINUTE_ROUNDS", ... }
+	file.playlistVarValueFormats[ "roundtimelimit" ] <- roundTimeLimitFormat
+	PlaylistVarValueFormat timeLimitFormat = { localizeStr = "#N_MINUTES", ... }
+	file.playlistVarValueFormats[ "timelimit" ] <- timeLimitFormat
 
 	// pilot
 
 	file.pilotBoostsButton = Hud_GetChild( menu, "BtnPilotBoosts" )
-	SetButtonRuiText( file.pilotBoostsButton, MatchSettings_PlaylistVarLabels["boosts_enabled"] )
+	SetButtonRuiText( file.pilotBoostsButton, MatchSettings_PlaylistVarLabels[ "boosts_enabled" ] )
 	PlaylistVarValueFormat pilotBoostsFormat = {
-		enumStrs = {
-			[eBoostAvailability.Default] = "#PILOT_BOOSTS_DEFAULT",
-			[eBoostAvailability.Disabled] = "#PILOT_BOOSTS_DISABLED",
-		},
+		enumStrs = { [eBoostAvailability.Default] = "#PILOT_BOOSTS_DEFAULT", [eBoostAvailability.Disabled] = "#PILOT_BOOSTS_DISABLED", },
 		...
 	}
-	file.playlistVarValueFormats["boosts_enabled"] <- pilotBoostsFormat
+	file.playlistVarValueFormats[ "boosts_enabled" ] <- pilotBoostsFormat
 	foreach ( int enum_, string val in pilotBoostsFormat.enumStrs )
 		Hud_DialogList_AddListItem( file.pilotBoostsButton, val, string( enum_ ) )
 
 	file.pilotOverdriveButton = Hud_GetChild( menu, "BtnPilotOverdrive" )
-	SetButtonRuiText( file.pilotOverdriveButton, MatchSettings_PlaylistVarLabels["earn_meter_pilot_overdrive"] )
+	SetButtonRuiText( file.pilotOverdriveButton, MatchSettings_PlaylistVarLabels[ "earn_meter_pilot_overdrive" ] )
 	PlaylistVarValueFormat pilotOverdriveFormat = {
 		enumStrs = {
 			[ePilotOverdrive.Enabled] = "#PILOT_OVERDRIVE_ON",
@@ -226,65 +169,49 @@ void function InitMatchSettingsMenu()
 		},
 		...
 	}
-	file.playlistVarValueFormats["earn_meter_pilot_overdrive"] <- pilotOverdriveFormat
+	file.playlistVarValueFormats[ "earn_meter_pilot_overdrive" ] <- pilotOverdriveFormat
 	foreach ( int enum_, string val in pilotOverdriveFormat.enumStrs )
 		Hud_DialogList_AddListItem( file.pilotOverdriveButton, val, string( enum_ ) )
 
 	file.pilotEarnButton = Hud_GetChild( menu, "BtnPilotEarn" )
 	Hud_AddEventHandler( file.pilotEarnButton, UIE_CHANGE, SetPilotEarnText )
-	SetButtonRuiText( Hud_GetChild( file.pilotEarnButton, "BtnDropButton" ), MatchSettings_PlaylistVarLabels["earn_meter_pilot_multiplier"] )
+	SetButtonRuiText( Hud_GetChild( file.pilotEarnButton, "BtnDropButton" ), MatchSettings_PlaylistVarLabels[ "earn_meter_pilot_multiplier" ] )
 	file.pilotEarnLabel = Hud_GetChild( menu, "LblPilotEarn" )
-	PlaylistVarValueFormat pilotEarnFormat = {
-		formatStr = FORMAT_PERCENTAGE,
-		...
-	}
-	file.playlistVarValueFormats["earn_meter_pilot_multiplier"] <- pilotEarnFormat
+	PlaylistVarValueFormat pilotEarnFormat = { formatStr = FORMAT_PERCENTAGE, ... }
+	file.playlistVarValueFormats[ "earn_meter_pilot_multiplier" ] <- pilotEarnFormat
 
 	file.pilotHealthButton = Hud_GetChild( menu, "BtnPilotHealth" )
 	Hud_AddEventHandler( file.pilotHealthButton, UIE_CHANGE, SetPilotHealthText )
-	SetButtonRuiText( Hud_GetChild( file.pilotHealthButton, "BtnDropButton" ), MatchSettings_PlaylistVarLabels["pilot_health_multiplier"] )
+	SetButtonRuiText( Hud_GetChild( file.pilotHealthButton, "BtnDropButton" ), MatchSettings_PlaylistVarLabels[ "pilot_health_multiplier" ] )
 	file.pilotHealthLabel = Hud_GetChild( menu, "LblPilotHealth" )
-	PlaylistVarValueFormat pilotHealthFormat = {
-		formatStr = FORMAT_PERCENTAGE,
-		...
-	}
-	file.playlistVarValueFormats["pilot_health_multiplier"] <- pilotHealthFormat
+	PlaylistVarValueFormat pilotHealthFormat = { formatStr = FORMAT_PERCENTAGE, ... }
+	file.playlistVarValueFormats[ "pilot_health_multiplier" ] <- pilotHealthFormat
 
 	file.pilotRespawnDelayButton = Hud_GetChild( menu, "BtnPilotRespawnDelay" )
 	Hud_AddEventHandler( file.pilotRespawnDelayButton, UIE_CHANGE, SetPilotRespawnDelayText )
-	SetButtonRuiText( Hud_GetChild( file.pilotRespawnDelayButton, "BtnDropButton" ), MatchSettings_PlaylistVarLabels["respawn_delay"] )
+	SetButtonRuiText( Hud_GetChild( file.pilotRespawnDelayButton, "BtnDropButton" ), MatchSettings_PlaylistVarLabels[ "respawn_delay" ] )
 	file.pilotRespawnDelayLabel = Hud_GetChild( menu, "LblPilotRespawnDelay" )
-	PlaylistVarValueFormat pilotRespawnDelayFormat = {
-		localizeStr = "#N_SECONDS",
-		formatStr = "%2.1f",
-		...
-	}
-	file.playlistVarValueFormats["respawn_delay"] <- pilotRespawnDelayFormat
+	PlaylistVarValueFormat pilotRespawnDelayFormat = { localizeStr = "#N_SECONDS", formatStr = "%2.1f", ... }
+	file.playlistVarValueFormats[ "respawn_delay" ] <- pilotRespawnDelayFormat
 
 	// titan
 
 	file.titanAvailabilityButton = Hud_GetChild( menu, "BtnTitanAvailability" )
-	SetButtonRuiText( file.titanAvailabilityButton, MatchSettings_PlaylistVarLabels["riff_titan_availability"] )
+	SetButtonRuiText( file.titanAvailabilityButton, MatchSettings_PlaylistVarLabels[ "riff_titan_availability" ] )
 	PlaylistVarValueFormat titanAvailabilityFormat = {
-		enumStrs = {
-			[eTitanAvailability.Default] = "#TITAN_AVAILABILITY_DEFAULT",
-			[eTitanAvailability.Never] = "#TITAN_AVAILABILITY_NEVER",
-		},
+		enumStrs = { [eTitanAvailability.Default] = "#TITAN_AVAILABILITY_DEFAULT", [eTitanAvailability.Never] = "#TITAN_AVAILABILITY_NEVER", },
 		...
 	}
-	file.playlistVarValueFormats["riff_titan_availability"] <- titanAvailabilityFormat
+	file.playlistVarValueFormats[ "riff_titan_availability" ] <- titanAvailabilityFormat
 	foreach ( int enum_, string val in titanAvailabilityFormat.enumStrs )
 		Hud_DialogList_AddListItem( file.titanAvailabilityButton, val, string( enum_ ) )
 
 	file.titanEarnButton = Hud_GetChild( menu, "BtnTitanEarn" )
 	Hud_AddEventHandler( file.titanEarnButton, UIE_CHANGE, SetTitanEarnText )
-	SetButtonRuiText( Hud_GetChild( file.titanEarnButton, "BtnDropButton" ), MatchSettings_PlaylistVarLabels["earn_meter_titan_multiplier"] )
+	SetButtonRuiText( Hud_GetChild( file.titanEarnButton, "BtnDropButton" ), MatchSettings_PlaylistVarLabels[ "earn_meter_titan_multiplier" ] )
 	file.titanEarnLabel = Hud_GetChild( menu, "LblTitanEarn" )
-	PlaylistVarValueFormat titanEarnFormat = {
-		formatStr = FORMAT_PERCENTAGE,
-		...
-	}
-	file.playlistVarValueFormats["earn_meter_titan_multiplier"] <- titanEarnFormat
+	PlaylistVarValueFormat titanEarnFormat = { formatStr = FORMAT_PERCENTAGE, ... }
+	file.playlistVarValueFormats[ "earn_meter_titan_multiplier" ] <- titanEarnFormat
 
 	file.gameModeLabel = Hud_GetChild( menu, "LblModeSubheaderText" )
 
@@ -352,7 +279,7 @@ function Privatematch_starting_Changed()
 		CloseActiveMenu()
 }
 
-void function SetSliderSettings( var button, table< string, float > settings, int gamemodeIdx, string playlistVar )
+void function SetSliderSettings( var button, table<string, float> settings, int gamemodeIdx, string playlistVar )
 {
 	Hud_SliderControl_SetStepSize( button, settings.step )
 	Hud_SliderControl_SetMin( button, settings.min )
@@ -369,13 +296,9 @@ void function SetSliderSettings( var button, table< string, float > settings, in
 
 void function SetGameModeSettings()
 {
-	table< string, float > scoreSettings = {
-		min = -1.0,
-		max = -1.0,
-		step = -1.0,
-	}
+	table<string, float> scoreSettings = { min = -1.0, max = -1.0, step = -1.0, }
 	if ( file.modeSettingsName in customMatchSettings.scorelimit )
-		scoreSettings = customMatchSettings.scorelimit[file.modeSettingsName]
+		scoreSettings = customMatchSettings.scorelimit[ file.modeSettingsName ]
 
 	int gamemodeIdx = expect int( level.ui.privatematch_mode )
 	string scoreLimitVar = "roundscorelimit"
@@ -393,26 +316,26 @@ void function SetGameModeSettings()
 		timeLimitVar = "timelimit"
 	}
 
-	int scoreLimit = scoreLimitStr.len() ? int( scoreLimitStr ) : 100;
+	int scoreLimit = scoreLimitStr.len() ? int( scoreLimitStr ) : 100
 	if ( scoreSettings.min <= 0 )
 	{
 		scoreSettings.min = max( scoreLimit / 5.0, 1.0 )
-		scoreSettings.max = max( scoreLimit + (scoreLimit - scoreSettings.min), 1.0 )
+		scoreSettings.max = max( scoreLimit + ( scoreLimit - scoreSettings.min ), 1.0 )
 		scoreSettings.step = scoreSettings.min
 	}
 
 	SetSliderSettings( file.scoreLimitButton, scoreSettings, gamemodeIdx, scoreLimitVar )
 
-	table< string, float > timeSettings = customMatchSettings.timelimit
+	table<string, float> timeSettings = customMatchSettings.timelimit
 	SetSliderSettings( file.timeLimitButton, timeSettings, gamemodeIdx, timeLimitVar )
 }
 
 string function MatchSettings_FormatPlaylistVarValue( string playlistVar, float value )
 {
-	if ( !(playlistVar in file.playlistVarValueFormats) )
+	if ( !( playlistVar in file.playlistVarValueFormats ) )
 		return "#" + playlistVar + " unknown"
 
-	PlaylistVarValueFormat fmt = file.playlistVarValueFormats[playlistVar]
+	PlaylistVarValueFormat fmt = file.playlistVarValueFormats[ playlistVar ]
 	if ( fmt.formatStr.len() )
 	{
 		if ( fmt.formatStr == FORMAT_PERCENTAGE )
@@ -422,7 +345,7 @@ string function MatchSettings_FormatPlaylistVarValue( string playlistVar, float 
 	}
 
 	if ( fmt.enumStrs.len() )
-		return Localize( fmt.enumStrs[int( value )] )
+		return Localize( fmt.enumStrs[ int( value ) ] )
 
 	return Localize( fmt.localizeStr, int( value ) )
 }
@@ -483,7 +406,7 @@ void function AddDescFocusHandler( var button, string descText )
 	Hud_AddEventHandler( child, UIE_GET_FOCUS, MatchSettingsFocusUpdate )
 
 	child = Hud_GetChild( button, "PnlDefaultMark" )
-	child.SetColor( [0,0,0,0] )
+	child.SetColor( [ 0, 0, 0, 0 ] )
 	Hud_Hide( child )
 }
 

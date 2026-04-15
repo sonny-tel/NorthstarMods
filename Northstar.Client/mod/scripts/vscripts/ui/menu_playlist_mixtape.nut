@@ -8,7 +8,7 @@ global function IsMixtapeVersionNew
 global function PrintPlaylistAvailability
 global function ConvertStringArrayToCSS
 
-//script_ui AdvanceMenu( GetMenu( "PlaylistMixtapeMenu" ) )
+// script_ui AdvanceMenu( GetMenu( "PlaylistMixtapeMenu" ) )
 
 struct
 {
@@ -33,7 +33,7 @@ struct
 	string lastFocusedPlaylistDisplayName
 	string lastFocusedPlaylistNoteText
 
-	/////
+	// ///
 
 	var checklistMenu
 	array<var> checklistButtons
@@ -61,10 +61,9 @@ struct
 	array<checkInfo> checks
 } pplInfo
 
-
 bool function MixtapeMatchmakingIsEnabled()
 {
-	bool result = (Code_GetCurrentPlaylistVarOrUseValue( "mixtape_matchmaking", "0" ) == "1")
+	bool result = ( Code_GetCurrentPlaylistVarOrUseValue( "mixtape_matchmaking", "0" ) == "1" )
 	return result
 }
 
@@ -85,7 +84,7 @@ void function ParsePlaylistInfos()
 	pplInfo.promo.clear()
 	pplInfo.promo.resize( PROMO_SLOT_COUNT )
 	pplInfo.checks.clear()
-	pplInfo.checks.resize( CHECKLIST_SLOT_COUNT)
+	pplInfo.checks.resize( CHECKLIST_SLOT_COUNT )
 
 	array<string> checkDisables = GetCheckDisablesFromConvar()
 	int plCount = GetPlaylistCount()
@@ -98,18 +97,18 @@ void function ParsePlaylistInfos()
 			continue
 
 		int promoSlot = int( GetPlaylistVarOrUseValue( playlistName, "mixtape_promo_slot", "-1" ) )
-		if ( (promoSlot >= 0) && (promoSlot < PROMO_SLOT_COUNT) )
+		if ( ( promoSlot >= 0 ) && ( promoSlot < PROMO_SLOT_COUNT ) )
 		{
-			pplInfo.promo[promoSlot].playlistName = playlistName
-			pplInfo.promo[promoSlot].isPromoLocked = (GetPlaylistVarOrUseValue( playlistName, "mixtape_promo_islocked", "0" ) == "1")
-			pplInfo.promo[promoSlot].isDoubleXP = (GetPlaylistVarOrUseValue( playlistName, "double_xp_enabled", "0" ) == "1")
+			pplInfo.promo[ promoSlot ].playlistName = playlistName
+			pplInfo.promo[ promoSlot ].isPromoLocked = ( GetPlaylistVarOrUseValue( playlistName, "mixtape_promo_islocked", "0" ) == "1" )
+			pplInfo.promo[ promoSlot ].isDoubleXP = ( GetPlaylistVarOrUseValue( playlistName, "double_xp_enabled", "0" ) == "1" )
 		}
 
 		int mixtapeSlot = int( GetPlaylistVarOrUseValue( playlistName, "mixtape_slot", "-1" ) )
-		if ( (mixtapeSlot >= 0) && (mixtapeSlot < CHECKLIST_SLOT_COUNT) )
+		if ( ( mixtapeSlot >= 0 ) && ( mixtapeSlot < CHECKLIST_SLOT_COUNT ) )
 		{
-			pplInfo.checks[mixtapeSlot].playlistName = playlistName
-			pplInfo.checks[mixtapeSlot].isChecked = !(checkDisables.contains( playlistName ))
+			pplInfo.checks[ mixtapeSlot ].playlistName = playlistName
+			pplInfo.checks[ mixtapeSlot ].isChecked = !( checkDisables.contains( playlistName ) )
 		}
 	}
 }
@@ -129,8 +128,8 @@ array<string> function GetChecklistPlaylistsArray()
 			continue
 
 		int mixtapeSlot = int( GetPlaylistVarOrUseValue( playlistName, "mixtape_slot", "-1" ) )
-		if ( (mixtapeSlot >= 0) && (mixtapeSlot < CHECKLIST_SLOT_COUNT) )
-			results[mixtapeSlot] = playlistName
+		if ( ( mixtapeSlot >= 0 ) && ( mixtapeSlot < CHECKLIST_SLOT_COUNT ) )
+			results[ mixtapeSlot ] = playlistName
 	}
 
 	return results
@@ -147,7 +146,7 @@ void function InitPlaylistMixtapeMenu()
 
 	for ( int idx = 0; idx < PROMO_SLOT_COUNT; ++idx )
 	{
-		string btnName = ("PromoButton" + format( "%02d", idx ))
+		string btnName = ( "PromoButton" + format( "%02d", idx ) )
 		var button = Hud_GetChild( file.mixtapeMenu, btnName )
 
 		file.promoButtons.append( button )
@@ -159,7 +158,7 @@ void function InitPlaylistMixtapeMenu()
 
 	for ( int idx = 0; idx < CHECKLIST_SLOT_COUNT; ++idx )
 	{
-		string buttonName = ("BtnPlaylistIcon" + format( "%02d", idx ))
+		string buttonName = ( "BtnPlaylistIcon" + format( "%02d", idx ) )
 		var button = Hud_GetChild( file.mixtapeMenu, buttonName )
 
 		AddButtonEventHandler( button, UIE_CLICK, OnChecklistIconButtonClick )
@@ -188,11 +187,11 @@ void function InitPlaylistMixtapeMenu()
 
 	AddMenuEventHandler( file.mixtapeMenu, eUIEvent.MENU_OPEN, OnOpenPlaylistMixtapeMenu )
 
-	//AddMenuFooterOption( file.mixtapeMenu, BUTTON_A, "#A_BUTTON_SELECT" )
+	// AddMenuFooterOption( file.mixtapeMenu, BUTTON_A, "#A_BUTTON_SELECT" )
 	AddMenuFooterOption( file.mixtapeMenu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
 	AddMenuFooterOption( file.mixtapeMenu, BUTTON_Y, "#Y_BUTTON_TOGGLE_ALL", "#TOGGLE_ALL", ToggleAllCheckboxButtons, null )
-	//AddMenuFooterOption( file.mixtapeMenu, BUTTON_X, "#X_BUTTON_DETAILS", "#MOUSE2_DETAILS", null, IsOnADetailsButton )
-    AddMenuFooterOption( file.mixtapeMenu, BUTTON_X, PrependControllerPrompts( BUTTON_X, "#MENU_TITLE_PLAYERLIST" ), "#MENU_TITLE_PLAYERLIST", GoToPlayerlistMenu )
+	// AddMenuFooterOption( file.mixtapeMenu, BUTTON_X, "#X_BUTTON_DETAILS", "#MOUSE2_DETAILS", null, IsOnADetailsButton )
+	AddMenuFooterOption( file.mixtapeMenu, BUTTON_X, PrependControllerPrompts( BUTTON_X, "#MENU_TITLE_PLAYERLIST" ), "#MENU_TITLE_PLAYERLIST", GoToPlayerlistMenu )
 
 	file.focusDescription = Hud_GetChild( file.mixtapeMenu, "FocusDescription" )
 	file.topBGHeight = Hud_GetHeight( Hud_GetChild( file.mixtapeMenu, "BackgroundLeft" ) )
@@ -200,7 +199,7 @@ void function InitPlaylistMixtapeMenu()
 
 void function GoToPlayerlistMenu( var button )
 {
-    AdvanceMenu( GetMenu( "PlayerlistMenu" ) )
+	AdvanceMenu( GetMenu( "PlayerlistMenu" ) )
 }
 
 bool function IsOnADetailsButton()
@@ -215,7 +214,7 @@ bool function IsOnADetailsButton()
 	return false
 }
 
-/////////////////
+// ///////////////
 void function UpdateChecklistIconButtonsThread()
 {
 	while ( GetTopNonDialogMenu() == GetMenu( MIXTAPE_MENU_NAME ) )
@@ -226,18 +225,18 @@ void function UpdateChecklistIconButtonsThread()
 
 			string singlePlaylistName
 			int length = file.checklistIconButtons.len()
-			for( int idx = 0; idx < length; ++idx )
+			for ( int idx = 0; idx < length; ++idx )
 			{
-				var panel = file.checklistIconButtons[idx]
+				var panel = file.checklistIconButtons[ idx ]
 				var panelRui = Hud_GetRui( panel )
-				string playlistName = pplInfo.checks[idx].playlistName
+				string playlistName = pplInfo.checks[ idx ].playlistName
 				if ( playlistName.len() == 0 )
 					continue
 
 				bool isLocked = PlaylistShouldShowAsLocked( playlistName )
 				RuiSetBool( panelRui, "isLocked", isLocked )
 
-				bool isChecked = pplInfo.checks[idx].isChecked
+				bool isChecked = pplInfo.checks[ idx ].isChecked
 				RuiSetBool( panelRui, "isChecked", isChecked )
 
 				if ( isChecked && !isLocked )
@@ -247,10 +246,10 @@ void function UpdateChecklistIconButtonsThread()
 						singlePlaylistName = GetPlaylistVarOrUseValue( playlistName, "name", "#UNKNOWN_PLAYLIST_NAME" )
 				}
 
-				bool isMuted = (file.isOnPromoButton)
+				bool isMuted = ( file.isOnPromoButton )
 				RuiSetBool( panelRui, "isMuted", isMuted )
 
-				bool isGlowing = (file.isOnPlayButton)
+				bool isGlowing = ( file.isOnPlayButton )
 				RuiSetBool( panelRui, "isGlowing", isGlowing )
 			}
 
@@ -268,10 +267,10 @@ void function UpdateChecklistIconButtonsThread()
 void function SetupChecklistIconButtons()
 {
 	int length = file.checklistIconButtons.len()
-	for( int idx = 0; idx < length; ++idx )
+	for ( int idx = 0; idx < length; ++idx )
 	{
-		var button = file.checklistIconButtons[idx]
-		string playlistName = pplInfo.checks[idx].playlistName
+		var button = file.checklistIconButtons[ idx ]
+		string playlistName = pplInfo.checks[ idx ].playlistName
 
 		Hud_SetVisible( button, false )
 
@@ -288,7 +287,7 @@ void function SetupChecklistIconButtons()
 
 void function RefreshDescriptionTitle( bool asEnabled )
 {
-	if ( file.isOnPlaylistCheckboxButton && (file.lastFocusedPlaylistDisplayName.len() > 0) )
+	if ( file.isOnPlaylistCheckboxButton && ( file.lastFocusedPlaylistDisplayName.len() > 0 ) )
 	{
 		string titleText = Localize( file.lastFocusedPlaylistDisplayName )
 		Hud_SetText( file.contentDescriptionTitle, titleText )
@@ -312,11 +311,11 @@ void function RefreshDescriptionTitle( bool asEnabled )
 
 void function SetDescriptionTitleForIconButton( int buttonID )
 {
-	string playlistName = pplInfo.checks[buttonID].playlistName
+	string playlistName = pplInfo.checks[ buttonID ].playlistName
 	file.lastFocusedPlaylistDisplayName = GetPlaylistVarOrUseValue( playlistName, "name", "#UNKNOWN_PLAYLIST_NAME" )
 	file.lastFocusedPlaylistNoteText = GetPlaylistVarOrUseValue( playlistName, "promo_note", "" )
 
-	bool isChecked = pplInfo.checks[buttonID].isChecked
+	bool isChecked = pplInfo.checks[ buttonID ].isChecked
 	RefreshDescriptionTitle( isChecked )
 }
 
@@ -329,16 +328,15 @@ void function OnChecklistIconButtonFocus( var button )
 	int buttonID = int( Hud_GetScriptID( button ) )
 	SetDescriptionTitleForIconButton( buttonID )
 
-	string descText = GetPlaylistDescription( pplInfo.checks[buttonID].playlistName )
+	string descText = GetPlaylistDescription( pplInfo.checks[ buttonID ].playlistName )
 	Hud_SetText( file.focusDescription, descText )
 	file.isShowingPlayButtonDescription = false
-
-	//SetMixtapeVersionCurrent()
+	// SetMixtapeVersionCurrent()
 }
 
 void function OnChecklistIconButtonFocusLost( var button )
 {
-//	file.isOnPlaylistCheckboxButton = false
+	// 	file.isOnPlaylistCheckboxButton = false
 	file.lastFocusedPlaylistDisplayName = ""
 	file.lastFocusedPlaylistNoteText = ""
 	RefreshDescriptionTitle( false )
@@ -348,8 +346,8 @@ void function OnChecklistIconButtonClick( var button )
 {
 	int buttonID = int( Hud_GetScriptID( button ) )
 
-	bool wasChecked = pplInfo.checks[buttonID].isChecked
-	pplInfo.checks[buttonID].isChecked = !(wasChecked)
+	bool wasChecked = pplInfo.checks[ buttonID ].isChecked
+	pplInfo.checks[ buttonID ].isChecked = !( wasChecked )
 	WriteCheckDisablesToConvar()
 
 	BouncePlayNoteText( !wasChecked )
@@ -364,11 +362,11 @@ bool function AreAnyPlaylistsCheckedOff()
 	int count = pplInfo.checks.len()
 	for ( int idx = 0; idx < count; ++idx )
 	{
-		string playlistName = pplInfo.checks[idx].playlistName
+		string playlistName = pplInfo.checks[ idx ].playlistName
 		if ( playlistName.len() <= 0 )
 			continue
 
-		if ( !pplInfo.checks[idx].isChecked )
+		if ( !pplInfo.checks[ idx ].isChecked )
 			return true
 	}
 
@@ -382,17 +380,17 @@ void function ToggleAllCheckboxButtons( var button )
 	int count = pplInfo.checks.len()
 	for ( int idx = 0; idx < count; ++idx )
 	{
-		string playlistName = pplInfo.checks[idx].playlistName
+		string playlistName = pplInfo.checks[ idx ].playlistName
 		if ( playlistName.len() <= 0 )
 			continue
 
-		bool wasChecked = pplInfo.checks[idx].isChecked
+		bool wasChecked = pplInfo.checks[ idx ].isChecked
 		if ( turnAllOn && wasChecked )
 			continue
 		if ( !turnAllOn && !wasChecked )
 			continue
 
-		pplInfo.checks[idx].isChecked = !wasChecked
+		pplInfo.checks[ idx ].isChecked = !wasChecked
 	}
 	WriteCheckDisablesToConvar()
 
@@ -412,10 +410,10 @@ void function ToggleAllCheckboxButtons( var button )
 void function SetChecklistIconButtonsVisible( bool setBool )
 {
 	int length = file.checklistIconButtons.len()
-	for( int idx = 0; idx < length; ++idx )
+	for ( int idx = 0; idx < length; ++idx )
 	{
-		var button = file.checklistIconButtons[idx]
-		string playlistName = pplInfo.checks[idx].playlistName
+		var button = file.checklistIconButtons[ idx ]
+		string playlistName = pplInfo.checks[ idx ].playlistName
 
 		if ( playlistName.len() == 0 )
 		{
@@ -426,7 +424,7 @@ void function SetChecklistIconButtonsVisible( bool setBool )
 		Hud_SetVisible( button, setBool )
 	}
 }
-/////////////////
+// ///////////////
 
 void function UpdatePromoButtonsThread()
 {
@@ -435,18 +433,17 @@ void function UpdatePromoButtonsThread()
 		if ( GetUIPlayer() )
 		{
 			int length = file.promoButtons.len()
-			for( int idx = 0; idx < length; ++idx )
+			for ( int idx = 0; idx < length; ++idx )
 			{
-				var button = file.promoButtons[idx]
+				var button = file.promoButtons[ idx ]
 				var buttonRui = Hud_GetRui( button )
-				string playlistName = pplInfo.promo[idx].playlistName
+				string playlistName = pplInfo.promo[ idx ].playlistName
 				if ( playlistName.len() == 0 )
 					continue
 
-				UpdatePlaylistButton( button, playlistName, pplInfo.promo[idx].isPromoLocked )
-				RuiSetBool( buttonRui, "doubleXP", pplInfo.promo[idx].isDoubleXP )
+				UpdatePlaylistButton( button, playlistName, pplInfo.promo[ idx ].isPromoLocked )
+				RuiSetBool( buttonRui, "doubleXP", pplInfo.promo[ idx ].isDoubleXP )
 			}
-
 		}
 		WaitFrame()
 	}
@@ -456,11 +453,11 @@ void function SetupPromoButtons()
 {
 	int numPromoButtons = 0
 	int length = file.promoButtons.len()
-	for( int idx = 0; idx < length; ++idx )
+	for ( int idx = 0; idx < length; ++idx )
 	{
-		var button = file.promoButtons[idx]
+		var button = file.promoButtons[ idx ]
 		var buttonRui = Hud_GetRui( button )
-		string playlistName = pplInfo.promo[idx].playlistName
+		string playlistName = pplInfo.promo[ idx ].playlistName
 
 		if ( playlistName.len() == 0 )
 		{
@@ -485,17 +482,17 @@ void function SetupPromoButtons()
 	var topBG = Hud_GetChild( file.mixtapeMenu, "BackgroundLeft" )
 	var bottomBG = Hud_GetChild( file.mixtapeMenu, "DetailsBackground" )
 
-	//if ( numPromoButtons <= 4 )
-	//{
-	//	int diff = int( file.topBGHeight * 0.2 )
-	//	Hud_SetHeight( topBG, file.topBGHeight * 0.8 )
-	//	Hud_SetY( bottomBG, Hud_GetBaseY( bottomBG ) - diff )
-	//}
-	//else
-	//{
-		Hud_SetHeight( topBG, file.topBGHeight )
-		Hud_SetY( bottomBG, Hud_GetBaseY( bottomBG ) )
-	//}
+	// if ( numPromoButtons <= 4 )
+	// {
+	// 	int diff = int( file.topBGHeight * 0.2 )
+	// 	Hud_SetHeight( topBG, file.topBGHeight * 0.8 )
+	// 	Hud_SetY( bottomBG, Hud_GetBaseY( bottomBG ) - diff )
+	// }
+	// else
+	// {
+	Hud_SetHeight( topBG, file.topBGHeight )
+	Hud_SetY( bottomBG, Hud_GetBaseY( bottomBG ) )
+	// }
 
 	thread UpdatePromoButtonsThread()
 }
@@ -510,7 +507,7 @@ bool function IsMixtapeVersionNew()
 {
 	int versionNow = GetMixtapeMatchmakingVersion()
 	int lastVersionSeen = GetConVarInt( "match_mixtape_version" )
-	bool mixtapeVersionIsNew = (versionNow != lastVersionSeen)
+	bool mixtapeVersionIsNew = ( versionNow != lastVersionSeen )
 	return mixtapeVersionIsNew
 }
 
@@ -528,13 +525,13 @@ void function SetMixtapeVersionCurrent()
 string function GetMenuHeader()
 {
 	bool openInviting = IsSendOpenInviteTrue()
-	return (openInviting ? "#MENU_HEADER_INVITE_ROOM" : "#MENU_HEADER_FIND_GAME")
+	return ( openInviting ? "#MENU_HEADER_INVITE_ROOM" : "#MENU_HEADER_FIND_GAME" )
 }
 
 void function OnOpenPlaylistMixtapeMenu()
 {
 	StopMatchmaking()
-	////
+	// //
 
 	ParsePlaylistInfos()
 
@@ -555,13 +552,11 @@ void function OnOpenPlaylistMixtapeMenu()
 	{
 		SetButtonRuiText( file.pickButton, "#MATCHMAKING_MIXTAPE_CHOOSE_OPTION" )
 		SetNamedRuiBool( file.pickButton, "showThinBorder", true )
-
 		// SetNamedRuiBool( file.pickButton, "isNew", mixtapeVersionIsNew )
 	}
 
 	bool mixtapeVersionIsNew = IsMixtapeVersionNew()
 	Hud_SetVisible( file.notifyNewTitle, mixtapeVersionIsNew )
-
 
 	SetupPromoButtons()
 	SetupChecklistIconButtons()
@@ -569,17 +564,17 @@ void function OnOpenPlaylistMixtapeMenu()
 	var pveRui = Hud_GetRui( file.pveButton )
 	RuiSetBool( pveRui, "bigPresentation", true )
 	RuiSetImage( pveRui, "itemImage", $"rui/menu/gametype_select/pve_play_image" )
-	//RuiSetString( pveRui, "title", "#MATCHMAKING_PVE_PLAY_BUTTON" )
+	// RuiSetString( pveRui, "title", "#MATCHMAKING_PVE_PLAY_BUTTON" )
 
 	// player count:
 	{
 		string playlistName = "at"
 		string regionDesc = GetPlaylistCountDescForRegion( playlistName )
 		string worldDesc = GetPlaylistCountDescForWorld( playlistName )
-#if DEV
-		if ( worldDesc == "" )
-			worldDesc = "37429"
-#endif // #if DEV
+		#if DEV
+			if ( worldDesc == "" )
+				worldDesc = "37429"
+		#endif // #if DEV
 		Hud_SetText( Hud_GetChild( file.mixtapeMenu, "PlayerCount" ), "#PLAYLIST_PLAYERCOUNT_MIXTAPE_SCREEN", regionDesc, worldDesc )
 	}
 
@@ -611,15 +606,14 @@ void function OnPromoButtonClick( var button )
 
 	CloseAllDialogs()
 
-	string playlistName = pplInfo.promo[buttonID].playlistName
-	array<var> refreshButtons	// empty
+	string playlistName = pplInfo.promo[ buttonID ].playlistName
+	array<var> refreshButtons // empty
 
 	SetNextAutoMatchmakingPlaylist( "" )
 	bool didStartMatchmaking = PlaylistButton_Click_Internal( button, playlistName, refreshButtons )
 	if ( didStartMatchmaking )
 		SetNextAutoMatchmakingPlaylist( playlistName )
 }
-
 
 void function DoPlaylistInfoDialog( string playlistName )
 {
@@ -641,7 +635,7 @@ void function DoPlaylistInfoDialog( string playlistName )
 
 string function pldn( array<string> pl, int index )
 {
-	string playlistName = pl[index]
+	string playlistName = pl[ index ]
 	string playlistDisplayName = GetPlaylistVarOrUseValue( playlistName, "name", "#UNKNOWN_PLAYLIST_NAME" )
 	return Localize( playlistDisplayName )
 }
@@ -652,27 +646,78 @@ string function BuildPlayWarningMessageTop( array<string> pl )
 	switch ( playlistCount )
 	{
 		case 0:
-		return Localize( "#MATCHMAKING_MIXTAPE_WARN_BODY_TOP_00" )
+			return Localize( "#MATCHMAKING_MIXTAPE_WARN_BODY_TOP_00" )
+
 		case 1:
-		return Localize( "#MATCHMAKING_MIXTAPE_WARN_BODY_TOP_01", pldn(pl,0) )
+			return Localize( "#MATCHMAKING_MIXTAPE_WARN_BODY_TOP_01", pldn( pl, 0 ) )
+
 		case 2:
-		return Localize( "#MATCHMAKING_MIXTAPE_WARN_BODY_TOP_02", pldn(pl,0), pldn(pl,1) )
+			return Localize( "#MATCHMAKING_MIXTAPE_WARN_BODY_TOP_02", pldn( pl, 0 ), pldn( pl, 1 ) )
+
 		case 3:
-		return Localize( "#MATCHMAKING_MIXTAPE_WARN_BODY_TOP_03", pldn(pl,0), pldn(pl,1), pldn(pl,2) )
+			return Localize( "#MATCHMAKING_MIXTAPE_WARN_BODY_TOP_03", pldn( pl, 0 ), pldn( pl, 1 ), pldn( pl, 2 ) )
+
 		case 4:
-		return Localize( "#MATCHMAKING_MIXTAPE_WARN_BODY_TOP_04", pldn(pl,0), pldn(pl,1), pldn(pl,2), pldn(pl,3) )
+			return Localize( "#MATCHMAKING_MIXTAPE_WARN_BODY_TOP_04", pldn( pl, 0 ), pldn( pl, 1 ), pldn( pl, 2 ), pldn( pl, 3 ) )
+
 		case 5:
-		return Localize( "#MATCHMAKING_MIXTAPE_WARN_BODY_TOP_05", pldn(pl,0), pldn(pl,1), pldn(pl,2), pldn(pl,3), pldn(pl,4) )
+			return Localize( "#MATCHMAKING_MIXTAPE_WARN_BODY_TOP_05", pldn( pl, 0 ), pldn( pl, 1 ), pldn( pl, 2 ), pldn( pl, 3 ), pldn( pl, 4 ) )
+
 		case 6:
-		return Localize( "#MATCHMAKING_MIXTAPE_WARN_BODY_TOP_06", pldn(pl,0), pldn(pl,1), pldn(pl,2), pldn(pl,3), pldn(pl,4), pldn(pl,5) )
+			return Localize( "#MATCHMAKING_MIXTAPE_WARN_BODY_TOP_06", pldn( pl, 0 ), pldn( pl, 1 ), pldn( pl, 2 ), pldn( pl, 3 ), pldn( pl, 4 ), pldn( pl, 5 ) )
+
 		case 7:
-		return Localize( "#MATCHMAKING_MIXTAPE_WARN_BODY_TOP_07", pldn(pl,0), pldn(pl,1), pldn(pl,2), pldn(pl,3), pldn(pl,4), pldn(pl,5), pldn(pl,6) )
+			return Localize(
+				"#MATCHMAKING_MIXTAPE_WARN_BODY_TOP_07",
+				pldn( pl, 0 ),
+				pldn( pl, 1 ),
+				pldn( pl, 2 ),
+				pldn( pl, 3 ),
+				pldn( pl, 4 ),
+				pldn( pl, 5 ),
+				pldn( pl, 6 )
+			)
+
 		case 8:
-		return Localize( "#MATCHMAKING_MIXTAPE_WARN_BODY_TOP_08", pldn(pl,0), pldn(pl,1), pldn(pl,2), pldn(pl,3), pldn(pl,4), pldn(pl,5), pldn(pl,6), pldn(pl,7) )
+			return Localize(
+				"#MATCHMAKING_MIXTAPE_WARN_BODY_TOP_08",
+				pldn( pl, 0 ),
+				pldn( pl, 1 ),
+				pldn( pl, 2 ),
+				pldn( pl, 3 ),
+				pldn( pl, 4 ),
+				pldn( pl, 5 ),
+				pldn( pl, 6 ),
+				pldn( pl, 7 )
+			)
+
 		case 9:
-		return Localize( "#MATCHMAKING_MIXTAPE_WARN_BODY_TOP_09", pldn(pl,0), pldn(pl,1), pldn(pl,2), pldn(pl,3), pldn(pl,4), pldn(pl,5), pldn(pl,6), pldn(pl,7), pldn(pl,8) )
+			return Localize(
+				"#MATCHMAKING_MIXTAPE_WARN_BODY_TOP_09",
+				pldn( pl, 0 ),
+				pldn( pl, 1 ),
+				pldn( pl, 2 ),
+				pldn( pl, 3 ),
+				pldn( pl, 4 ),
+				pldn( pl, 5 ),
+				pldn( pl, 6 ),
+				pldn( pl, 7 ),
+				pldn( pl, 8 )
+			)
+
 		default:
-		return Localize( "#MATCHMAKING_MIXTAPE_WARN_BODY_TOP_MAX", pldn(pl,0), pldn(pl,1), pldn(pl,2), pldn(pl,3), pldn(pl,4), pldn(pl,5), pldn(pl,6), pldn(pl,7), pldn(pl,8) )
+			return Localize(
+				"#MATCHMAKING_MIXTAPE_WARN_BODY_TOP_MAX",
+				pldn( pl, 0 ),
+				pldn( pl, 1 ),
+				pldn( pl, 2 ),
+				pldn( pl, 3 ),
+				pldn( pl, 4 ),
+				pldn( pl, 5 ),
+				pldn( pl, 6 ),
+				pldn( pl, 7 ),
+				pldn( pl, 8 )
+			)
 	}
 	unreachable
 }
@@ -716,7 +761,7 @@ void function OnPromoButtonFocus( var button )
 	file.isOnPlayButton = false
 
 	int buttonID = int( Hud_GetScriptID( button ) )
-	string descText = GetPlaylistDescription( pplInfo.promo[buttonID].playlistName )
+	string descText = GetPlaylistDescription( pplInfo.promo[ buttonID ].playlistName )
 	Hud_SetText( file.focusDescription, descText )
 	file.isShowingPlayButtonDescription = false
 }
@@ -736,7 +781,7 @@ void function DoPlayButtonAction_Internal( array<string> activePlaylists )
 {
 	if ( activePlaylists.len() <= 0 )
 	{
-		thread DelayedSetFocusThread( file.checklistIconButtons[0] )
+		thread DelayedSetFocusThread( file.checklistIconButtons[ 0 ] )
 		return
 	}
 	string playlistsCS = ConvertStringArrayToCSS( activePlaylists )
@@ -777,7 +822,7 @@ void function OnPlayButtonClick( var button )
 	array<string> activePlaylists = GetActiveChecks()
 	if ( activePlaylists.len() == 0 )
 	{
-		thread DelayedSetFocusThread( file.checklistIconButtons[0] )
+		thread DelayedSetFocusThread( file.checklistIconButtons[ 0 ] )
 		return
 	}
 
@@ -815,10 +860,8 @@ void function OnPickButtonFocus( var button )
 {
 }
 
-
-
-//////////////////////////
-//////////////////////////
+// ////////////////////////
+// ////////////////////////
 
 const string CHECKLIST_MENU_NAME = "PlaylistMixtapeChecklistMenu"
 void function InitPlaylistMixtapeChecklistMenu()
@@ -827,7 +870,7 @@ void function InitPlaylistMixtapeChecklistMenu()
 
 	for ( int idx = 0; idx < CHECKLIST_SLOT_COUNT; ++idx )
 	{
-		string btnName = ("BtnPlaylistCheck" + format( "%02d", idx ))
+		string btnName = ( "BtnPlaylistCheck" + format( "%02d", idx ) )
 		var button = Hud_GetChild( file.checklistMenu, btnName )
 
 		file.checklistButtons.append( button )
@@ -848,20 +891,19 @@ void function UpdateChecklistButtonsThread()
 		if ( GetUIPlayer() )
 		{
 			int length = file.checklistButtons.len()
-			for( int idx = 0; idx < length; ++idx )
+			for ( int idx = 0; idx < length; ++idx )
 			{
-				var button = file.checklistButtons[idx]
+				var button = file.checklistButtons[ idx ]
 				var buttonRui = Hud_GetRui( button )
-				string playlistName = pplInfo.checks[idx].playlistName
+				string playlistName = pplInfo.checks[ idx ].playlistName
 				if ( playlistName.len() == 0 )
 					continue
 
 				bool isLocked = PlaylistShouldShowAsLocked( playlistName )
 				RuiSetBool( buttonRui, "isLocked", isLocked )
 
-				RuiSetBool( buttonRui, "isChecked", pplInfo.checks[idx].isChecked )
+				RuiSetBool( buttonRui, "isChecked", pplInfo.checks[ idx ].isChecked )
 			}
-
 		}
 		WaitFrame()
 	}
@@ -871,11 +913,11 @@ void function SetupChecklistButtons()
 {
 	file.checklistButtonsFirstVisibleIndex = -1
 	int length = file.checklistButtons.len()
-	for( int idx = 0; idx < length; ++idx )
+	for ( int idx = 0; idx < length; ++idx )
 	{
-		var button = file.checklistButtons[idx]
+		var button = file.checklistButtons[ idx ]
 		var buttonRui = Hud_GetRui( button )
-		string playlistName = pplInfo.checks[idx].playlistName
+		string playlistName = pplInfo.checks[ idx ].playlistName
 
 		if ( playlistName.len() == 0 )
 		{
@@ -910,14 +952,14 @@ void function OnOpenPlaylistMixtapeChecklistMenu()
 	}
 
 	if ( file.checklistButtonsFirstVisibleIndex >= 0 )
-		thread DelayedSetFocusThread( file.checklistButtons[file.checklistButtonsFirstVisibleIndex] )
+		thread DelayedSetFocusThread( file.checklistButtons[ file.checklistButtonsFirstVisibleIndex ] )
 }
 
 void function OnChecklistButtonFocus( var button )
 {
 	int buttonID = int( Hud_GetScriptID( button ) )
 
-	string playlistName = pplInfo.checks[buttonID].playlistName
+	string playlistName = pplInfo.checks[ buttonID ].playlistName
 
 	asset playlistImage = GetPlaylistImage( playlistName )
 	RuiSetImage( Hud_GetRui( Hud_GetChild( file.checklistMenu, "PlaylistImage" ) ), "basicImage", playlistImage )
@@ -932,11 +974,11 @@ void function OnChecklistButtonFocus( var button )
 void function OnChecklistButtonClick( var button )
 {
 	int buttonID = int( Hud_GetScriptID( button ) )
-	//bool isLocked = PlaylistShouldShowAsLocked( pplInfo.checks[buttonID].playlistName )
-	//if ( isLocked )
-	//	return
+	// bool isLocked = PlaylistShouldShowAsLocked( pplInfo.checks[buttonID].playlistName )
+	// if ( isLocked )
+	// 	return
 
-	pplInfo.checks[buttonID].isChecked = !(pplInfo.checks[buttonID].isChecked)
+	pplInfo.checks[ buttonID ].isChecked = !( pplInfo.checks[ buttonID ].isChecked )
 	WriteCheckDisablesToConvar()
 }
 
@@ -947,8 +989,8 @@ void function WriteCheckDisablesToConvar()
 	int checksCount = pplInfo.checks.len()
 	for ( int idx = 0; idx < checksCount; ++idx )
 	{
-		string playlistName = pplInfo.checks[idx].playlistName
-		if ( (playlistName.len() > 0) && !pplInfo.checks[idx].isChecked )
+		string playlistName = pplInfo.checks[ idx ].playlistName
+		if ( ( playlistName.len() > 0 ) && !pplInfo.checks[ idx ].isChecked )
 		{
 			if ( !foundADisable )
 				foundADisable = true
@@ -971,7 +1013,7 @@ array<string> function GetCheckDisablesFromConvar()
 	int convarVersionUsed = GetConVarInt( "match_mixtape_unchecked_version" )
 	int convarVersionNow = int( Code_GetCurrentPlaylistVarOrUseValue( "mixtape_checkbox_memory_version", "-1" ) )
 
-	string convarVal = (convarVersionUsed == convarVersionNow) ? GetConVarString( "match_mixtape_unchecked" ) : ""
+	string convarVal = ( convarVersionUsed == convarVersionNow ) ? GetConVarString( "match_mixtape_unchecked" ) : ""
 	array<string> result = split( convarVal, "," )
 	return result
 }
@@ -983,11 +1025,11 @@ array<string> function GetActiveChecks_Internal( bool excludeIfLocked )
 	int count = pplInfo.checks.len()
 	for ( int idx = 0; idx < count; ++idx )
 	{
-		string playlistName = pplInfo.checks[idx].playlistName
+		string playlistName = pplInfo.checks[ idx ].playlistName
 		if ( playlistName.len() <= 0 )
 			continue
 
-		if ( !pplInfo.checks[idx].isChecked )
+		if ( !pplInfo.checks[ idx ].isChecked )
 			continue
 
 		if ( excludeIfLocked && PlaylistShouldShowAsLocked( playlistName ) )
@@ -1011,8 +1053,8 @@ string function ConvertStringArrayToCSS( array<string> strArray )
 	int count = strArray.len()
 	for ( int idx = 0; idx < count; ++idx )
 	{
-		string thisStr = strArray[idx]
-		if ( (thisStr.len() > 0) )
+		string thisStr = strArray[ idx ]
+		if ( ( thisStr.len() > 0 ) )
 		{
 			if ( !usedOne )
 				usedOne = true

@@ -1,6 +1,5 @@
 untyped
 
-
 global function GetFrontline
 global function SetFrontline
 global function AddCalculateFrontlineCallback
@@ -27,8 +26,8 @@ global function GetBestFrontline
 global function FrontlineDeath
 global function FrontlineDeathNPC
 
-global const FRONTLINE_MIN_DIST_SQR = 262144    // 512^2
-global const FRONTLINE_MAX_DIST_SQR = 16777216  // 4096^2
+global const FRONTLINE_MIN_DIST_SQR = 262144 // 512^2
+global const FRONTLINE_MAX_DIST_SQR = 16777216 // 4096^2
 global const FRONTLINE_NPC_SPAWN_OFFSET = 0
 global const FRONTLINE_PLAYER_SPAWN_OFFSET = 256
 global const FRONTLINE_PLAYER_SPAWN_DIST = 1536
@@ -104,20 +103,22 @@ void function AddCalculateFrontlineCallback( void functionref() callbackFunc )
 
 void function CalculateFrontline()
 {
-		float debugTime = 0.2
-		float now = Time()
-		bool throttledLog = DEBUG_FRONTLINE && now >= file.debugLogNext
+	float debugTime = 0.2
+	float now = Time()
+	bool throttledLog = DEBUG_FRONTLINE && now >= file.debugLogNext
 
-		if ( DEBUG_FRONTLINE )
-		{
-			printl( "[frontline] CalculateFrontline tick t=" + now + " callbacks=" + file.calculateFrontlineCallbacks.len() + ", current=" + ( file.currentFrontline != null ) )
-		}
+	if ( DEBUG_FRONTLINE )
+	{
+		printl(
+			"[frontline] CalculateFrontline tick t=" + now + " callbacks=" + file.calculateFrontlineCallbacks.len() + ", current=" + ( file.currentFrontline != null )
+		)
+	}
 
-		if ( throttledLog )
-		{
-			printl( "[frontline] pre-calc centers friendly=" + file.frontline.friendlyCenter + " enemy=" + file.frontline.enemyCenter )
-			printl( "[frontline] pre-calc players imc=" + GetPlayerArrayOfTeam_Alive( TEAM_IMC ).len() + " militia=" + GetPlayerArrayOfTeam_Alive( TEAM_MILITIA ).len() )
-		}
+	if ( throttledLog )
+	{
+		printl( "[frontline] pre-calc centers friendly=" + file.frontline.friendlyCenter + " enemy=" + file.frontline.enemyCenter )
+		printl( "[frontline] pre-calc players imc=" + GetPlayerArrayOfTeam_Alive( TEAM_IMC ).len() + " militia=" + GetPlayerArrayOfTeam_Alive( TEAM_MILITIA ).len() )
+	}
 
 	if ( file.calculateFrontlineCallbacks.len() == 0 )
 	{
@@ -132,11 +133,11 @@ void function CalculateFrontline()
 			militiaCenter = Vector( anchor.x - dir.x * 256.0, anchor.y - dir.y * 256.0, anchor.z - dir.z * 256.0 )
 		}
 
-		file.frontline.friendlyCenter = imcCenter 
+		file.frontline.friendlyCenter = imcCenter
 		file.frontline.enemyCenter = militiaCenter
 
 		file.frontline.origin = ( militiaCenter + imcCenter ) * 0.5
-		file.frontline.combatDir = Normalize( militiaCenter - imcCenter ) 
+		file.frontline.combatDir = Normalize( militiaCenter - imcCenter )
 		file.frontline.line = CrossProduct( file.frontline.combatDir, Vector( 0.0, 0.0, 1.0 ) )
 
 		#if DEV
@@ -164,16 +165,16 @@ void function CalculateFrontline()
 			printl( "[frontline] post-callback centers friendly=" + file.frontline.friendlyCenter + " enemy=" + file.frontline.enemyCenter )
 	}
 
-		if ( DEBUG_FRONTLINE )
-		{
-			DrawBox( file.frontline.origin, Vector( -32.0, -32.0, -32.0 ), Vector( 32.0, 32.0, 32.0 ), 255, 0, 0, true, debugTime )
-			DebugDrawLine( file.frontline.origin - file.frontline.line * 500.0, file.frontline.origin + file.frontline.line * 500.0, 255, 0, 0, true, debugTime )
-		}
+	if ( DEBUG_FRONTLINE )
+	{
+		DrawBox( file.frontline.origin, Vector( -32.0, -32.0, -32.0 ), Vector( 32.0, 32.0, 32.0 ), 255, 0, 0, true, debugTime )
+		DebugDrawLine( file.frontline.origin - file.frontline.line * 500.0, file.frontline.origin + file.frontline.line * 500.0, 255, 0, 0, true, debugTime )
+	}
 
-		if ( throttledLog )
-		{
-			file.debugLogNext = now + 5.0
-		}
+	if ( throttledLog )
+	{
+		file.debugLogNext = now + 5.0
+	}
 }
 
 void function SetFrontline( vector origin, vector combatDir )
@@ -189,25 +190,11 @@ function InitFrontLine()
 	file.frontlineGroupTable = {}
 	file.currentFrontline = null
 
-	file.frontlineTeamSide = 
-	{ 
-		[TEAM_IMC] = 0, 
-		[TEAM_MILITIA] = 1
-	}
+	file.frontlineTeamSide = { [TEAM_IMC] = 0, [TEAM_MILITIA] = 1 }
 
-	file.npcDeathPerTeam = 
-	{
-		[TEAM_UNASSIGNED] = [], 
-		[TEAM_IMC] = [], 
-		[TEAM_MILITIA] = []
-	}
+	file.npcDeathPerTeam = { [TEAM_UNASSIGNED] = [], [TEAM_IMC] = [], [TEAM_MILITIA] = [] }
 
-	file.playerDeathPerTeam = 
-	{
-		[TEAM_UNASSIGNED] = [], 
-		[TEAM_IMC] = [], 
-		[TEAM_MILITIA] = []
-	 }
+	file.playerDeathPerTeam = { [TEAM_UNASSIGNED] = [], [TEAM_IMC] = [], [TEAM_MILITIA] = [] }
 
 	file.debug = 0
 	file.debugLogNext = 0
@@ -216,27 +203,30 @@ function InitFrontLine()
 	if ( !file.frontlineGroupTable.len() )
 		return false
 
-#if SERVER
-	AddDeathCallback( "npc_soldier", FrontlineDeathNPC )
-	AddDeathCallback( "npc_spectre", FrontlineDeathNPC )
-	AddDeathCallback( "player", FrontlineDeath )
-	AddDeathCallback( "npc_titan", FrontlineDeath )
+	#if SERVER
+		AddDeathCallback( "npc_soldier", FrontlineDeathNPC )
+		AddDeathCallback( "npc_spectre", FrontlineDeathNPC )
+		AddDeathCallback( "player", FrontlineDeath )
+		AddDeathCallback( "npc_titan", FrontlineDeath )
 
-	local spawnpoints = SpawnPoints_GetDropPodStart( TEAM_ANY )
-	local mapCenter = GetMapCenter( spawnpoints )
+		local spawnpoints = SpawnPoints_GetDropPodStart( TEAM_ANY )
+		local mapCenter = GetMapCenter( spawnpoints )
 
-	local oldDist = 100000 * 100000
-	foreach( group, groupTable in file.frontlineGroupTable )
-	{
-		local dist = Distance2DSqr( mapCenter, groupTable.frontlineCenter )
-		if ( dist > oldDist )
-			continue
+		local oldDist = 100000 * 100000
+		foreach ( group, groupTable in file.frontlineGroupTable )
+		{
+			local dist = Distance2DSqr( mapCenter, groupTable.frontlineCenter )
+			if ( dist > oldDist )
+				continue
 
-		oldDist = dist
-		file.currentFrontline = groupTable
-	}
+			oldDist = dist
+			file.currentFrontline = groupTable
+		}
 
-		printl( "[frontline] InitFrontLine built " + file.frontlineGroupTable.len() + " groups; picked current=" + ( file.currentFrontline ? file.currentFrontline.name : "null" ) )
+		printl(
+			"[frontline] InitFrontLine built " + file.frontlineGroupTable.len() + " groups; picked current=" +
+				( file.currentFrontline ? file.currentFrontline.name : "null" )
+		)
 		if ( file.currentFrontline )
 		{
 			printl( "[frontline] current center=" + file.currentFrontline.frontlineCenter + " dir=" + file.currentFrontline.combatDir )
@@ -247,7 +237,7 @@ function InitFrontLine()
 			printl( "[frontline] disabling frontline: no valid groups for map" )
 			return false
 		}
-#endif
+	#endif
 
 	return true
 }
@@ -262,6 +252,7 @@ function GameModeRemoveFrontline( entArray )
 		case LAST_TITAN_STANDING:
 		case TITAN_BRAWL:
 			break
+
 		default:
 			keepUndefined = true
 			gameMode = TEAM_DEATHMATCH
@@ -273,7 +264,7 @@ function GameModeRemoveFrontline( entArray )
 	{
 		local ent = entArray[ index ]
 
-		if ( ent.HasKey( gamemodeKey ) && ent.kv[gamemodeKey] == "1" )
+		if ( ent.HasKey( gamemodeKey ) && ent.kv[ gamemodeKey ] == "1" )
 			continue
 		else if ( !ent.HasKey( gamemodeKey ) && keepUndefined )
 			continue
@@ -289,9 +280,9 @@ function InitFrontlineGroups()
 	local groupTableByName = {}
 
 	#if SERVER
-	local entArray = GetEntArrayByClass_Expensive( "info_frontline" )
+		local entArray = GetEntArrayByClass_Expensive( "info_frontline" )
 	#else
-	local entArray = []
+		local entArray = []
 	#endif
 	GameModeRemoveFrontline( entArray )
 
@@ -320,10 +311,10 @@ function InitFrontlineGroups()
 		groupTableByName[ group ].sideNodeArray[ side ].append( info_frontline )
 	}
 
-	foreach( group, frontlineTable in groupTableByName )
+	foreach ( group, frontlineTable in groupTableByName )
 	{
-		Assert( frontlineTable.sideNodeArray[0].len() == 3, "Frontline group [" + group + "] does not have 3 info_frontline ents for side #0" )
-		Assert( frontlineTable.sideNodeArray[1].len() == 3, "Frontline group [" + group + "] does not have 3 info_frontline ents for side #1" )
+		Assert( frontlineTable.sideNodeArray[ 0 ].len() == 3, "Frontline group [" + group + "] does not have 3 info_frontline ents for side #0" )
+		Assert( frontlineTable.sideNodeArray[ 1 ].len() == 3, "Frontline group [" + group + "] does not have 3 info_frontline ents for side #1" )
 
 		frontlineTable.frontlineCenter = GetFrontlineCenter( frontlineTable )
 		frontlineTable.frontlineVector = GetFrontlineVector( frontlineTable )
@@ -331,7 +322,7 @@ function InitFrontlineGroups()
 		frontlineTable.combatDir = Vector( frontlineTable.frontlineVector.y, -frontlineTable.frontlineVector.x, 0 )
 	}
 
-	foreach( spectreNode in spectreNodeArray )
+	foreach ( spectreNode in spectreNodeArray )
 	{
 		local group = spectreNode.kv.group
 		local side = spectreNode.GetTeam()
@@ -339,7 +330,7 @@ function InitFrontlineGroups()
 		local nearestNode = null
 		Assert( group in groupTableByName )
 
-		foreach( frontlineNode in groupTableByName[ group ]["sideNodeArray"][ side ] )
+		foreach ( frontlineNode in groupTableByName[ group ][ "sideNodeArray" ][ side ] )
 		{
 			local dist = Distance( spectreNode.GetOrigin(), frontlineNode.GetOrigin() )
 			if ( nearestDist == null || dist < nearestDist )
@@ -352,7 +343,7 @@ function InitFrontlineGroups()
 			}
 		}
 
-		Assert( nearestNode, "couldn't find a frontline node to for frontline spectre node at " +  spectreNode.GetOrigin() )
+		Assert( nearestNode, "couldn't find a frontline node to for frontline spectre node at " + spectreNode.GetOrigin() )
 		nearestNode.s.spectreNode <- spectreNode
 	}
 
@@ -363,14 +354,14 @@ function CreateFrontlineTable()
 {
 	local frontlineTable = {}
 
-	frontlineTable.sideNodeArray    <- [ [], [] ]
-	frontlineTable.frontlineCenter  <- null
-	frontlineTable.frontlineVector  <- null
-	frontlineTable.combatDir        <- null
-	frontlineTable.width            <- null
-	frontlineTable.lineDistFrac     <- 0
-	frontlineTable.useCount         <- 0
-	frontlineTable.name             <- ""
+	frontlineTable.sideNodeArray <- [ [], [] ]
+	frontlineTable.frontlineCenter <- null
+	frontlineTable.frontlineVector <- null
+	frontlineTable.combatDir <- null
+	frontlineTable.width <- null
+	frontlineTable.lineDistFrac <- 0
+	frontlineTable.useCount <- 0
+	frontlineTable.name <- ""
 
 	return frontlineTable
 }
@@ -391,7 +382,7 @@ function CheckFrontlineOverrun( losingTeam )
 	local playerArray = GetPlayerArray()
 	local rest = 0
 
-	foreach( entity player in playerArray )
+	foreach ( entity player in playerArray )
 	{
 		if ( !IsAlive( player ) )
 			continue
@@ -457,12 +448,12 @@ function GetBestFrontline( winningTeam )
 {
 	local combatDir = GetTeamCombatDir( file.currentFrontline, winningTeam )
 
-	local right = CalcRelativeVector( Vector( 0,45,0), combatDir )
-	local left = CalcRelativeVector( Vector( 0,-45,0), combatDir )
+	local right = CalcRelativeVector( Vector( 0, 45, 0 ), combatDir )
+	local left = CalcRelativeVector( Vector( 0, -45, 0 ), combatDir )
 	local rear = combatDir * -1
 	local vectorArray = [ combatDir, right, left, rear ]
 
-	foreach( vector dirVec in vectorArray )
+	foreach ( vector dirVec in vectorArray )
 	{
 		local frontline = FindFrontlineInDirection( dirVec )
 		if ( frontline )
@@ -496,7 +487,7 @@ function FindFrontlineInDirection( vector forwardVector )
 	local closestDistFrac = 1
 	local frontlineSelection = []
 
-	foreach( groupName, frontline in file.frontlineGroupTable )
+	foreach ( groupName, frontline in file.frontlineGroupTable )
 	{
 		frontline.lineDistFrac = 0
 
@@ -529,7 +520,7 @@ function FindFrontlineInDirection( vector forwardVector )
 	if ( !forwardFrontline )
 		return false
 
-	foreach( frontline in frontlineSelection )
+	foreach ( frontline in frontlineSelection )
 	{
 		if ( frontline == file.currentFrontline )
 			continue
@@ -552,13 +543,13 @@ function FindFrontlineInDirection( vector forwardVector )
 
 function GetFrontlineCenter( frontlineTable )
 {
-	local entArray = clone frontlineTable.sideNodeArray[0]
+	local entArray = clone frontlineTable.sideNodeArray[ 0 ]
 	Assert( entArray.len() )
 
-	entArray.extend( frontlineTable.sideNodeArray[1] )
+	entArray.extend( frontlineTable.sideNodeArray[ 1 ] )
 
-	local centerPos = Vector( 0,0,0 )
-	foreach( ent in entArray )
+	local centerPos = Vector( 0, 0, 0 )
+	foreach ( ent in entArray )
 		centerPos += ent.GetOrigin()
 
 	centerPos *= ( 1.0 / entArray.len() )
@@ -567,16 +558,16 @@ function GetFrontlineCenter( frontlineTable )
 
 function GetFrontlineVector( frontlineTable )
 {
-	local centerPos0 = Vector( 0,0,0 )
-	foreach( ent in frontlineTable.sideNodeArray[0] )
+	local centerPos0 = Vector( 0, 0, 0 )
+	foreach ( ent in frontlineTable.sideNodeArray[ 0 ] )
 		centerPos0 += ent.GetOrigin()
 
-	local centerPos1 = Vector( 0,0,0 )
-	foreach( ent in frontlineTable.sideNodeArray[1] )
+	local centerPos1 = Vector( 0, 0, 0 )
+	foreach ( ent in frontlineTable.sideNodeArray[ 1 ] )
 		centerPos1 += ent.GetOrigin()
 
-	centerPos0 *= ( 1.0 / frontlineTable.sideNodeArray[0].len() )
-	centerPos1 *= ( 1.0 / frontlineTable.sideNodeArray[1].len() )
+	centerPos0 *= ( 1.0 / frontlineTable.sideNodeArray[ 0 ].len() )
+	centerPos1 *= ( 1.0 / frontlineTable.sideNodeArray[ 1 ].len() )
 
 	local dirVec = centerPos1 - centerPos0
 	dirVec.Norm()
@@ -608,16 +599,16 @@ function GetFrontlineWidth( frontlineTable )
 function CreateTempFrontline()
 {
 	#if SERVER
-	local spawnpoints = SpawnPoints_GetPilotStart( TEAM_ANY )
-	switch( GameRules_GetGameMode() )
-	{
-		case LAST_TITAN_STANDING:
-		case TITAN_BRAWL:
-			spawnpoints = SpawnPoints_GetTitanStart( TEAM_ANY )
-			break
-	}
+		local spawnpoints = SpawnPoints_GetPilotStart( TEAM_ANY )
+		switch ( GameRules_GetGameMode() )
+		{
+			case LAST_TITAN_STANDING:
+			case TITAN_BRAWL:
+				spawnpoints = SpawnPoints_GetTitanStart( TEAM_ANY )
+				break
+		}
 	#else
-	local spawnpoints = []
+		local spawnpoints = []
 	#endif
 
 	if ( spawnpoints.len() == 0 )
@@ -637,25 +628,25 @@ function CreateTempFrontline()
 
 	local entArray = []
 	#if SERVER
-	foreach( origin in originArray )
-	{
-		local info_frontline = CreateEntity( "info_frontline" )
-		info_frontline.kv.group = "temp_group"
-		info_frontline.kv.TeamNum = 0
-		info_frontline.SetOrigin( origin + ( mapDir * 512 ) )
-		DispatchSpawn( info_frontline )
-		entArray.append( info_frontline )
-	}
+		foreach ( origin in originArray )
+		{
+			local info_frontline = CreateEntity( "info_frontline" )
+			info_frontline.kv.group = "temp_group"
+			info_frontline.kv.TeamNum = 0
+			info_frontline.SetOrigin( origin + ( mapDir * 512 ) )
+			DispatchSpawn( info_frontline )
+			entArray.append( info_frontline )
+		}
 
-	foreach( origin in originArray )
-	{
-		local info_frontline = CreateEntity( "info_frontline" )
-		info_frontline.kv.group = "temp_group"
-		info_frontline.kv.TeamNum = 1
-		info_frontline.SetOrigin( origin + ( mapDir * -512 ) )
-		DispatchSpawn( info_frontline )
-		entArray.append( info_frontline )
-	}
+		foreach ( origin in originArray )
+		{
+			local info_frontline = CreateEntity( "info_frontline" )
+			info_frontline.kv.group = "temp_group"
+			info_frontline.kv.TeamNum = 1
+			info_frontline.SetOrigin( origin + ( mapDir * -512 ) )
+			DispatchSpawn( info_frontline )
+			entArray.append( info_frontline )
+		}
 	#endif
 
 	return entArray
@@ -717,7 +708,7 @@ function GetMapDirection( centerPos, startSpawnPoints )
 
 function SetFrontlineSides( frontline, winningTeam )
 {
-	local otherTeam = (winningTeam == TEAM_IMC) ? TEAM_MILITIA : TEAM_IMC
+	local otherTeam = ( winningTeam == TEAM_IMC ) ? TEAM_MILITIA : TEAM_IMC
 	local center = frontline.frontlineCenter
 	local combatDir = file.currentFrontline.combatDir
 
@@ -725,9 +716,9 @@ function SetFrontlineSides( frontline, winningTeam )
 	if ( GetGameState() <= eGameState.Prematch || GetGameState() == eGameState.SwitchingSides || playerArray.len() == 0 )
 	{
 		#if SERVER
-		playerArray = GetEntArrayByClass_Expensive( "info_spawnpoint_human_start" )
+			playerArray = GetEntArrayByClass_Expensive( "info_spawnpoint_human_start" )
 		#else
-		playerArray = []
+			playerArray = []
 		#endif
 	}
 
@@ -754,13 +745,13 @@ function SetFrontlineSides( frontline, winningTeam )
 
 	if ( teamCount[ 1 ] > teamCount[ 0 ] )
 	{
-		file.frontlineTeamSide[ winningTeam ]  = 1
-		file.frontlineTeamSide[ otherTeam ]    = 0
+		file.frontlineTeamSide[ winningTeam ] = 1
+		file.frontlineTeamSide[ otherTeam ] = 0
 	}
 	else
 	{
-		file.frontlineTeamSide[ otherTeam ]    = 1
-		file.frontlineTeamSide[ winningTeam ]  = 0
+		file.frontlineTeamSide[ otherTeam ] = 1
+		file.frontlineTeamSide[ winningTeam ] = 0
 	}
 }
 
@@ -785,7 +776,7 @@ function RateFrontLineNPCSpawnpoint( spawnpoint, team, edgeOrigin, combatDir )
 	frontlineRating *= 2.0
 
 	#if SERVER
-	spawnpoint.CalculateRating( TD_AI, team, frontlineRating, frontlineRating )
+		spawnpoint.CalculateRating( TD_AI, team, frontlineRating, frontlineRating )
 	#endif
 }
 
@@ -819,7 +810,7 @@ void function FrontlineDeath( entity ent, var damageInfo )
 function GetFrontlineNPCKillsPerSec( team )
 {
 	local newArray = []
-	foreach( timestamp in file.npcDeathPerTeam[ team ] )
+	foreach ( timestamp in file.npcDeathPerTeam[ team ] )
 	{
 		if ( timestamp > Time() - KPS_TIMEFRAME )
 			newArray.append( timestamp )
@@ -833,7 +824,7 @@ function GetFrontlineNPCKillsPerSec( team )
 function GetFrontlinePlayerKillsPerSec( team )
 {
 	local newArray = []
-	foreach( timestamp in file.playerDeathPerTeam[ team ] )
+	foreach ( timestamp in file.playerDeathPerTeam[ team ] )
 	{
 		if ( timestamp > Time() - PLAYER_KPS_TIMEFRAME )
 			newArray.append( timestamp )
@@ -875,7 +866,7 @@ vector function CalculateWeightedTeamCenter( int team )
 		return Vector( 0.0, 0.0, 0.0 )
 
 	// find minimum distances between teammates
-	array<float> minTeammateDistances// = arrayofsize( teamPlayersCount, 99999.0 )
+	array<float> minTeammateDistances // = arrayofsize( teamPlayersCount, 99999.0 )
 	minTeammateDistances.resize( teamPlayersCount, 99999.0 )
 
 	for ( int i = 0; i < teamPlayersCount; i++ )

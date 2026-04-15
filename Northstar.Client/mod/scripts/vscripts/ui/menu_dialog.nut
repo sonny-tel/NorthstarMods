@@ -106,18 +106,18 @@ void function OnDialogButton_Focused( var button )
 {
 	int buttonID = int( Hud_GetScriptID( button ) )
 
-	if ( uiGlobal.dialogButtonData[buttonID].focusMessage != "" )
+	if ( uiGlobal.dialogButtonData[ buttonID ].focusMessage != "" )
 	{
 		var menu = Hud_GetParent( button )
 		var messageElem = GetSingleElementByClassname( menu, "DialogMessageClass" )
-		Hud_SetText( messageElem, uiGlobal.dialogButtonData[buttonID].focusMessage )
+		Hud_SetText( messageElem, uiGlobal.dialogButtonData[ buttonID ].focusMessage )
 	}
 }
 
 void function OnDialogButton_FocusedLose( var button )
 {
-	//if ( !IsDialog( uiGlobal.activeMenu ) )
-	//	return
+	// if ( !IsDialog( uiGlobal.activeMenu ) )
+	// 	return
 }
 
 void function OnDialogButton_Activate( var button )
@@ -131,8 +131,8 @@ void function OnDialogButton_Activate( var button )
 
 	Assert( uiGlobal.dialogButtonData.len() > 0 )
 
-	if ( uiGlobal.dialogButtonData[buttonID].activateFunc != null )
-		uiGlobal.dialogButtonData[buttonID].activateFunc.call( this )
+	if ( uiGlobal.dialogButtonData[ buttonID ].activateFunc != null )
+		uiGlobal.dialogButtonData[ buttonID ].activateFunc.call( this )
 }
 
 void function OnDataCenterButton_Activate( var button )
@@ -148,7 +148,7 @@ void function CancelConnect()
 	MatchmakingCancel()
 	ClientCommand( "party_leave" )
 
-	if( GetLobbyType() == "party" )
+	if ( GetLobbyType() == "party" )
 		ClientCommand( "CancelPrivateMatchSearch" )
 }
 
@@ -164,11 +164,11 @@ void function OpenConnectingDialog()
 	dialogData.header = "#MATCHMAKING_TITLE_CONNECTING"
 	dialogData.showSpinner = true
 
-#if PC_PROG
-	AddDialogButton( dialogData, "#CANCEL", CancelConnect )
+	#if PC_PROG
+		AddDialogButton( dialogData, "#CANCEL", CancelConnect )
 
-	AddDialogFooter( dialogData, "#A_BUTTON_SELECT" )
-#endif // PC_PROG
+		AddDialogFooter( dialogData, "#A_BUTTON_SELECT" )
+	#endif // PC_PROG
 	AddDialogFooter( dialogData, "#B_BUTTON_CANCEL" )
 
 	OpenDialog( dialogData )
@@ -233,10 +233,9 @@ void function OpenDialog( DialogData dialogData )
 			messageHeight = Hud_GetHeight( messageElem )
 	}
 
-    if ( Hud_HasChild( menu, "TextEntryBox" ) )
-    {
-
-    }
+	if ( Hud_HasChild( menu, "TextEntryBox" ) )
+	{
+	}
 
 	if ( Hud_HasChild( menu, "DarkenBackground" ) )
 	{
@@ -274,7 +273,7 @@ void function OpenDialog( DialogData dialogData )
 
 	array<DialogFooterData> footerData
 
-	bool forceNoButtonsOnTheBottom = (dialogData.noChoice || dialogData.noChoiceWithNavigateBack)
+	bool forceNoButtonsOnTheBottom = ( dialogData.noChoice || dialogData.noChoiceWithNavigateBack )
 	if ( !forceNoButtonsOnTheBottom )
 	{
 		DialogFooterData defaultFooter1
@@ -309,9 +308,9 @@ void function OpenDialog( DialogData dialogData )
 		{
 			RuiSetString( ruiButton, "buttonText", uiGlobal.dialogButtonData[ index ].label )
 			if ( index in dialogData.coloredButton )
-				RuiSetFloat3( ruiButton, "textColorOverride", <1.0,0.7,0.4> )
+				RuiSetFloat3( ruiButton, "textColorOverride", < 1.0, 0.7, 0.4 > )
 			else
-				RuiSetFloat3( ruiButton, "textColorOverride", <1,1,1> )
+				RuiSetFloat3( ruiButton, "textColorOverride", < 1, 1, 1 > )
 
 			Hud_SetHeight( button, defaultButtonHeight )
 			Hud_Show( button )
@@ -374,7 +373,7 @@ void function OpenDialog( DialogData dialogData )
 	{
 		var dialogFrame = Hud_GetChild( menu, "DialogFrame" )
 		int baseDialogHeight = int( ContentScaledY( 312 ) )
-		int bottomButtonAdjust = forceNoButtonsOnTheBottom ? int( ContentScaledY( -(BOTTOM_BUTTON_AREA_HEIGHT - BOTTOM_BUTTON_AREA_HEIGHT_WHENDISABLED) ) ) : 0
+		int bottomButtonAdjust = forceNoButtonsOnTheBottom ? int( ContentScaledY( -( BOTTOM_BUTTON_AREA_HEIGHT - BOTTOM_BUTTON_AREA_HEIGHT_WHENDISABLED ) ) ) : 0
 		int adjustedDialogHeight = baseDialogHeight + messageHeight + buttonsHeight + bottomButtonAdjust
 		Hud_SetHeight( dialogFrame, adjustedDialogHeight )
 	}
@@ -401,7 +400,7 @@ void function UpdateDialogFooterVisibility( var menu, bool isControllerModeActiv
 		var PCBackButton = Hud_GetChild( dialogFooter, "MouseBackFooterButton" )
 		bool isVisible = isControllerModeActive || Hud_IsVisible( PCBackButton )
 		DialogData dialogData = uiGlobal.menuData[ menu ].dialogData
-		bool forceNoButtonsOnTheBottom = (dialogData.noChoice || dialogData.noChoiceWithNavigateBack)
+		bool forceNoButtonsOnTheBottom = ( dialogData.noChoice || dialogData.noChoiceWithNavigateBack )
 
 		int newHeight = defaultHeight
 		if ( !isVisible || forceNoButtonsOnTheBottom )
@@ -427,7 +426,7 @@ bool function ShouldUpdateMenuForDialogFooterVisibility( var menu )
 
 function ServerCallback_OpenPilotLoadoutMenu()
 {
-	if ( uiGlobal.activeMenu == null)
+	if ( uiGlobal.activeMenu == null )
 	{
 		AdvanceMenu( GetMenu( "PilotLoadoutsMenu" ) )
 	}
@@ -534,7 +533,7 @@ void function LeaveDialog()
 			{
 				Assert( PartyHasMembers() )
 				Assert( !AmIPartyLeader() )
-				if ( lobbyType == eLobbyType.PRIVATE_MATCH  )
+				if ( lobbyType == eLobbyType.PRIVATE_MATCH )
 					AddDialogButton( dialogData, "#YES_LEAVE_MATCH_AND_PARTY", LeaveMatchAndParty )
 				else
 					AddDialogButton( dialogData, "#YES_LEAVE_PARTY", LeaveParty )
@@ -558,7 +557,7 @@ void function LeaveDialog()
 				if ( level.ui.penalizeDisconnect && !IsPrivateMatch() )
 				{
 					dialogData.message = "#LEAVING_MATCH_LOSS_WARNING"
-					dialogData.messageColor = [ENEMY_R, ENEMY_G * 0.7, ENEMY_B * 0.7, 255]
+					dialogData.messageColor = [ ENEMY_R, ENEMY_G * 0.7, ENEMY_B * 0.7, 255 ]
 					confirmSoloText = "#YES_LEAVE_MATCH_WITH_LOSS"
 					confirmPartyText = "#YES_LEAVE_MATCH_AND_PARTY_WITH_LOSS"
 				}
@@ -570,7 +569,7 @@ void function LeaveDialog()
 			}
 		}
 	}
-	else  // SP
+	else // SP
 	{
 		dialogData.header = "#ARE_YOU_SURE_YOU_WANT_TO_QUIT_SP"
 		dialogData.message = "#QUIT_CONFIRM_MESSAGE_SP"
@@ -683,9 +682,9 @@ void function OpenDataCenterDialog( var button )
 	dialogData.menu = GetMenu( "DataCenterDialog" )
 	dialogData.header = "#DATA_CENTERS"
 
-#if PC_PROG
-	AddDialogButton( dialogData, "#DISMISS" )
-#endif // PC_PROG
+	#if PC_PROG
+		AddDialogButton( dialogData, "#DISMISS" )
+	#endif // PC_PROG
 
 	AddDialogFooter( dialogData, "#A_BUTTON_SELECT" )
 	AddDialogFooter( dialogData, "#B_BUTTON_DISMISS_RUI" )
@@ -700,15 +699,15 @@ void function OpenAnnouncementDialog()
 	dialogData.header = "#ANNOUNCEMENT"
 	dialogData.message = GetConVarString( "announcement" )
 	dialogData.image = $"ui/menu/common/dialog_announcement_1"
-//#if !DEV
-//	dialogData.inputDisableTime = 2.0
-//#endif // #if !DEV
+	// #if !DEV
+	// 	dialogData.inputDisableTime = 2.0
+	// #endif // #if !DEV
 
-#if PC_PROG
-	AddDialogButton( dialogData, "#DISMISS", UpdateAnnouncementVersionSeen )
+	#if PC_PROG
+		AddDialogButton( dialogData, "#DISMISS", UpdateAnnouncementVersionSeen )
 
-	AddDialogFooter( dialogData, "#A_BUTTON_SELECT" )
-#endif // PC_PROG
+		AddDialogFooter( dialogData, "#A_BUTTON_SELECT" )
+	#endif // PC_PROG
 	AddDialogFooter( dialogData, "#B_BUTTON_DISMISS_RUI" )
 
 	OpenDialog( dialogData )
@@ -724,7 +723,6 @@ void function UpdateAnnouncementVersionSeen()
 
 	ClientCommand( "SetAnnouncementVersionSeen " + string( announcementVersion ) )
 }
-
 
 void function OnBtnBackPressed( var button )
 {

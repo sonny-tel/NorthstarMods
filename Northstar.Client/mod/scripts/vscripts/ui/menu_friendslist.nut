@@ -8,13 +8,13 @@ struct
 	var menu
 	GridMenuData gridData
 	FriendsData& friendsData
-	table< string, string> subscriptionMap
+	table<string, string> subscriptionMap
 	int selectedElemNum
 } file
 
 void function AddFriendslistMenu()
-{	
-    AddMenu( "FriendslistMenu", $"resource/ui/menus/friendslist.menu", InitFriendslistMenu )
+{
+	AddMenu( "FriendslistMenu", $"resource/ui/menus/friendslist.menu", InitFriendslistMenu )
 }
 
 void function InitFriendslistMenu()
@@ -99,7 +99,7 @@ bool function IsFriendNotFocused()
 
 	if ( focus != null && file.friendsData.isValid )
 	{
-		table< int, var > buttons = Grid_GetActivePageButtons( file.menu )
+		table<int, var> buttons = Grid_GetActivePageButtons( file.menu )
 
 		foreach ( button in buttons )
 		{
@@ -113,7 +113,7 @@ bool function IsFriendNotFocused()
 
 bool function FriendButton_Init( var button, int elemNum )
 {
-	array< string > resultArray = []
+	array<string> resultArray = []
 	resultArray.resize( file.subscriptionMap.len() )
 	int currentArrayIndex = 0
 	foreach ( key, val in file.subscriptionMap )
@@ -122,7 +122,7 @@ bool function FriendButton_Init( var button, int elemNum )
 		++currentArrayIndex
 	}
 
-	string index = resultArray[elemNum]
+	string index = resultArray[ elemNum ]
 	string name = ""
 
 	foreach ( friend in file.friendsData.friends )
@@ -134,7 +134,7 @@ bool function FriendButton_Init( var button, int elemNum )
 		}
 	}
 
-	string subscription = file.subscriptionMap[index]
+	string subscription = file.subscriptionMap[ index ]
 
 	var rui = Hud_GetRui( button )
 	RuiSetString( rui, "buttonText", name )
@@ -144,7 +144,7 @@ bool function FriendButton_Init( var button, int elemNum )
 
 void function ConfirmFriendInvite_Final()
 {
-	array< string > resultArray = []
+	array<string> resultArray = []
 	resultArray.resize( file.subscriptionMap.len() )
 	int currentArrayIndex = 0
 	foreach ( key, val in file.subscriptionMap )
@@ -153,8 +153,8 @@ void function ConfirmFriendInvite_Final()
 		++currentArrayIndex
 	}
 
-	string index = resultArray[file.selectedElemNum]
-	string subscription = file.subscriptionMap[index]
+	string index = resultArray[ file.selectedElemNum ]
+	string subscription = file.subscriptionMap[ index ]
 
 	ClientCommand( "ns_join_room " + subscription )
 }
@@ -166,7 +166,7 @@ void function ConfirmFriendInvite_Thread()
 
 	DialogData dialogData
 
-	array< string > resultArray = []
+	array<string> resultArray = []
 	resultArray.resize( file.subscriptionMap.len() )
 	int currentArrayIndex = 0
 	foreach ( key, val in file.subscriptionMap )
@@ -175,7 +175,7 @@ void function ConfirmFriendInvite_Thread()
 		++currentArrayIndex
 	}
 
-	string index = resultArray[file.selectedElemNum]
+	string index = resultArray[ file.selectedElemNum ]
 	string name = ""
 
 	foreach ( friend in file.friendsData.friends )
@@ -215,7 +215,7 @@ void function FriendButton_GetFocus( var button, int elemNum )
 
 void function InviteFriendsIGO( var button )
 {
-    #if PC_PROG
+	#if PC_PROG
 		if ( !Origin_IsOverlayAvailable() )
 		{
 			PopUpOriginOverlayDisabledDialog()

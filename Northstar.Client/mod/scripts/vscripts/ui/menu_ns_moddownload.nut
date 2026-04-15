@@ -4,38 +4,37 @@ global function FetchVerifiedModsManifesto
 
 global enum eModInstallStatus
 {
-    MANIFEST_FETCHING,
+	MANIFEST_FETCHING,
 	CHECKING_DETAILS,
-    DOWNLOADING,
-    CHECKSUMING,
-    EXTRACTING,
-    DONE,
-    ABORTED,
-    FAILED,
-    FAILED_READING_ARCHIVE,
-    FAILED_WRITING_TO_DISK,
-    MOD_FETCHING_FAILED,
-    MOD_CORRUPTED,
-    NO_DISK_SPACE_AVAILABLE,
+	DOWNLOADING,
+	CHECKSUMING,
+	EXTRACTING,
+	DONE,
+	ABORTED,
+	FAILED,
+	FAILED_READING_ARCHIVE,
+	FAILED_WRITING_TO_DISK,
+	MOD_FETCHING_FAILED,
+	MOD_CORRUPTED,
+	NO_DISK_SPACE_AVAILABLE,
 	INVALID_DEPENDENCY,
-    NOT_FOUND
+	NOT_FOUND
 }
 
-const int MB = 1024*1000;
-
+const int MB = 1024 * 1000
 
 void function FetchVerifiedModsManifesto()
 {
-	print("Start fetching verified mods manifesto from the Internet")
+	print( "Start fetching verified mods manifesto from the Internet" )
 
 	// Fetching UI
 	DialogData dialogData
 	dialogData.header = Localize( "#MANIFEST_FETCHING_TITLE" )
 	dialogData.message = Localize( "#MANIFEST_FETCHING_TEXT" )
-	dialogData.showSpinner = true;
+	dialogData.showSpinner = true
 
 	// Prevent user from closing dialog
-	dialogData.forceChoice = true;
+	dialogData.forceChoice = true
 	OpenDialog( dialogData )
 
 	// Do the actual fetching
@@ -58,15 +57,20 @@ bool function DownloadMod( RequiredModInfo mod )
 	DialogData dialogData
 	dialogData.header = Localize( "#DOWNLOADING_MOD_TITLE" )
 	dialogData.message = Localize( "#DOWNLOADING_MOD_TEXT", mod.name, mod.version )
-	dialogData.showSpinner = true;
+	dialogData.showSpinner = true
 
 	// Prevent download button
-	AddDialogButton( dialogData, "#CANCEL", void function() {
-		NSCancelModDownload()
-	})
+	AddDialogButton(
+		dialogData,
+		"#CANCEL",
+		void function()
+		{
+			NSCancelModDownload()
+		}
+	)
 
 	// Prevent user from closing dialog
-	dialogData.forceChoice = true;
+	dialogData.forceChoice = true
 	OpenDialog( dialogData )
 
 	// Save reference to UI elements, to update their content
@@ -88,8 +92,8 @@ bool function DownloadMod( RequiredModInfo mod )
 	// If download was aborted, don't close UI since it was closed by clicking cancel button
 	if ( state.status == eModInstallStatus.ABORTED )
 	{
-		print("Mod download was cancelled by the user.")
-		return false;
+		print( "Mod download was cancelled by the user." )
+		return false
 	}
 
 	printt( "Mod status:", state.status )
@@ -104,28 +108,33 @@ void function UpdateModDownloadDialog( RequiredModInfo mod, ModInstallState stat
 {
 	switch ( state.status )
 	{
-	case eModInstallStatus.MANIFEST_FETCHING:
-		Hud_SetText( header, Localize( "#MANIFEST_FETCHING_TITLE" ) )
-		Hud_SetText( body, Localize( "#MANIFEST_FETCHING_TEXT" ) )
-		break
-	case eModInstallStatus.CHECKING_DETAILS:
-		Hud_SetText( header, Localize( "#CHECKING_DETAILS_TITLE" ) )
-		Hud_SetText( body, Localize( "#CHECKING_DETAILS_TEXT", mod.name, mod.version ) )
-		break
-	case eModInstallStatus.DOWNLOADING:
-		Hud_SetText( header, Localize( "#DOWNLOADING_MOD_TITLE_W_PROGRESS", string( state.ratio ) ) )
-		Hud_SetText( body, Localize( "#DOWNLOADING_MOD_TEXT_W_PROGRESS", mod.name, mod.version, floor( state.progress / MB ), floor( state.total / MB ) ) )
-		break
-	case eModInstallStatus.CHECKSUMING:
-		Hud_SetText( header, Localize( "#CHECKSUMING_TITLE" ) )
-		Hud_SetText( body, Localize( "#CHECKSUMING_TEXT", mod.name, mod.version ) )
-		break
-	case eModInstallStatus.EXTRACTING:
-		Hud_SetText( header, Localize( "#EXTRACTING_MOD_TITLE", string( state.ratio ) ) )
-		Hud_SetText( body, Localize( "#EXTRACTING_MOD_TEXT", mod.name, mod.version, floor( state.progress / MB ), floor( state.total / MB ) ) )
-		break
-	default:
-		break
+		case eModInstallStatus.MANIFEST_FETCHING:
+			Hud_SetText( header, Localize( "#MANIFEST_FETCHING_TITLE" ) )
+			Hud_SetText( body, Localize( "#MANIFEST_FETCHING_TEXT" ) )
+			break
+
+		case eModInstallStatus.CHECKING_DETAILS:
+			Hud_SetText( header, Localize( "#CHECKING_DETAILS_TITLE" ) )
+			Hud_SetText( body, Localize( "#CHECKING_DETAILS_TEXT", mod.name, mod.version ) )
+			break
+
+		case eModInstallStatus.DOWNLOADING:
+			Hud_SetText( header, Localize( "#DOWNLOADING_MOD_TITLE_W_PROGRESS", string( state.ratio ) ) )
+			Hud_SetText( body, Localize( "#DOWNLOADING_MOD_TEXT_W_PROGRESS", mod.name, mod.version, floor( state.progress / MB ), floor( state.total / MB ) ) )
+			break
+
+		case eModInstallStatus.CHECKSUMING:
+			Hud_SetText( header, Localize( "#CHECKSUMING_TITLE" ) )
+			Hud_SetText( body, Localize( "#CHECKSUMING_TEXT", mod.name, mod.version ) )
+			break
+
+		case eModInstallStatus.EXTRACTING:
+			Hud_SetText( header, Localize( "#EXTRACTING_MOD_TITLE", string( state.ratio ) ) )
+			Hud_SetText( body, Localize( "#EXTRACTING_MOD_TEXT", mod.name, mod.version, floor( state.progress / MB ), floor( state.total / MB ) ) )
+			break
+
+		default:
+			break
 	}
 }
 
@@ -145,31 +154,38 @@ void function DisplayModDownloadErrorDialog( string modName )
 
 	switch ( state.status )
 	{
-    case eModInstallStatus.FAILED_READING_ARCHIVE:
-		dialogData.message = Localize( "#FAILED_READING_ARCHIVE" )
-		break
-    case eModInstallStatus.FAILED_WRITING_TO_DISK:
-		dialogData.message = Localize( "#FAILED_WRITING_TO_DISK" )
-		break
-    case eModInstallStatus.MOD_FETCHING_FAILED:
-		dialogData.message = Localize( "#MOD_FETCHING_FAILED" )
-		break
-    case eModInstallStatus.MOD_CORRUPTED:
-		dialogData.message = Localize( "#MOD_CORRUPTED" )
-		break
-    case eModInstallStatus.NO_DISK_SPACE_AVAILABLE:
-		dialogData.message = Localize( "#NO_DISK_SPACE_AVAILABLE" )
-		break
-	case eModInstallStatus.INVALID_DEPENDENCY:
-		dialogData.message = Localize( "#INVALID_DEPENDENCY" )
-		break;
-    case eModInstallStatus.NOT_FOUND:
-		dialogData.message = Localize( "#NOT_FOUND" )
-		break
-	case eModInstallStatus.FAILED:
-	default:
-		dialogData.message = Localize( "#MOD_FETCHING_FAILED_GENERAL" )
-		break
+		case eModInstallStatus.FAILED_READING_ARCHIVE:
+			dialogData.message = Localize( "#FAILED_READING_ARCHIVE" )
+			break
+
+		case eModInstallStatus.FAILED_WRITING_TO_DISK:
+			dialogData.message = Localize( "#FAILED_WRITING_TO_DISK" )
+			break
+
+		case eModInstallStatus.MOD_FETCHING_FAILED:
+			dialogData.message = Localize( "#MOD_FETCHING_FAILED" )
+			break
+
+		case eModInstallStatus.MOD_CORRUPTED:
+			dialogData.message = Localize( "#MOD_CORRUPTED" )
+			break
+
+		case eModInstallStatus.NO_DISK_SPACE_AVAILABLE:
+			dialogData.message = Localize( "#NO_DISK_SPACE_AVAILABLE" )
+			break
+
+		case eModInstallStatus.INVALID_DEPENDENCY:
+			dialogData.message = Localize( "#INVALID_DEPENDENCY" )
+			break
+
+		case eModInstallStatus.NOT_FOUND:
+			dialogData.message = Localize( "#NOT_FOUND" )
+			break
+
+		case eModInstallStatus.FAILED:
+		default:
+			dialogData.message = Localize( "#MOD_FETCHING_FAILED_GENERAL" )
+			break
 	}
 
 	AddDialogButton( dialogData, "#DISMISS" )

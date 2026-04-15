@@ -3,11 +3,11 @@ global function ClGetPlayerEntsTrampoline
 
 void function ClGetPlayerEntsTrampoline()
 {
-    foreach( entity player in GetPlayerArray() )
-    {
-        RunUIScript( "PopulatePlayerlistFromCL", player.GetPlayerName() )
-    }
+	foreach ( entity player in GetPlayerArray() )
+	{
+		RunUIScript( "PopulatePlayerlistFromCL", player.GetPlayerName() )
+	}
 
-    RunUIScript( "DonePopulatingPlayerlist" )
+	RunUIScript( "DonePopulatingPlayerlist" )
 }
 

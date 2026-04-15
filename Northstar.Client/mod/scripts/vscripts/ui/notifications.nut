@@ -13,7 +13,7 @@ struct
 
 void function ShowNotification()
 {
-/*
+	/*
 	if ( !IsConnected() )
 	{
 		Hud_Hide( file.menu )
@@ -83,10 +83,10 @@ function HideNotificationInABit( var callback, var param )
 	// EndSignal( uiGlobal.signalDummy, "CleanupInGameMenus" )
 
 	float notificationWaitTime = GetConVarFloat( "notification_displayTime" )
-	printt( "about to wait " + notificationWaitTime + " while we show a notification\n" );
+	printt( "about to wait " + notificationWaitTime + " while we show a notification\n" )
 	wait notificationWaitTime
 
-	printt( "we're done waiting " + notificationWaitTime + " while we showed a notification - now calling callback with param" + param + "\n" );
+	printt( "we're done waiting " + notificationWaitTime + " while we showed a notification - now calling callback with param" + param + "\n" )
 	if ( callback )
 		callback( param )
 
@@ -100,7 +100,6 @@ bool function IsViewingNotification()
 	return Hud_IsVisible( file.menu )
 }
 
-
 void function InitNotificationsMenu()
 {
 	file.menu = GetMenu( "Notifications" )
@@ -110,7 +109,7 @@ void function InitNotificationsMenu()
 	file.notificationMessage = Hud_GetChild( file.notificationPanel, "NotificationMessage" )
 	file.notificationBox = Hud_GetChild( file.notificationPanel, "NotificationBox" )
 
-	RuiSetColorAlpha( Hud_GetRui( file.notificationBox ), "backgroundColor", <0.025, 0.025, 0.025>, 1.0 )
+	RuiSetColorAlpha( Hud_GetRui( file.notificationBox ), "backgroundColor", < 0.025, 0.025, 0.025 >, 1.0 )
 
 	Assert( !IsViewingNotification() )
 }

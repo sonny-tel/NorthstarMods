@@ -5,21 +5,21 @@ global function AddCallback_InputEvent
 
 global enum InputEventType
 {
-	IE_ButtonPressed = 0	// m_nData contains a ButtonCode_t
-	IE_ButtonReleased		// m_nData contains a ButtonCode_t
-	IE_ButtonDoubleClicked	// m_nData contains a ButtonCode_t
-	IE_AnalogValueChanged	// m_nData contains an AnalogCode_t, m_nData2 contains the value
+	IE_ButtonPressed = 0 // m_nData contains a ButtonCode_t
+	IE_ButtonReleased // m_nData contains a ButtonCode_t
+	IE_ButtonDoubleClicked // m_nData contains a ButtonCode_t
+	IE_AnalogValueChanged // m_nData contains an AnalogCode_t, m_nData2 contains the value
 
 	IE_Unknown8 = 8 // Unknown what this is/does, its used in [r5apex.exe+0x297722] and [r5apex.exe+0x297ACD]
 
 	IE_FirstSystemEvent = 100
 	IE_Quit = 100
-	IE_ControllerInserted	// m_nData contains the controller ID
-	IE_ControllerUnplugged	// m_nData contains the controller ID
+	IE_ControllerInserted // m_nData contains the controller ID
+	IE_ControllerUnplugged // m_nData contains the controller ID
 	IE_Close
-	IE_WindowSizeChanged	// m_nData contains width, m_nData2 contains height, m_nData3 = 0 if not minimized, 1 if minimized
+	IE_WindowSizeChanged // m_nData contains width, m_nData2 contains height, m_nData3 = 0 if not minimized, 1 if minimized
 	IE_PS_CameraUnplugged // m_nData contains code for type of disconnect.
-	IE_PS_Move_OutOfView   // m_nData contains bool (0, 1) for whether the move is now out of view (1) or in view (0)
+	IE_PS_Move_OutOfView // m_nData contains bool (0, 1) for whether the move is now out of view (1) or in view (0)
 
 	IE_FirstUIEvent = 200
 	IE_LocateMouseClick = 200
@@ -37,80 +37,82 @@ global enum InputEventType
 	IE_IMERecomputeModes
 	IE_OverlayEvent
 
-	IE_FirstVguiEvent = 1000	// Assign ranges for other systems that post user events here
+	IE_FirstVguiEvent = 1000 // Assign ranges for other systems that post user events here
 	IE_FirstAppEvent = 2000
 }
 
 global enum AnalogCode
 {
 	ANALOG_CODE_INVALID = -1,
-	MOUSE_XY = 0,		// Invoked when either x or y changes
+	MOUSE_XY = 0, // Invoked when either x or y changes
 	MOUSE_WHEEL,
 
 	JOYSTICK_FIRST_AXIS,
 	JOYSTICK_LAST_AXIS = 25,
 
 	ANALOG_CODE_LAST,
-};
-
-global struct InputEventCallbackStruct {
-    int eventType
-    void functionref(int, int, int, int, int) callbackFunc
 }
 
-
-struct InputEventItemtruct {
-    int nType
-    int nTick
-    int nData
-    int nData2
-    int nData3
+global struct InputEventCallbackStruct
+{
+	int eventType
+	void functionref( int, int, int, int, int ) callbackFunc
 }
 
-struct {
-    array< InputEventCallbackStruct > InputEventCallbacks
+struct InputEventItemtruct
+{
+	int nType
+	int nTick
+	int nData
+	int nData2
+	int nData3
+}
+
+struct
+{
+	array<InputEventCallbackStruct> InputEventCallbacks
 } NsCustomCallbacksSH
 
-struct {
-    array< InputEventItemtruct > InputEventQueue
+struct
+{
+	array<InputEventItemtruct> InputEventQueue
 } file
 
-
-void function CInputSystem__ProcessPostEvent(int nType, int nTick, int nData, int nData2, int nData3)
+void function CInputSystem__ProcessPostEvent( int nType, int nTick, int nData, int nData2, int nData3 )
 {
-    // printt("CInputSystem__ProcessPostEvent: " + nType + ", " + nTick + ", " + nData + ", " + nData2 + ", " + nData3)
+	// printt("CInputSystem__ProcessPostEvent: " + nType + ", " + nTick + ", " + nData + ", " + nData2 + ", " + nData3)
 
-    InputEventItemtruct newEvent
-    newEvent.nType = nType
-    newEvent.nTick = nTick
-    newEvent.nData = nData
-    newEvent.nData2 = nData2
-    newEvent.nData3 = nData3
+	InputEventItemtruct newEvent
+	newEvent.nType = nType
+	newEvent.nTick = nTick
+	newEvent.nData = nData
+	newEvent.nData2 = nData2
+	newEvent.nData3 = nData3
 
-    file.InputEventQueue.insert( 0, newEvent )
-    
-    if ( file.InputEventQueue.len() > 16 )
-        file.InputEventQueue.resize( 16 )
+	file.InputEventQueue.insert( 0, newEvent )
 
-    foreach (callbackFunc in NsCustomCallbacksSH.InputEventCallbacks)
-    {
-        if (callbackFunc.eventType == nType )
-        {
-            callbackFunc.callbackFunc(nType, nTick, nData, nData2, nData3)
-        }
-    }
+	if ( file.InputEventQueue.len() > 16 )
+		file.InputEventQueue.resize( 16 )
+
+	foreach ( callbackFunc in NsCustomCallbacksSH.InputEventCallbacks )
+	{
+		if ( callbackFunc.eventType == nType )
+		{
+			callbackFunc.callbackFunc( nType, nTick, nData, nData2, nData3 )
+		}
+	}
 }
 
-void function AddCallback_InputEvent(int eventType, void functionref(int, int, int, int, int) callbackFunc)
+void function AddCallback_InputEvent( int eventType, void functionref( int, int, int, int, int ) callbackFunc )
 {
-    InputEventCallbackStruct callbackStruct
-    callbackStruct.eventType = eventType
-    callbackStruct.callbackFunc = callbackFunc
-    
-    NsCustomCallbacksSH.InputEventCallbacks.append(callbackStruct)
+	InputEventCallbackStruct callbackStruct
+	callbackStruct.eventType = eventType
+	callbackStruct.callbackFunc = callbackFunc
+
+	NsCustomCallbacksSH.InputEventCallbacks.append( callbackStruct )
 }
 
-array< InputEventItemtruct > function NSGetInputEventQueue()
+array<InputEventItemtruct> function NSGetInputEventQueue()
 {
-    return file.InputEventQueue
+	return file.InputEventQueue
 }

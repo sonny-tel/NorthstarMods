@@ -124,7 +124,7 @@ void function UpdateChatroomUI()
 			if ( communitySettings != null )
 			{
 				expect CommunitySettings( communitySettings )
-				communityName = GetCurrentCommunityName() + " [" +  communitySettings.clanTag + "]"
+				communityName = GetCurrentCommunityName() + " [" + communitySettings.clanTag + "]"
 			}
 			else
 			{
@@ -150,7 +150,7 @@ void function UpdateChatroomUI()
 		{
 			SetLabelRuiText( chatroomUI.happyHourTimeLeft, Localize( "#HAPPYHOUR_NOMERITSLEFT", meritsLeft ) )
 			SetNamedRuiText( chatroomUI.happyHourTimeLeft, "happyHourHintString", "" )
-			//SetNamedRuiText( chatroomUI.happyHourTimeLeft, "happyHourHintString", Localize( "#HAPPYHOUR_HINT_ACTIVE_01" ) )
+			// SetNamedRuiText( chatroomUI.happyHourTimeLeft, "happyHourHintString", Localize( "#HAPPYHOUR_HINT_ACTIVE_01" ) )
 		}
 		else if ( meritsLeft >= 1 )
 		{
@@ -166,23 +166,23 @@ void function UpdateChatroomUI()
 bool function FillInCommunityMembership( UserInfoPanel userInfoPanel, CommunityMembership membershipData, int communityIndex )
 {
 	if ( userInfoPanel.communityNames.len() <= communityIndex )
-		return false;
+		return false
 
 	string title
-	title = "[" + membershipData.communityClantag + "] " + Localize( membershipData.communityName );
+	title = "[" + membershipData.communityClantag + "] " + Localize( membershipData.communityName )
 
 	if ( membershipData.membershipLevel == "owner" )
-		Hud_SetText( userInfoPanel.communityLabels[communityIndex], "#COMMUNITY_MEMBERSHIP_OWNER" )
+		Hud_SetText( userInfoPanel.communityLabels[ communityIndex ], "#COMMUNITY_MEMBERSHIP_OWNER" )
 	else if ( membershipData.membershipLevel == "admin" )
-		Hud_SetText( userInfoPanel.communityLabels[communityIndex], "#COMMUNITY_MEMBERSHIP_ADMIN" )
+		Hud_SetText( userInfoPanel.communityLabels[ communityIndex ], "#COMMUNITY_MEMBERSHIP_ADMIN" )
 	else if ( membershipData.membershipLevel == "member" )
-		Hud_SetText( userInfoPanel.communityLabels[communityIndex], "#COMMUNITY_MEMBERSHIP_MEMBER" )
+		Hud_SetText( userInfoPanel.communityLabels[ communityIndex ], "#COMMUNITY_MEMBERSHIP_MEMBER" )
 	else
 		Assert( false, "Unknown membership level " + membershipData.membershipLevel + " in FillInCommunityMembership" )
 
-	Hud_SetText( userInfoPanel.communityNames[communityIndex], title )
-	Hud_Show( userInfoPanel.communityLabels[communityIndex] );
-	Hud_Show( userInfoPanel.communityNames[communityIndex] );
+	Hud_SetText( userInfoPanel.communityNames[ communityIndex ], title )
+	Hud_Show( userInfoPanel.communityLabels[ communityIndex ] )
+	Hud_Show( userInfoPanel.communityNames[ communityIndex ] )
 
 	return true
 }
@@ -224,7 +224,7 @@ void function FillInUserInfoPanel( UserInfoPanel userInfoPanel, CommunityUserInf
 	{
 		CommunityMembership ornull communityInfo = GetCommunityUserMembershipInfo( userInfo.hardware, userInfo.uid, i )
 		if ( !communityInfo )
-			continue;
+			continue
 		expect CommunityMembership( communityInfo )
 		string membershipLevel = communityInfo.membershipLevel
 		if ( membershipLevel == "owner" )
@@ -248,23 +248,23 @@ void function FillInUserInfoPanel( UserInfoPanel userInfoPanel, CommunityUserInf
 
 	array<CommunityMembership> allCommunities
 	for ( int i = 0; i < ownerCommunities.len(); i++ )
-		allCommunities.append( ownerCommunities[i] )
+		allCommunities.append( ownerCommunities[ i ] )
 	for ( int i = 0; i < adminCommunities.len(); i++ )
-		allCommunities.append( adminCommunities[i] )
+		allCommunities.append( adminCommunities[ i ] )
 	for ( int i = 0; i < memberCommunities.len(); i++ )
-		allCommunities.append( memberCommunities[i] )
+		allCommunities.append( memberCommunities[ i ] )
 
 	int currentCommunityIndex = 0
 	for ( ; currentCommunityIndex < allCommunities.len(); currentCommunityIndex++ )
 	{
-		if ( !FillInCommunityMembership( userInfoPanel, allCommunities[currentCommunityIndex], currentCommunityIndex ) )
-			break;
+		if ( !FillInCommunityMembership( userInfoPanel, allCommunities[ currentCommunityIndex ], currentCommunityIndex ) )
+			break
 	}
 
 	for ( ; currentCommunityIndex < userInfoPanel.communityNames.len(); currentCommunityIndex++ )
 	{
-		Hud_Hide( userInfoPanel.communityLabels[currentCommunityIndex] );
-		Hud_Hide( userInfoPanel.communityNames[currentCommunityIndex] );
+		Hud_Hide( userInfoPanel.communityLabels[ currentCommunityIndex ] )
+		Hud_Hide( userInfoPanel.communityNames[ currentCommunityIndex ] )
 	}
 
 	UpdateFooterOptions()
@@ -304,7 +304,6 @@ void function GetUserInfoThread( string hardware, string userId )
 	}
 }
 
-
 void function UICodeCallback_ShowUserInfo( string hardware, string userId )
 {
 	Signal( uiGlobal.signalDummy, "StopUserInfoLookups" )
@@ -321,11 +320,11 @@ void function UICodeCallback_ShowUserInfo( string hardware, string userId )
 
 		foreach ( chatroomUI in file.chatroomUIs )
 		{
-		//	Hud_SetWidth( chatrooUI.chatroomWidget, Hud_GetBaseWidth( chatrooUI.chatroomWidget ) )
+			// 	Hud_SetWidth( chatrooUI.chatroomWidget, Hud_GetBaseWidth( chatrooUI.chatroomWidget ) )
 			Hud_SetWidth( chatroomUI.chatroomBackground, Hud_GetBaseWidth( chatroomUI.chatroomBackground ) )
 			Hud_Show( chatroomUI.chatroomDivider )
-			//	Hud_SetWidth( chatrooUI.chatroomHeader, Hud_GetBaseWidth( chatrooUI.chatroomHeader ) )
-		//	Hud_SetWidth( chatrooUI.chatroomMode, Hud_GetBaseWidth( chatrooUI.chatroomBackground ) )
+			// 	Hud_SetWidth( chatrooUI.chatroomHeader, Hud_GetBaseWidth( chatrooUI.chatroomHeader ) )
+			// 	Hud_SetWidth( chatrooUI.chatroomMode, Hud_GetBaseWidth( chatrooUI.chatroomBackground ) )
 			#if CONSOLE_PROG
 				Hud_Show( chatroomUI.chatroomHintText )
 			#else
@@ -340,11 +339,11 @@ void function UICodeCallback_ShowUserInfo( string hardware, string userId )
 
 		foreach ( chatroomUI in file.chatroomUIs )
 		{
-		//	Hud_SetWidth( chatroomUI.chatroomWidget, Hud_GetBaseWidth( chatroomUI.chatroomWidget ) - Hud_GetBaseWidth( chatroomUI.userInfoPanel.Panel ) - 24 )
+			// 	Hud_SetWidth( chatroomUI.chatroomWidget, Hud_GetBaseWidth( chatroomUI.chatroomWidget ) - Hud_GetBaseWidth( chatroomUI.userInfoPanel.Panel ) - 24 )
 			Hud_SetWidth( chatroomUI.chatroomBackground, Hud_GetBaseWidth( chatroomUI.chatroomBackground ) - Hud_GetBaseWidth( chatroomUI.userInfoPanel.Panel ) - 12 )
 			Hud_Hide( chatroomUI.chatroomDivider )
-		//	Hud_SetWidth( chatroomUI.chatroomHeader, Hud_GetBaseWidth( chatroomUI.chatroomHeader ) - Hud_GetBaseWidth( chatroomUI.userInfoPanel.Panel ) - 12 )
-		//	Hud_SetWidth( chatroomUI.chatroomMode, Hud_GetBaseWidth( chatroomUI.chatroomBackground ) - Hud_GetBaseWidth( chatroomUI.userInfoPanel.Panel ) - 24 )
+			// 	Hud_SetWidth( chatroomUI.chatroomHeader, Hud_GetBaseWidth( chatroomUI.chatroomHeader ) - Hud_GetBaseWidth( chatroomUI.userInfoPanel.Panel ) - 12 )
+			// 	Hud_SetWidth( chatroomUI.chatroomMode, Hud_GetBaseWidth( chatroomUI.chatroomBackground ) - Hud_GetBaseWidth( chatroomUI.userInfoPanel.Panel ) - 24 )
 			#if CONSOLE_PROG
 				Hud_Hide( chatroomUI.chatroomHintText )
 			#else
@@ -425,8 +424,8 @@ void function FillInRemoteMatchInfoPanel( RemoteMatchInfo info, RemoteMatchInfoP
 	Hud_SetText( panel.TimeLeft, timeLeft )
 	string scoreLimit = "" + info.maxScore
 	Hud_SetText( panel.ScoreLimit, scoreLimit )
-	string imcScore = "" + info.teamScores[TEAM_IMC]
-	string milScore = "" + info.teamScores[TEAM_MILITIA]
+	string imcScore = "" + info.teamScores[ TEAM_IMC ]
+	string milScore = "" + info.teamScores[ TEAM_MILITIA ]
 	Hud_SetText( panel.Team1Score, imcScore )
 	Hud_SetText( panel.Team2Score, milScore )
 
@@ -438,7 +437,7 @@ void function FillInRemoteMatchInfoPanel( RemoteMatchInfo info, RemoteMatchInfoP
 	for ( int i = 0; i < info.clients.len(); i++ )
 	{
 		RemoteMatchPlayerInfoRow teamPlayer
-		if ( info.clients[i].teamNum == TEAM_IMC )
+		if ( info.clients[ i ].teamNum == TEAM_IMC )
 		{
 			if ( team1PlayerCount >= panel.team1Players.len() )
 			{
@@ -446,10 +445,10 @@ void function FillInRemoteMatchInfoPanel( RemoteMatchInfo info, RemoteMatchInfoP
 				continue
 			}
 
-			teamPlayer = panel.team1Players[team1PlayerCount]
+			teamPlayer = panel.team1Players[ team1PlayerCount ]
 			team1PlayerCount++
 		}
-		else if ( info.clients[i].teamNum == TEAM_MILITIA )
+		else if ( info.clients[ i ].teamNum == TEAM_MILITIA )
 		{
 			if ( team2PlayerCount >= panel.team2Players.len() )
 			{
@@ -457,29 +456,28 @@ void function FillInRemoteMatchInfoPanel( RemoteMatchInfo info, RemoteMatchInfoP
 				continue
 			}
 
-			teamPlayer = panel.team2Players[team2PlayerCount]
+			teamPlayer = panel.team2Players[ team2PlayerCount ]
 			team2PlayerCount++
 		}
 		else
 		{
-			printt( "Unhandled player team " + info.clients[i].teamNum )
+			printt( "Unhandled player team " + info.clients[ i ].teamNum )
 			continue
 		}
-		string score = "" + info.clients[i].score
-		string kills = "" + info.clients[i].kills
-		string deaths = "" + info.clients[i].deaths
+		string score = "" + info.clients[ i ].score
+		string kills = "" + info.clients[ i ].kills
+		string deaths = "" + info.clients[ i ].deaths
 
 		Hud_Hide( teamPlayer.playerPanel ) // not enough room for these
-		Hud_SetText( teamPlayer.name, info.clients[i].name )
+		Hud_SetText( teamPlayer.name, info.clients[ i ].name )
 		Hud_SetText( teamPlayer.score, score )
 		Hud_SetText( teamPlayer.kills, kills )
 		Hud_SetText( teamPlayer.deaths, deaths )
 	}
 	for ( int i = team1PlayerCount; i < panel.team1Players.len(); i++ )
-		Hud_Hide( panel.team1Players[i].playerPanel )
+		Hud_Hide( panel.team1Players[ i ].playerPanel )
 	for ( int i = team2PlayerCount; i < panel.team2Players.len(); i++ )
-		Hud_Hide( panel.team2Players[i].playerPanel )
-
+		Hud_Hide( panel.team2Players[ i ].playerPanel )
 }
 
 void function RemoteMatchInfoVisibilityThread()
@@ -518,7 +516,6 @@ void function InitChatroom( var parentMenu )
 {
 	RegisterSignal( "StopUserInfoLookups" )
 
-
 	file.activeMenus.append( parentMenu )
 	file.communityChatroomMode = "chatroom"
 
@@ -553,18 +550,18 @@ void function InitChatroom( var parentMenu )
 	for ( int i = 0; i < 6; i++ )
 	{
 		if ( !Hud_HasChild( chatroomUI.userInfoPanel.Panel, "Community" + i + "Label" ) )
-			break;
+			break
 		var communityLabel = Hud_GetChild( chatroomUI.userInfoPanel.Panel, "Community" + i + "Label" )
 		var communityName = Hud_GetChild( chatroomUI.userInfoPanel.Panel, "Community" + i )
-		Assert( communityName, "found Community" + i + "Label, but no Community" + i + " in userInfo panel" );
+		Assert( communityName, "found Community" + i + "Label, but no Community" + i + " in userInfo panel" )
 		chatroomUI.userInfoPanel.communityLabels.append( communityLabel )
 		chatroomUI.userInfoPanel.communityNames.append( communityName )
 	}
 
 	chatroomUI.communityChatroomModeButton = Hud_GetChild( menu, "CommunityChatRoomMode" )
-#if CONSOLE_PROG
-	chatroomUI.chatroomHintText = Hud_GetChild( menu, "TextChatHintForConsole" )
-#endif
+	#if CONSOLE_PROG
+		chatroomUI.chatroomHintText = Hud_GetChild( menu, "TextChatHintForConsole" )
+	#endif
 	chatroomUI.happyHourTimeLeft = Hud_GetChild( menu, "HappyHourTimeLeft" )
 	// Hud_EnableKeyBindingIcons( chatroomUI.communityChatroomModeButton )
 
@@ -574,9 +571,9 @@ void function InitChatroom( var parentMenu )
 	openInviteUI.openInviteCountdownText = Hud_GetChild( openInviteUI.openInvitePanel, "OpenInviteCountdownText" )
 
 	var openInviteBackground = Hud_GetChild( openInviteUI.openInvitePanel, "OpenInviteBox" )
-	RuiSetColorAlpha( Hud_GetRui( openInviteBackground ), "backgroundColor", <0, 0, 0>, 0.9 )
+	RuiSetColorAlpha( Hud_GetRui( openInviteBackground ), "backgroundColor", < 0, 0, 0 >, 0.9 )
 
-	int i = 0;
+	int i = 0
 	while ( i < 8 )
 	{
 		int count = i + 1
@@ -588,7 +585,7 @@ void function InitChatroom( var parentMenu )
 	}
 	for ( int idx = 0; idx < 9; ++idx )
 	{
-		string widgetName = ("OpenInvitePlaylist" + format( "%02d", idx ))
+		string widgetName = ( "OpenInvitePlaylist" + format( "%02d", idx ) )
 		var widget = Hud_GetChild( openInviteUI.openInvitePanel, widgetName )
 		openInviteUI.openInvitePlaylistSlots.append( widget )
 		i++
@@ -663,7 +660,7 @@ void function DisableProgression()
 	dialogData.image = $"ui/menu/common/dialog_announcement_1"
 
 	AddDialogButton( dialogData, "#OK" )
-	
+
 	OpenDialog( dialogData )
 }
 
@@ -673,21 +670,21 @@ void function UpdateChatRoomButtons( InputDef data )
 
 	int index = int( Hud_GetScriptID( data.vguiElem ) )
 
-	while( data.conditionCheckFunc() )
+	while ( data.conditionCheckFunc() )
 	{
 		bool progEnabled = Progression_GetPreference()
-		
+
 		string progressionTitle = progEnabled ? "#DISABLE_PROGRESSION" : "#ENABLE_PROGRESSION"
 
-		foreach( var menu in file.activeMenus )
+		foreach ( var menu in file.activeMenus )
 		{
-			if( !NSIsVanilla() )
+			if ( !NSIsVanilla() )
 				SetFooterText( menu, index, Localize( progressionTitle ) )
 			else
 			{
-				if( data.activateFunc == MuteRoom )
+				if ( data.activateFunc == MuteRoom )
 					SetFooterText( menu, index, Localize( "#MUTEROOM" ) )
-				else 
+				else
 					SetFooterText( menu, index, Localize( "#UNMUTEROOM" ) )
 			}
 		}
@@ -722,11 +719,11 @@ void function bsupdate()
 		if ( remainingTime == 6 )
 			openInvite.numClaimedSlots = 4
 
-		//if ( remainingTime == 5 )
-		//	openInvite.numClaimedSlots = 5
+		// if ( remainingTime == 5 )
+		// 	openInvite.numClaimedSlots = 5
 		//
-		//if ( remainingTime == 4 )
-		//	openInvite.numClaimedSlots = 6
+		// if ( remainingTime == 4 )
+		// 	openInvite.numClaimedSlots = 6
 
 		WaitFrame()
 	}
@@ -737,12 +734,12 @@ void function UpdateOpenInvites( OpenInvite openInvite, string message, string p
 	foreach ( chatroomUI in file.chatroomUIs )
 	{
 		if ( param2 )
-			Hud_SetText( chatroomUI.openInviteUI.openInviteMessage, message, param1, param2 );
+			Hud_SetText( chatroomUI.openInviteUI.openInviteMessage, message, param1, param2 )
 		else
-			Hud_SetText( chatroomUI.openInviteUI.openInviteMessage, message, param1 );
+			Hud_SetText( chatroomUI.openInviteUI.openInviteMessage, message, param1 )
 
 		string countdownText = "" + countdown
-//		Hud_SetText( chatroomUI.openInviteUI.openInviteCountdownText, "#OPENINVITE_COUNTDOWN", countdownText )
+		// 		Hud_SetText( chatroomUI.openInviteUI.openInviteCountdownText, "#OPENINVITE_COUNTDOWN", countdownText )
 		var countdownRui = Hud_GetRui( chatroomUI.openInviteUI.openInviteCountdownText )
 		RuiSetFloat( countdownRui, "timeLeft", openInvite.timeLeft )
 		RuiSetFloat( countdownRui, "maxTime", GetConVarFloat( "openinvite_duration_default" ) )
@@ -787,7 +784,7 @@ void function UpdateOpenInvites( OpenInvite openInvite, string message, string p
 
 			if ( i >= openInvite.numSlots )
 			{
-				//Hud_Hide( player )
+				// Hud_Hide( player )
 				RuiSetBool( rui, "isEnabled", false )
 				RuiSetBool( rui, "hasPlayer", false )
 			}
@@ -799,7 +796,7 @@ void function UpdateOpenInvites( OpenInvite openInvite, string message, string p
 
 				if ( i < openInvite.numClaimedSlots )
 				{
-					PartyMember member = openInvite.members[i]
+					PartyMember member = openInvite.members[ i ]
 					isMe = ( member.uid == myUID )
 					if ( isMe )
 					{
@@ -824,11 +821,10 @@ void function UpdateOpenInvites( OpenInvite openInvite, string message, string p
 				RuiSetBool( rui, "hasPlayer", i < openInvite.numClaimedSlots )
 				RuiSetBool( rui, "isViewPlayer", isMe )
 				RuiSetImage( rui, "playerImage", callsignIcon.image )
-
-				//if ( i < openInvite.numClaimedSlots )
-				//	Hud_SetImage( player, $"ui/menu/main_menu/openinvite_occupiedslot" )
-				//else
-				//	Hud_SetImage( player, $"ui/menu/main_menu/openinvite_emptyslot" )
+				// if ( i < openInvite.numClaimedSlots )
+				// 	Hud_SetImage( player, $"ui/menu/main_menu/openinvite_occupiedslot" )
+				// else
+				// 	Hud_SetImage( player, $"ui/menu/main_menu/openinvite_emptyslot" )
 			}
 			i++
 		}
@@ -844,16 +840,16 @@ void function UpdateOpenInvites( OpenInvite openInvite, string message, string p
 			shouldShowCheckboxPlaylists = false
 		else if ( invitePlaylists.len() == 0 )
 			shouldShowCheckboxPlaylists = false
-		else if ( (invitePlaylists.len() == 1) && (!checklistPlaylists.contains( invitePlaylists[0] )) )
+		else if ( ( invitePlaylists.len() == 1 ) && ( !checklistPlaylists.contains( invitePlaylists[ 0 ] ) ) )
 			shouldShowCheckboxPlaylists = false
 
 		int playlistSlotCount = chatroomUI.openInviteUI.openInvitePlaylistSlots.len()
-		for( int idx = 0; idx < playlistSlotCount; ++idx )
+		for ( int idx = 0; idx < playlistSlotCount; ++idx )
 		{
-			var slot = chatroomUI.openInviteUI.openInvitePlaylistSlots[idx]
+			var slot = chatroomUI.openInviteUI.openInvitePlaylistSlots[ idx ]
 
-			string thisPlaylistName = idx < checklistPlaylists.len() ? checklistPlaylists[idx] : ""
-			if ( (thisPlaylistName == "") || !shouldShowCheckboxPlaylists )
+			string thisPlaylistName = idx < checklistPlaylists.len() ? checklistPlaylists[ idx ] : ""
+			if ( ( thisPlaylistName == "" ) || !shouldShowCheckboxPlaylists )
 			{
 				Hud_Hide( slot )
 				continue
@@ -873,7 +869,6 @@ void function UpdateOpenInvites( OpenInvite openInvite, string message, string p
 	}
 }
 
-
 void function HideOpenInvite()
 {
 	foreach ( chatroomUI in file.chatroomUIs )
@@ -890,7 +885,6 @@ void function ShowOpenInvite()
 	}
 }
 
-
 void function LostFocus( panel )
 {
 	Signal( uiGlobal.signalDummy, "StopUserInfoLookups" )
@@ -901,14 +895,13 @@ void function LostFocus( panel )
 
 	foreach ( chatroomUI in file.chatroomUIs )
 	{
-	//	Hud_SetWidth( chatrooUI.chatroomWidget, Hud_GetBaseWidth( chatrooUI.chatroomWidget ) )
+		// 	Hud_SetWidth( chatrooUI.chatroomWidget, Hud_GetBaseWidth( chatrooUI.chatroomWidget ) )
 		Hud_SetWidth( chatroomUI.chatroomBackground, Hud_GetBaseWidth( chatroomUI.chatroomBackground ) )
 		Hud_Show( chatroomUI.chatroomDivider )
-	//	Hud_SetWidth( chatrooUI.chatroomMode, Hud_GetBaseWidth( chatrooUI.chatroomBackground ) )
+		// 	Hud_SetWidth( chatrooUI.chatroomMode, Hud_GetBaseWidth( chatrooUI.chatroomBackground ) )
 		Hud_Show( chatroomUI.chatroomTextChat )
 	}
 }
-
 
 void function OnChatroomWidgetGetFocus( var widget )
 {
@@ -925,10 +918,10 @@ void function GotFocus( panel )
 
 	foreach ( chatroomUI in file.chatroomUIs )
 	{
-	//	Hud_SetWidth( chatroomUI.chatroomWidget, Hud_GetBaseWidth( chatroomUI.chatroomWidget ) - Hud_GetBaseWidth( chatroomUI.userInfoPanel.Panel ) - 24 )
+		// 	Hud_SetWidth( chatroomUI.chatroomWidget, Hud_GetBaseWidth( chatroomUI.chatroomWidget ) - Hud_GetBaseWidth( chatroomUI.userInfoPanel.Panel ) - 24 )
 		Hud_SetWidth( chatroomUI.chatroomBackground, Hud_GetBaseWidth( chatroomUI.chatroomBackground ) - Hud_GetBaseWidth( chatroomUI.userInfoPanel.Panel ) - 12 )
 		Hud_Hide( chatroomUI.chatroomDivider )
-	//	Hud_SetWidth( chatroomUI.chatroomMode, Hud_GetBaseWidth( chatroomUI.chatroomBackground ) - Hud_GetBaseWidth( chatroomUI.userInfoPanel.Panel ) - 24 )
+		// 	Hud_SetWidth( chatroomUI.chatroomMode, Hud_GetBaseWidth( chatroomUI.chatroomBackground ) - Hud_GetBaseWidth( chatroomUI.userInfoPanel.Panel ) - 24 )
 		Hud_Hide( chatroomUI.chatroomTextChat )
 	}
 }
@@ -964,7 +957,7 @@ bool function ChatroomIsNotMuted()
 
 void function MuteRoom( var button )
 {
-	if( !NSIsVanilla() )
+	if ( !NSIsVanilla() )
 	{
 		ShowToggleProgressionDialog()
 		return
@@ -976,7 +969,7 @@ void function MuteRoom( var button )
 
 void function UnmuteRoom( var button )
 {
-	if( !NSIsVanilla() )
+	if ( !NSIsVanilla() )
 	{
 		ShowToggleProgressionDialog()
 		return

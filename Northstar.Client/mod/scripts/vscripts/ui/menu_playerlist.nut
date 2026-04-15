@@ -9,9 +9,9 @@ struct
 {
 	var menu
 	GridMenuData gridData
-    array<string> playerNames
+	array<string> playerNames
 	int selectedElemNum
-    bool donePopulating = false
+	bool donePopulating = false
 } file
 
 void function AddPlayerlistMenu()
@@ -44,7 +44,7 @@ void function InitPlayerlistMenu()
 
 	AddMenuEventHandler( menu, eUIEvent.MENU_OPEN, OnPlayerlistMenu_Open )
 
-    AddMenuFooterOption( menu, BUTTON_A, "#A_BUTTON_SELECT" )
+	AddMenuFooterOption( menu, BUTTON_A, "#A_BUTTON_SELECT" )
 	AddMenuFooterOption( menu, BUTTON_B, "#B_BUTTON_BACK", "#BACK" )
 }
 
@@ -56,19 +56,18 @@ void function OnPlayerlistMenu_Open()
 	int lastNumPlayers = -2
 
 	file.gridData.currentPage = 0
-    file.donePopulating = false
-
+	file.donePopulating = false
 
 	while ( GetTopNonDialogMenu() == file.menu )
 	{
-        ClearPlayerlist()
-        
-        RunClientScript( "ClGetPlayerEntsTrampoline" )
+		ClearPlayerlist()
 
-        while(!file.donePopulating)
-            WaitFrame()
+		RunClientScript( "ClGetPlayerEntsTrampoline" )
 
-        numPlayers = file.playerNames.len()
+		while ( !file.donePopulating )
+			WaitFrame()
+
+		numPlayers = file.playerNames.len()
 
 		if ( numPlayers != lastNumPlayers )
 		{
@@ -93,7 +92,7 @@ void function OnPlayerlistMenu_Open()
 
 bool function PlayerButton_Init( var button, int elemNum )
 {
-	string name = file.playerNames[elemNum]
+	string name = file.playerNames[ elemNum ]
 
 	var rui = Hud_GetRui( button )
 	RuiSetString( rui, "buttonText", name )
@@ -117,15 +116,15 @@ void function PlayerButton_GetFocus( var button, int elemNum )
 
 void function PopulatePlayerlistFromCL( string name )
 {
-    file.playerNames.append( name )
+	file.playerNames.append( name )
 }
 
 void function DonePopulatingPlayerlist()
 {
-    file.donePopulating = true
+	file.donePopulating = true
 }
 
 void function ClearPlayerlist()
 {
-    file.playerNames.clear()
+	file.playerNames.clear()
 }

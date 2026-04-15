@@ -1,4 +1,4 @@
-//global function InitLobbyStartMenu
+// global function InitLobbyStartMenu
 global function InitInGameMPMenu
 global function InitInGameSPMenu
 global function ServerCallback_UI_ObjectiveUpdated
@@ -33,7 +33,7 @@ struct
 	var titanSelectButton
 	var titanEditButton
 
-	ComboStruct &comboStruct
+	ComboStruct& comboStruct
 
 	array<var> loadoutButtons
 	array<var> loadoutHeaders
@@ -91,11 +91,11 @@ void function InitInGameMPMenu()
 		thread UpdateTeamSwitchButton_Threaded( teamChangeButton )
 	#endif
 	#if DEV
-	if( !NSIsVanilla() )
-	{
-		var devButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "Dev" )
-		Hud_AddEventHandler( devButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "DevMenu" ) ) )
-	}
+		if ( !NSIsVanilla() )
+		{
+			var devButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "Dev" )
+			Hud_AddEventHandler( devButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "DevMenu" ) ) )
+		}
 	#endif
 
 	headerIndex++
@@ -123,8 +123,8 @@ void function InitInGameMPMenu()
 	file.faqButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#KNB_MENU_HEADER" )
 	Hud_AddEventHandler( file.faqButton, UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "KnowledgeBaseMenu" ) ) )
 
-	//var dataCenterButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#DATA_CENTER" )
-	//Hud_AddEventHandler( dataCenterButton, UIE_CLICK, OpenDataCenterDialog )
+	// var dataCenterButton = AddComboButton( comboStruct, headerIndex, buttonIndex++, "#DATA_CENTER" )
+	// Hud_AddEventHandler( dataCenterButton, UIE_CLICK, OpenDataCenterDialog )
 
 	ComboButtons_Finalize( comboStruct )
 
@@ -132,7 +132,7 @@ void function InitInGameMPMenu()
 
 	AddMenuFooterOption( menu, BUTTON_A, "#A_BUTTON_SELECT" )
 	AddMenuFooterOption( menu, BUTTON_B, "#B_BUTTON_CLOSE", "#CLOSE" )
-	AddMenuFooterOption( menu, BUTTON_Y, PrependControllerPrompts(BUTTON_Y, "#MENU_TITLE_MODS"), "#MENU_TITLE_MODS", OpenModsMenu )
+	AddMenuFooterOption( menu, BUTTON_Y, PrependControllerPrompts( BUTTON_Y, "#MENU_TITLE_MODS" ), "#MENU_TITLE_MODS", OpenModsMenu )
 	AddMenuFooterOption( menu, BUTTON_X, "#X_BUTTON_INBOX_ACCEPT", "#INBOX_ACCEPT", OpenDemoMenuDialog, Demo_IsPlayingBack, UpdateDemoFooterMP )
 }
 
@@ -165,9 +165,9 @@ void function UpdateDemoFooterMP( InputDef data )
 		string strpercentage = "Unknown"
 		string name = "?"
 
-		if( Demo_GetPlaybackTick() != 0 )
+		if ( Demo_GetPlaybackTick() != 0 )
 		{
-			percentage = (tickPos / maxTicks) * 100
+			percentage = ( tickPos / maxTicks ) * 100
 		}
 
 		strpercentage = "%%" + percentage.tointeger()
@@ -183,7 +183,7 @@ void function UpdateDemoFooterMP( InputDef data )
 
 void function OpenModsMenu( var button )
 {
-    AdvanceMenu( GetMenu( "ModListMenu" ) )
+	AdvanceMenu( GetMenu( "ModListMenu" ) )
 }
 
 void function OnInGameMPMenu_Open()
@@ -206,8 +206,8 @@ void function OnInGameMPMenu_Close()
 
 	if ( IsConnected() && !IsLobby() && IsLevelMultiplayer( GetActiveLevel() ) )
 	{
-		//printt( "OnInGameMPMenu_Close() uiGlobal.updatePilotSpawnLoadout is:", uiGlobal.updatePilotSpawnLoadout )
-		//printt( "OnInGameMPMenu_Close() uiGlobal.updateTitanSpawnLoadout is:", uiGlobal.updateTitanSpawnLoadout )
+		// printt( "OnInGameMPMenu_Close() uiGlobal.updatePilotSpawnLoadout is:", uiGlobal.updatePilotSpawnLoadout )
+		// printt( "OnInGameMPMenu_Close() uiGlobal.updateTitanSpawnLoadout is:", uiGlobal.updateTitanSpawnLoadout )
 
 		string updatePilotSpawnLoadout = uiGlobal.updatePilotSpawnLoadout ? "1" : "0"
 		string updateTitanSpawnLoadout = uiGlobal.updateTitanSpawnLoadout ? "1" : "0"
@@ -223,7 +223,7 @@ void function OnInGameMPMenu_Close()
 
 void function UpdateLoadoutButtons()
 {
-	bool loadoutSelectionEnabled = (GetCurrentPlaylistVarInt( "loadout_selection_enabled", 1 ) == 1)
+	bool loadoutSelectionEnabled = ( GetCurrentPlaylistVarInt( "loadout_selection_enabled", 1 ) == 1 )
 
 	SetTitanSelectButtonVisibleState( true )
 
@@ -264,9 +264,9 @@ void function UpdateLoadoutButtons()
 	}
 }
 
-//////////
+// ////////
 
-//////////
+// ////////
 
 void function InitInGameSPMenu()
 {
@@ -350,7 +350,7 @@ void function InitInGameSPMenu()
 
 	AddMenuFooterOption( menu, BUTTON_A, "#A_BUTTON_SELECT" )
 	AddMenuFooterOption( menu, BUTTON_B, "#B_BUTTON_CLOSE", "#CLOSE" )
-	AddMenuFooterOption( menu, BUTTON_Y, PrependControllerPrompts(BUTTON_Y, "#MENU_TITLE_MODS"), "#MENU_TITLE_MODS", OpenModsMenu )
+	AddMenuFooterOption( menu, BUTTON_Y, PrependControllerPrompts( BUTTON_Y, "#MENU_TITLE_MODS" ), "#MENU_TITLE_MODS", OpenModsMenu )
 	AddMenuFooterOption( menu, BUTTON_X, "#X_BUTTON_INBOX_ACCEPT", "#INBOX_ACCEPT", OpenDemoMenuDialog, Demo_IsPlayingBack, UpdateDemoFooterSP )
 }
 
@@ -367,14 +367,14 @@ void function UpdateDemoFooterSP( InputDef data )
 		float maxTicks = Demo_GetTotalTicks().tofloat()
 		string name = "Unknown"
 
-		if( Demo_GetPlaybackTick() != 0 )
+		if ( Demo_GetPlaybackTick() != 0 )
 		{
-			percentage = (tickPos / maxTicks) * 100
+			percentage = ( tickPos / maxTicks ) * 100
 		}
 
 		name = "%%" + percentage.tointeger()
 
-		printt(name + " position in demo with " + Demo_GetPlaybackTick() + " and " + Demo_GetTotalTicks())
+		printt( name + " position in demo with " + Demo_GetPlaybackTick() + " and " + Demo_GetTotalTicks() )
 
 		if ( IsControllerModeActive() )
 			SetFooterText( file.menuSP, index, Localize( "#X_BUTTON_DEMOFOOTER" ) + name )
@@ -471,7 +471,6 @@ void function OnOpenInGameSPMenu()
 	SPMenu_UpdateReloadCheckpointButton()
 }
 
-
 void function OnCloseInGameSPMenu()
 {
 	if ( file.SP_displayObjectiveOnClose )
@@ -521,7 +520,7 @@ void function OnReloadCheckpoint_Activate( var button )
 	}
 	else
 	{
-		ShowAreYouSureDialog( "#MENU_RESTART_CHECKPOINT_CONFIRM", ReloadLastCheckpoint, "#EMPTY_STRING"  )
+		ShowAreYouSureDialog( "#MENU_RESTART_CHECKPOINT_CONFIRM", ReloadLastCheckpoint, "#EMPTY_STRING" )
 	}
 }
 
@@ -589,24 +588,20 @@ void function SPDifficultyButton_Click( var button )
 	else
 		AddDialogButton( dialogData, "#SP_DIFFICULTY_EASY_TITLE", SPPickEasy, "#SP_DIFFICULTY_EASY_DESCRIPTION", false )
 
-
 	if ( currentDifficulty == DIFFICULTY_NORMAL )
 		AddDialogButton( dialogData, "#SP_DIFFICULTY_NORMAL_TITLE", SPPickNormal, "#SP_DIFFICULTY_NORMAL_DESCRIPTION", true )
 	else
 		AddDialogButton( dialogData, "#SP_DIFFICULTY_NORMAL_TITLE", SPPickNormal, "#SP_DIFFICULTY_NORMAL_DESCRIPTION", false )
-
 
 	if ( currentDifficulty == DIFFICULTY_HARD )
 		AddDialogButton( dialogData, "#SP_DIFFICULTY_HARD_TITLE", SPPickHard, "#SP_DIFFICULTY_HARD_DESCRIPTION", true )
 	else
 		AddDialogButton( dialogData, "#SP_DIFFICULTY_HARD_TITLE", SPPickHard, "#SP_DIFFICULTY_HARD_DESCRIPTION", false )
 
-
 	if ( currentDifficulty == DIFFICULTY_MASTER )
 		AddDialogButton( dialogData, "#SP_DIFFICULTY_MASTER_TITLE", SPPickMaster, "#SP_DIFFICULTY_MASTER_DESCRIPTION", true )
 	else
 		AddDialogButton( dialogData, "#SP_DIFFICULTY_MASTER_TITLE", SPPickMaster, "#SP_DIFFICULTY_MASTER_DESCRIPTION", false )
-
 
 	AddDialogFooter( dialogData, "#A_BUTTON_SELECT" )
 	AddDialogFooter( dialogData, "#B_BUTTON_BACK" )
