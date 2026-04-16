@@ -1001,9 +1001,7 @@ void function FilterServerList()
 		if ( filterArguments.useSearch )
 		{
 			array<string> sName
-			printt( "Original name: " + server.name )
 			string cleanName = StripColorCodes( server.name )
-			printt( "Clean name: " + cleanName )
 			sName.append( cleanName.tolower() )
 			sName.append( Localize( GetMapDisplayName( server.map ) ).tolower() )
 			sName.append( server.map.tolower() )
