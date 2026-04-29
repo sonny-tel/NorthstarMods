@@ -899,77 +899,77 @@ void function WaitForServerListRequest()
 	}
 }
 
+
 bool function IsHexDigitChar( int c )
 {
-	return ( c >= '0' && c <= '9' ) || ( c >= 'A' && c <= 'F' ) || ( c >= 'a' && c <= 'f' )
+    return ( c >= '0' && c <= '9' ) || ( c >= 'A' && c <= 'F' ) || ( c >= 'a' && c <= 'f' )
 }
 
 int function GetNameColorCodeLengthAt( string s, int i )
 {
-	if ( i >= s.len() || s[ i ] != '^' )
-		return 0
+    if ( i >= s.len() || s[i] != '^' )
+        return 0
 
-	int remaining = s.len() - ( i + 1 )
-	if ( remaining <= 0 )
-		return 0
+    int remaining = s.len() - ( i + 1 )
+    if ( remaining <= 0 )
+        return 0
 
-	if ( remaining >= 8 )
-	{
-		bool ok = true
-		for ( int j = 1; j <= 8; j++ )
-		{
-			int c = expect int( s[ i + j ].tointeger() )
-			if ( !IsHexDigitChar( c ) )
-			{
-				ok = false
-				break
-			}
-		}
-		if ( ok )
-			return 9
-	}
+    if ( remaining >= 8 )
+    {
+        bool ok = true
+        for ( int j = 1; j <= 8; j++ )
+        {
+            int c = expect int( s[i + j].tointeger() )
+            if ( !IsHexDigitChar( c ) )
+            {
+                ok = false
+                break
+            }
+        }
+        if ( ok )
+            return 9
+    }
 
-	if ( remaining >= 6 )
-	{
-		bool ok = true
-		for ( int j = 1; j <= 6; j++ )
-		{
-			int c = expect int( s[ i + j ].tointeger() )
-			if ( !IsHexDigitChar( c ) )
-			{
-				ok = false
-				break
-			}
-		}
-		if ( ok )
-			return 7
-	}
+    if ( remaining >= 6 )
+    {
+        bool ok = true
+        for ( int j = 1; j <= 6; j++ )
+        {
+            int c = expect int( s[i + j].tointeger() )
+            if ( !IsHexDigitChar( c ) )
+            {
+                ok = false
+                break
+            }
+        }
+        if ( ok )
+            return 7
+    }
 
-	int c1 = expect int( s[ i + 1 ].tointeger() )
-	if ( c1 >= '0' && c1 <= '9' )
-		return 2
+    int c1 = expect int( s[i + 1].tointeger() )
+    if ( c1 >= '0' && c1 <= '9' )
+        return 2
 
-	return 0
+    return 0
 }
 
 string function StripColorCodes( string s )
 {
-	string clean = ""
-	for ( int i = 0; i < s.len(); )
-	{
-		int codeLen = GetNameColorCodeLengthAt( s, i )
-		if ( codeLen > 0 )
-		{
-			i += codeLen
-			continue
-		}
+    string clean = ""
+    for ( int i = 0; i < s.len(); )
+    {
+        int codeLen = GetNameColorCodeLengthAt( s, i )
+        if ( codeLen > 0 )
+        {
+            i += codeLen
+            continue
+        }
 
-		clean += format( "%c", expect int( s[ i ].tointeger() ) )
-		i++
-	}
-	return clean
+        clean += format( "%c", expect int( s[i].tointeger() ) )
+        i++
+    }
+    return clean
 }
-
 void function FilterServerList()
 {
 	file.filteredServers.clear()
@@ -1001,13 +1001,12 @@ void function FilterServerList()
 		if ( filterArguments.useSearch )
 		{
 			array<string> sName
-			string cleanName = StripColorCodes( server.name )
-			sName.append( cleanName.tolower() )
+			sName.append( StripColorCodes( RemoveNewlines( server.name.tolower() ) ) )
 			sName.append( Localize( GetMapDisplayName( server.map ) ).tolower() )
 			sName.append( server.map.tolower() )
 			sName.append( server.playlist.tolower() )
 			sName.append( Localize( server.playlist ).tolower() )
-			sName.append( server.description.tolower() )
+			sName.append( StripColorCodes( RemoveNewlines( server.description.tolower() ) ) )
 			sName.append( server.region.tolower() )
 
 			string sTerm = filterArguments.searchTerm.tolower()
@@ -1050,9 +1049,9 @@ void function UpdateShownPage()
 
 		Hud_SetEnabled( file.serverButtons[ i ], true )
 		Hud_SetVisible( file.serverButtons[ i ], true )
-
+		bool stripColor = GetConVarBool( "serverlist_remove_colors" )
 		Hud_SetVisible( file.serversProtected[ i ], server.requiresPassword )
-		Hud_SetText( file.serversName[ i ], server.name )
+		Hud_SetText( file.serversName[ i ], stripColor ? StripColorCodes( RemoveNewlines( server.name ) ) : RemoveNewlines( server.name ) )
 		Hud_SetText( file.playerCountLabels[ i ], format( "%i/%i", server.playerCount, server.maxPlayerCount ) )
 		Hud_SetText( file.serversMap[ i ], GetMapDisplayName( server.map ) )
 		Hud_SetText( file.serversGamemode[ i ], GetGameModeDisplayName( server.playlist ) )
@@ -1135,26 +1134,29 @@ void function DisplayFocusedServerInfo( int scriptID )
 	int serverIndex = file.scrollOffset + scriptID
 	if ( serverIndex < 0 )
 		serverIndex = 0
-
+	bool stripColor = GetConVarBool( "serverlist_remove_colors" )
 	ServerInfo server = file.filteredServers[ serverIndex ]
-
+	printt("Regular description: " + server.description)
+	string description = stripColor ? StripColorCodes( 	RemoveNewlines( server.description ) ) : RemoveNewlines( server.description ) 
+	printt( "Description: " + description )
 	Hud_SetVisible( Hud_GetChild( menu, "BtnServerDescription" ), true )
 	Hud_SetVisible( Hud_GetChild( menu, "BtnServerMods" ), true )
 	Hud_SetVisible( Hud_GetChild( menu, "BtnServerJoin" ), true )
 	// text panels
 	Hud_SetVisible( Hud_GetChild( menu, "LabelDescription" ), true )
 	Hud_SetVisible( Hud_GetChild( menu, "LabelMods" ), false )
-	Hud_SetText( Hud_GetChild( menu, "LabelDescription" ), server.description + "\n\nRequired Mods:\n" + FillInServerModsLabel( server.requiredMods ) )
+	Hud_SetText( Hud_GetChild( menu, "LabelDescription" ), description + " ^FFFFFFFF" + "\n\nRequired Mods:\n" + FillInServerModsLabel( server.requiredMods ) )
 
 	// map name/image/server name
 	string map = server.map
+	string serverName = stripColor ? StripColorCodes( server.name ) : server.name
 	Hud_SetVisible( Hud_GetChild( menu, "NextMapImage" ), true )
 	Hud_SetVisible( Hud_GetChild( menu, "NextMapBack" ), true )
 	RuiSetImage( Hud_GetRui( Hud_GetChild( menu, "NextMapImage" ) ), "basicImage", GetMapImageForMapName( map ) )
 	Hud_SetVisible( Hud_GetChild( menu, "NextMapName" ), true )
 	Hud_SetText( Hud_GetChild( menu, "NextMapName" ), GetMapDisplayName( map ) )
 	Hud_SetVisible( Hud_GetChild( menu, "ServerName" ), true )
-	Hud_SetText( Hud_GetChild( menu, "ServerName" ), server.name )
+	Hud_SetText( Hud_GetChild( menu, "ServerName" ), serverName)
 
 	// mode name/image
 	string mode = server.playlist
@@ -1420,4 +1422,31 @@ array<string> function GetModVersions( string modName )
 		versions.append( mod.version )
 	}
 	return versions
+}
+
+// removes all newlines
+string function RemoveNewlines( string input )
+{
+	return StringReplace( input, "\n", " " )
+}
+
+string function EscapeLocalisation( string input )
+{
+	try
+	{
+		if ( Localize( input ) != input )
+			return StringReplace( input, "#", "^FFFFFFFF#" )
+	}
+	catch ( error )
+	{
+		return StringReplace( input, "#", "^FFFFFFFF#" )
+	}
+
+	return input
+}
+
+// EscapeLocalisation and RemoveNewlines combined
+string function EscapeLocalisationAndRemoveNewlines( string input )
+{
+	return EscapeLocalisation( RemoveNewlines( input ) )
 }

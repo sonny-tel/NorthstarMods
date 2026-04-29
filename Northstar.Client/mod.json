@@ -81,6 +81,11 @@
       "Name": "previous_match_compat_mode",
       "DefaultValue": "-1",
       "Flags": "ARCHIVE"
+    },
+    {
+      "Name": "serverlist_remove_colors",
+      "DefaultValue": "0",
+      "Flags": "ARCHIVE_PLAYERPROFILE"
     }
   ],
   "Scripts": [
@@ -245,5 +250,7 @@
       }
     }
   ],
-  "Localisation": ["resource/northstar_client_localisation_%language%.txt"]
+  "Localisation": [
+    "resource/northstar_client_localisation_%language%.txt"
+  ]
 }
