@@ -1136,9 +1136,7 @@ void function DisplayFocusedServerInfo( int scriptID )
 		serverIndex = 0
 	bool stripColor = GetConVarBool( "serverlist_remove_colors" )
 	ServerInfo server = file.filteredServers[ serverIndex ]
-	printt("Regular description: " + server.description)
 	string description = stripColor ? StripColorCodes( 	RemoveNewlines( server.description ) ) : RemoveNewlines( server.description ) 
-	printt( "Description: " + description )
 	Hud_SetVisible( Hud_GetChild( menu, "BtnServerDescription" ), true )
 	Hud_SetVisible( Hud_GetChild( menu, "BtnServerMods" ), true )
 	Hud_SetVisible( Hud_GetChild( menu, "BtnServerJoin" ), true )
