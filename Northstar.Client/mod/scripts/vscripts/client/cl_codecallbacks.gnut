@@ -15,6 +15,9 @@ global function HidePickupFlyout
 global function ShowPickupFlyout
 global function IsCurrentlyFocusedWeapon
 global function IsPickupFlyoutValid
+global function CodeCallback_OnCrouchKick
+global function AddCallback_OnCrouchKick
+global function RemoveCallback_OnCrouchKick
 
 #if HAS_WEAPON_PICKUP_HIGHLIGHT
 	global function ServerCallback_RefreshWeaponHighlights
@@ -33,8 +36,34 @@ struct
 	int flyoutType
 	entity focusedEnt
 	table<string, asset> modImages
+	array<void functionref( int, bool, bool, int )> onCrouchKickCallbacks
 } file
 
+void function CodeCallback_OnCrouchKick( int input, bool isEarly, bool isCK, int delta )
+{
+	foreach ( callbackFunc in file.onCrouchKickCallbacks )
+	{
+		callbackFunc( input, isEarly, isCK, delta )
+	}
+}
+
+void function AddCallback_OnCrouchKick( void functionref( int input, bool isEarly, bool isCK, int delta ) callbackFunc )
+{
+	file.onCrouchKickCallbacks.append( callbackFunc )
+}
+
+void function RemoveCallback_OnCrouchKick( void functionref( int input, bool isEarly, bool isCK, int delta ) callbackFunc )
+{
+	if ( !file.onCrouchKickCallbacks.contains( callbackFunc ) )
+	{
+		return
+	}
+	int index = file.onCrouchKickCallbacks.find( callbackFunc )
+	if ( index >= 0 )
+	{
+		file.onCrouchKickCallbacks.remove( index )
+	}
+}
 void function ClDroppedWeaponFlyout_Init()
 {
 	RegisterSignal( "PetTitanChanged" )
