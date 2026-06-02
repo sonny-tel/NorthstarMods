@@ -487,7 +487,7 @@ void function UpdateVisibleSettings()
 					if ( playlistVar.find( "." ) != null )
 						playlistVar = string( int( float( playlistVar ) ) )
 
-					if ( playlistVar != gamemodeVar && playlistVar == setting.defaultValue )
+					if ( !( setting.playlistVar in file.localOverrides ) && playlistVar != gamemodeVar && playlistVar == setting.defaultValue )
 						playlistVar = gamemodeVar
 
 					Hud_SetDialogListSelectionValue( button, playlistVar )
@@ -581,7 +581,24 @@ void function OnSettingButtonChanged( var button )
 	{
 		string val = Hud_GetDialogListSelectionValue( button )
 
-		string currentVal = string( GetCurrentPlaylistVarOrUseValue( setting.playlistVar, setting.defaultValue ) )
+		string currentVal
+		if ( setting.playlistVar in file.localOverrides )
+			currentVal = file.localOverrides[ setting.playlistVar ]
+		else
+			currentVal = string( GetCurrentPlaylistVarOrUseValue( setting.playlistVar, setting.defaultValue ) )
+
+		string gamemodeVar = GetGamemodeVarOrUseValue( PrivateMatch_GetSelectedMode(), setting.playlistVar, setting.defaultValue )
+
+		if ( !( setting.playlistVar in file.localOverrides ) )
+		{
+			if ( gamemodeVar.find( "." ) != null )
+				gamemodeVar = string( int( float( gamemodeVar ) ) )
+			if ( currentVal.find( "." ) != null )
+				currentVal = string( int( float( currentVal ) ) )
+
+			if ( currentVal != gamemodeVar && currentVal == setting.defaultValue )
+				currentVal = gamemodeVar
+		}
 
 		string normVal = val
 		string normCurrentVal = currentVal
