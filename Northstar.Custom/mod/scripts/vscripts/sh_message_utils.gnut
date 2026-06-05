@@ -13,6 +13,16 @@
 	global function NSEditStatusMessageOnPlayer
 	global function NSDeleteStatusMessageOnPlayer
 
+	global const int ANNOUNCEMENT_STYLE_BIG = 0
+	global const int ANNOUNCEMENT_STYLE_QUICK = 1
+	global const int ANNOUNCEMENT_STYLE_PLAYER_LEVEL = 2
+	global const int ANNOUNCEMENT_STYLE_WEAPON_LEVEL = 3
+	global const int ANNOUNCEMENT_STYLE_TITAN_LEVEL = 4
+	global const int ANNOUNCEMENT_STYLE_SWEEP = 5
+	global const int ANNOUNCEMENT_STYLE_RESULTS = 6
+	global const int ANNOUNCEMENT_STYLE_FD_WAVE_INTRO = 7
+	global const int ANNOUNCEMENT_STYLE_FD_ITEM = 8
+
 	struct
 	{
 		table<entity, int> playerPollResponses
@@ -46,6 +56,8 @@
 			float duration
 			bool pollActive
 			array<var> ruis
+			bool keysInit = false
+			array<int> keys = [ KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9 ]
 		} poll
 
 		string id
@@ -287,6 +299,7 @@ enum eDataType
 		{
 			case eMessageType.POLL:
 				thread ShowPollMessage_Threaded()
+				InitDefaultKeyBinds()
 				break
 
 			case eMessageType.LARGE:
@@ -431,6 +444,25 @@ enum eDataType
 
 		client.poll.ruis.clear()
 		client.poll.pollActive = false
+	}
+
+	void function InitDefaultKeyBinds()
+	{
+		if ( client.poll.keysInit )
+			return
+
+		foreach ( int index, int key in client.poll.keys )
+		{
+			RegisterButtonPressedCallback(
+				key,
+				void function( var button ) : ( index )
+				{
+					if ( client.poll.pollActive )
+						GetLocalClientPlayer().ClientCommand( "vote " + ( index + 1 ) )
+				}
+			)
+		}
+		client.poll.keysInit = true
 	}
 
 	void function InfoMessageHandler_Threaded()
