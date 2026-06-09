@@ -932,6 +932,14 @@ void function AddCallback_OnPlayerInventoryChanged( void functionref( entity ) c
 #if MP
 	void function CodeCallback_OnWeaponAttack( entity player, entity weapon, string weaponName, int shotsFired )
 	{
+		if ( !IsValid( weapon ) )
+		{
+			printt(
+				"CodeCallback_OnWeaponAttack called with invalid weapon entity, returning early to avoid crashes. Weapon name: " + weaponName + ", player: " +
+					player.GetPlayerName()
+			)
+			return
+		}
 		foreach ( callbackFunc in file.weaponAttackCallbacks )
 		{
 			callbackFunc( player, weapon, weaponName, shotsFired )
