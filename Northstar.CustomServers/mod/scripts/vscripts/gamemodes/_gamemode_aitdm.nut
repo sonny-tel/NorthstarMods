@@ -509,6 +509,8 @@ int function GetSpawnPointIndex( array<entity> points, int team )
 // AI can also flee deeper into their zone suggesting someone spent way too much time on this
 void function SquadHandler( array<entity> guys )
 {
+	if ( guys.len() == 0 )
+		return
 	int team = guys[ 0 ].GetTeam()
 	// show the squad enemy radar
 	array<entity> players = GetPlayerArrayOfEnemies( team )
