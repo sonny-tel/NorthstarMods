@@ -940,9 +940,12 @@ void function AddCallback_OnPlayerInventoryChanged( void functionref( entity ) c
 			)
 			return
 		}
-		foreach ( callbackFunc in file.weaponAttackCallbacks )
+		if ( IsValid( player ) && IsValid( weapon ) )
 		{
-			callbackFunc( player, weapon, weaponName, shotsFired )
+			foreach ( callbackFunc in file.weaponAttackCallbacks )
+			{
+				callbackFunc( player, weapon, weaponName, shotsFired )
+			}
 		}
 	}
 
