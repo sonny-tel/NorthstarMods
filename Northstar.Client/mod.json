@@ -243,6 +243,10 @@
       }
     },
     {
+      "Path": "ui/_atlas_announcements.nut",
+      "RunOn": "UI"
+    },
+    {
       "Path": "client/cl_ns_compat.gnut",
       "RunOn": "(CLIENT && MP)",
       "ClientCallback": {

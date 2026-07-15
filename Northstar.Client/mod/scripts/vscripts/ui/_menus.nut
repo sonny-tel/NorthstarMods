@@ -816,6 +816,10 @@ void function UpdateMenusOnConnect( string levelname )
 			}
 
 			thread UpdateAnnouncementDialog()
+			if ( !NSIsVanilla() )
+			{
+				thread GetAtlasAnnouncement_Threaded()
+			}
 		}
 		else
 		{
