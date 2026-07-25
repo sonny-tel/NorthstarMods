@@ -156,7 +156,6 @@ void function OnShowMainMenuPanel()
 	EndSignal( uiGlobal.signalDummy, "EndShowMainMenuPanel" )
 
 	UpdateCustomMainMenuPromos()
-	NSSetModDownloadReady()
 	NSMarkClearPlaylistOverrides()
 
 	foreach ( button in file.menuButtons )
@@ -1098,5 +1097,5 @@ void function OpenModSettingsMenu( var button )
 
 void function OpenModWorkshopBrowser( var button )
 {
-	LaunchExternalWebBrowser( "https://modworkshop.net/g/titanfall-2", WEBBROWSER_FLAG_FORCEEXTERNAL )
+	AdvanceMenu( GetMenu( "ModWorkshopMenu" ) )
 }

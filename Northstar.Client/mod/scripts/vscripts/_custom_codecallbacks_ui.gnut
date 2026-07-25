@@ -5,6 +5,9 @@ global function NSUICodeCallback_ConnectionMessage
 global function NSUICodeCallback_DownloadingModsStarted
 global function NSUICodeCallback_DownloadingModsStopped
 global function NSUICodeCallback_ConfirmDownloadMods
+global function NSUICodeCallback_ChooseModDownloadSource
+global function NSUISetConnectionModalChoiceActive
+global function NSUIConnectionOwnsModDownloadDialog
 global function ConnectionDialog_Think
 global function ModDownloadDialog_Think
 
@@ -19,6 +22,7 @@ struct
 	bool downloading = false
 	int serverModCount = 0
 	string serverModDownloadName = ""
+	bool modalChoiceActive = false
 } file
 
 const int MB = 1024 * 1000
@@ -205,6 +209,55 @@ void function NSUICodeCallback_ConfirmDownloadMods( int modCount, string serverN
 	Signal( uiGlobal.signalDummy, "NSModsRequestConfirmation" )
 }
 
+void function NSUISetConnectionModalChoiceActive( bool active )
+{
+	file.modalChoiceActive = active
+}
+
+bool function NSUIConnectionOwnsModDownloadDialog()
+{
+	return file.active && file.downloading
+}
+
+void function NSUICodeCallback_ChooseModDownloadSource( string requestedName, string requestedVersion, string workshopName )
+{
+	NSUISetConnectionModalChoiceActive( true )
+	DialogData dialogData
+	dialogData.header = "#MOD_SOURCE_CHOICE_TITLE"
+	dialogData.message = Localize( "#MOD_SOURCE_CHOICE_MESSAGE", requestedName, requestedVersion, workshopName )
+	dialogData.forceChoice = true
+
+	AddDialogButton(
+		dialogData,
+		"#MOD_SOURCE_MODWORKSHOP",
+		void function()
+		{
+			NSUISetConnectionModalChoiceActive( false )
+			NSDecideModDownloadSource( 2 )
+		}
+	)
+	AddDialogButton(
+		dialogData,
+		"#MOD_SOURCE_THUNDERSTORE",
+		void function()
+		{
+			NSUISetConnectionModalChoiceActive( false )
+			NSDecideModDownloadSource( 1 )
+		}
+	)
+	AddDialogButton(
+		dialogData,
+		"#CANCEL",
+		void function()
+		{
+			NSUISetConnectionModalChoiceActive( false )
+			NSDecideModDownloadSource( 0 )
+		}
+	)
+
+	OpenDialog( dialogData )
+}
+
 void function OpenErrorDialog( string errorDetails )
 {
 	DialogData dialogData
@@ -302,8 +355,30 @@ void function ConnectionRunning_Think()
 	var header = Hud_GetChild( menu, "DialogHeader" )
 	var body = GetSingleElementByClassname( menu, "DialogMessageClass" )
 
+	bool restoreProgressDialog = false
 	for ( ; ; )
 	{
+		if ( file.modalChoiceActive )
+		{
+			restoreProgressDialog = true
+			WaitFrame()
+			continue
+		}
+		if ( restoreProgressDialog )
+		{
+			WaitFrame()
+			DialogData progressDialog
+			progressDialog.header = "#MATCHMAKING_TITLE_CONNECTING"
+			progressDialog.message = file.message
+			progressDialog.showSpinner = true
+			progressDialog.forceChoice = true
+			AddDialogButton( progressDialog, Localize( "#CANCEL" ), NSCancelConnection )
+			OpenDialog( progressDialog )
+			menu = GetMenu( "Dialog" )
+			header = Hud_GetChild( menu, "DialogHeader" )
+			body = GetSingleElementByClassname( menu, "DialogMessageClass" )
+			restoreProgressDialog = false
+		}
 		if ( file.active )
 		{
 			if ( file.downloading )

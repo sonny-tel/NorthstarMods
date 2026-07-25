@@ -1,0 +1,776 @@
+resource/ui/menus/modworkshop.menu
+{
+	menu
+	{
+		ControlName Frame
+		xpos 0
+		ypos 0
+		zpos 3
+		wide f0
+		tall f0
+		autoResize 0
+		visible 1
+		enabled 1
+		pinCorner 0
+		PaintBackgroundType 0
+		infocus_bgcolor_override "0 0 0 0"
+		outoffocus_bgcolor_override "0 0 0 0"
+
+		Vignette
+		{
+			ControlName ImagePanel
+			InheritProperties MenuVignette
+		}
+
+		Title
+		{
+			ControlName Label
+			InheritProperties MenuTitle
+			labelText "#MODS_MOD_WORKSHOP"
+		}
+
+		SearchLabel
+		{
+			ControlName RuiButton
+			InheritProperties RuiSmallButton
+			xpos 1178
+			ypos 792
+			wide 500
+			tall 36
+			labelText "#SEARCHBAR_LABEL"
+			textAlignment west
+		}
+
+		MwsSearch
+		{
+			ControlName TextEntry
+			xpos 1278
+			ypos 795
+			wide 380
+			tall 30
+			zpos 100
+			textHidden 0
+			editable 1
+			font Default_21
+			allowRightClickMenu 0
+			allowSpecialCharacters 1
+			unicode 1
+			navUp CardButton17
+			navRight MwsSort
+			navDown MwsSort
+		}
+
+		MwsSort
+		{
+			ControlName RuiButton
+			InheritProperties SwitchButton
+			xpos 1178
+			ypos 832
+			wide 500
+			tall 36
+			labelText "#MWS_SORT"
+			list
+			{
+				"#MWS_SORT_RECENTLY_UPDATED" "bumped_at"
+				"#MWS_SORT_PUBLISHED" "published_at"
+				"#MWS_SORT_DOWNLOADS" "downloads"
+				"#MWS_SORT_LIKES" "likes"
+				"#MWS_SORT_VIEWS" "views"
+				"#MWS_SORT_WEEKLY_SCORE" "weekly_score"
+				"#MWS_SORT_DAILY_SCORE" "daily_score"
+				"#MWS_SORT_BEST_MATCH" "best_match"
+				"#MWS_SORT_RANDOM" "random"
+			}
+			navUp MwsSearch
+			navLeft MwsSearch
+			navDown MwsFilter
+		}
+
+		MwsFilter
+		{
+			ControlName RuiButton
+			InheritProperties SwitchButton
+			xpos 1178
+			ypos 872
+			wide 500
+			tall 36
+			labelText "#SHOW"
+			list
+			{
+				"#MWS_FILTER_ALL_MODS" "0"
+				"#MWS_FILTER_INSTALLED" "1"
+				"#MWS_FILTER_UPDATES" "2"
+			}
+			navUp MwsSort
+			navLeft MwsSort
+			navDown CardButton5
+		}
+
+		Card0
+		{
+			ControlName CNestedPanel
+			classname MWSCard
+			scriptID 0
+			xpos 80
+			ypos 190
+			wide 176
+			tall 196
+			controlSettingsFile "resource/ui/menus/panels/modworkshop_card.res"
+		}
+		Card1
+		{
+			ControlName CNestedPanel
+			classname MWSCard
+			scriptID 1
+			xpos 258
+			ypos 190
+			wide 176
+			tall 196
+			controlSettingsFile "resource/ui/menus/panels/modworkshop_card.res"
+		}
+		Card2
+		{
+			ControlName CNestedPanel
+			classname MWSCard
+			scriptID 2
+			xpos 436
+			ypos 190
+			wide 176
+			tall 196
+			controlSettingsFile "resource/ui/menus/panels/modworkshop_card.res"
+		}
+		Card3
+		{
+			ControlName CNestedPanel
+			classname MWSCard
+			scriptID 3
+			xpos 614
+			ypos 190
+			wide 176
+			tall 196
+			controlSettingsFile "resource/ui/menus/panels/modworkshop_card.res"
+		}
+		Card4
+		{
+			ControlName CNestedPanel
+			classname MWSCard
+			scriptID 4
+			xpos 792
+			ypos 190
+			wide 176
+			tall 196
+			controlSettingsFile "resource/ui/menus/panels/modworkshop_card.res"
+		}
+		Card5
+		{
+			ControlName CNestedPanel
+			classname MWSCard
+			scriptID 5
+			xpos 970
+			ypos 190
+			wide 176
+			tall 196
+			controlSettingsFile "resource/ui/menus/panels/modworkshop_card.res"
+		}
+		Card6
+		{
+			ControlName CNestedPanel
+			classname MWSCard
+			scriptID 6
+			xpos 80
+			ypos 389
+			wide 176
+			tall 196
+			controlSettingsFile "resource/ui/menus/panels/modworkshop_card.res"
+		}
+		Card7
+		{
+			ControlName CNestedPanel
+			classname MWSCard
+			scriptID 7
+			xpos 258
+			ypos 389
+			wide 176
+			tall 196
+			controlSettingsFile "resource/ui/menus/panels/modworkshop_card.res"
+		}
+		Card8
+		{
+			ControlName CNestedPanel
+			classname MWSCard
+			scriptID 8
+			xpos 436
+			ypos 389
+			wide 176
+			tall 196
+			controlSettingsFile "resource/ui/menus/panels/modworkshop_card.res"
+		}
+		Card9
+		{
+			ControlName CNestedPanel
+			classname MWSCard
+			scriptID 9
+			xpos 614
+			ypos 389
+			wide 176
+			tall 196
+			controlSettingsFile "resource/ui/menus/panels/modworkshop_card.res"
+		}
+		Card10
+		{
+			ControlName CNestedPanel
+			classname MWSCard
+			scriptID 10
+			xpos 792
+			ypos 389
+			wide 176
+			tall 196
+			controlSettingsFile "resource/ui/menus/panels/modworkshop_card.res"
+		}
+		Card11
+		{
+			ControlName CNestedPanel
+			classname MWSCard
+			scriptID 11
+			xpos 970
+			ypos 389
+			wide 176
+			tall 196
+			controlSettingsFile "resource/ui/menus/panels/modworkshop_card.res"
+		}
+		Card12
+		{
+			ControlName CNestedPanel
+			classname MWSCard
+			scriptID 12
+			xpos 80
+			ypos 588
+			wide 176
+			tall 196
+			controlSettingsFile "resource/ui/menus/panels/modworkshop_card.res"
+		}
+		Card13
+		{
+			ControlName CNestedPanel
+			classname MWSCard
+			scriptID 13
+			xpos 258
+			ypos 588
+			wide 176
+			tall 196
+			controlSettingsFile "resource/ui/menus/panels/modworkshop_card.res"
+		}
+		Card14
+		{
+			ControlName CNestedPanel
+			classname MWSCard
+			scriptID 14
+			xpos 436
+			ypos 588
+			wide 176
+			tall 196
+			controlSettingsFile "resource/ui/menus/panels/modworkshop_card.res"
+		}
+
+		Card15
+		{
+			ControlName CNestedPanel
+			classname MWSCard
+			scriptID 15
+			xpos 614
+			ypos 588
+			wide 176
+			tall 196
+			controlSettingsFile "resource/ui/menus/panels/modworkshop_card.res"
+		}
+		Card16
+		{
+			ControlName CNestedPanel
+			classname MWSCard
+			scriptID 16
+			xpos 792
+			ypos 588
+			wide 176
+			tall 196
+			controlSettingsFile "resource/ui/menus/panels/modworkshop_card.res"
+		}
+		Card17
+		{
+			ControlName CNestedPanel
+			classname MWSCard
+			scriptID 17
+			xpos 970
+			ypos 588
+			wide 176
+			tall 196
+			controlSettingsFile "resource/ui/menus/panels/modworkshop_card.res"
+		}
+
+		CardButton0
+		{
+			ControlName RuiButton
+			InheritProperties RuiSmallButton
+			classname MWSCardButton
+			scriptID 0
+			xpos 80
+			ypos 190
+			wide 176
+			tall 196
+			labelText ""
+			zpos 20
+			navUp MwsSort
+			navRight CardButton1
+			navDown CardButton6
+		}
+		CardButton1
+		{
+			ControlName RuiButton
+			InheritProperties RuiSmallButton
+			classname MWSCardButton
+			scriptID 1
+			xpos 258
+			ypos 190
+			wide 176
+			tall 196
+			labelText ""
+			zpos 20
+			navUp MwsSort
+			navLeft CardButton0
+			navRight CardButton2
+			navDown CardButton7
+		}
+		CardButton2
+		{
+			ControlName RuiButton
+			InheritProperties RuiSmallButton
+			classname MWSCardButton
+			scriptID 2
+			xpos 436
+			ypos 190
+			wide 176
+			tall 196
+			labelText ""
+			zpos 20
+			navUp MwsSort
+			navLeft CardButton1
+			navRight CardButton3
+			navDown CardButton8
+		}
+		CardButton3
+		{
+			ControlName RuiButton
+			InheritProperties RuiSmallButton
+			classname MWSCardButton
+			scriptID 3
+			xpos 614
+			ypos 190
+			wide 176
+			tall 196
+			labelText ""
+			zpos 20
+			navUp MwsFilter
+			navLeft CardButton2
+			navRight CardButton4
+			navDown CardButton9
+		}
+		CardButton4
+		{
+			ControlName RuiButton
+			InheritProperties RuiSmallButton
+			classname MWSCardButton
+			scriptID 4
+			xpos 792
+			ypos 190
+			wide 176
+			tall 196
+			labelText ""
+			zpos 20
+			navUp MwsFilter
+			navLeft CardButton3
+			navRight CardButton5
+			navDown CardButton10
+		}
+		CardButton5
+		{
+			ControlName RuiButton
+			InheritProperties RuiSmallButton
+			classname MWSCardButton
+			scriptID 5
+			xpos 970
+			ypos 190
+			wide 176
+			tall 196
+			labelText ""
+			zpos 20
+			navUp MwsFilter
+			navLeft CardButton4
+			navRight DetailsPreviewFocus
+			navDown CardButton11
+		}
+		CardButton6
+		{
+			ControlName RuiButton
+			InheritProperties RuiSmallButton
+			classname MWSCardButton
+			scriptID 6
+			xpos 80
+			ypos 389
+			wide 176
+			tall 196
+			labelText ""
+			zpos 20
+			navUp CardButton0
+			navRight CardButton7
+			navDown CardButton12
+		}
+		CardButton7
+		{
+			ControlName RuiButton
+			InheritProperties RuiSmallButton
+			classname MWSCardButton
+			scriptID 7
+			xpos 258
+			ypos 389
+			wide 176
+			tall 196
+			labelText ""
+			zpos 20
+			navUp CardButton1
+			navLeft CardButton6
+			navRight CardButton8
+			navDown CardButton13
+		}
+		CardButton8
+		{
+			ControlName RuiButton
+			InheritProperties RuiSmallButton
+			classname MWSCardButton
+			scriptID 8
+			xpos 436
+			ypos 389
+			wide 176
+			tall 196
+			labelText ""
+			zpos 20
+			navUp CardButton2
+			navLeft CardButton7
+			navRight CardButton9
+			navDown CardButton14
+		}
+		CardButton9
+		{
+			ControlName RuiButton
+			InheritProperties RuiSmallButton
+			classname MWSCardButton
+			scriptID 9
+			xpos 614
+			ypos 389
+			wide 176
+			tall 196
+			labelText ""
+			zpos 20
+			navUp CardButton3
+			navLeft CardButton8
+			navRight CardButton10
+			navDown CardButton15
+		}
+		CardButton10
+		{
+			ControlName RuiButton
+			InheritProperties RuiSmallButton
+			classname MWSCardButton
+			scriptID 10
+			xpos 792
+			ypos 389
+			wide 176
+			tall 196
+			labelText ""
+			zpos 20
+			navUp CardButton4
+			navLeft CardButton9
+			navRight CardButton11
+			navDown CardButton16
+		}
+		CardButton11
+		{
+			ControlName RuiButton
+			InheritProperties RuiSmallButton
+			classname MWSCardButton
+			scriptID 11
+			xpos 970
+			ypos 389
+			wide 176
+			tall 196
+			labelText ""
+			zpos 20
+			navUp CardButton5
+			navLeft CardButton10
+			navRight DetailsPreviewFocus
+			navDown CardButton17
+		}
+		CardButton12
+		{
+			ControlName RuiButton
+			InheritProperties RuiSmallButton
+			classname MWSCardButton
+			scriptID 12
+			xpos 80
+			ypos 588
+			wide 176
+			tall 196
+			labelText ""
+			zpos 20
+			navUp CardButton6
+			navRight CardButton13
+			navDown MwsSort
+		}
+		CardButton13
+		{
+			ControlName RuiButton
+			InheritProperties RuiSmallButton
+			classname MWSCardButton
+			scriptID 13
+			xpos 258
+			ypos 588
+			wide 176
+			tall 196
+			labelText ""
+			zpos 20
+			navUp CardButton7
+			navLeft CardButton12
+			navRight CardButton14
+			navDown MwsSort
+		}
+		CardButton14
+		{
+			ControlName RuiButton
+			InheritProperties RuiSmallButton
+			classname MWSCardButton
+			scriptID 14
+			xpos 436
+			ypos 588
+			wide 176
+			tall 196
+			labelText ""
+			zpos 20
+			navUp CardButton8
+			navLeft CardButton13
+			navRight CardButton15
+			navDown MwsSort
+		}
+		CardButton15
+		{
+			ControlName RuiButton
+			InheritProperties RuiSmallButton
+			classname MWSCardButton
+			scriptID 15
+			xpos 614
+			ypos 588
+			wide 176
+			tall 196
+			labelText ""
+			zpos 20
+			navUp CardButton9
+			navLeft CardButton14
+			navRight CardButton16
+			navDown MwsFilter
+		}
+		CardButton16
+		{
+			ControlName RuiButton
+			InheritProperties RuiSmallButton
+			classname MWSCardButton
+			scriptID 16
+			xpos 792
+			ypos 588
+			wide 176
+			tall 196
+			labelText ""
+			zpos 20
+			navUp CardButton10
+			navLeft CardButton15
+			navRight CardButton17
+			navDown MwsFilter
+		}
+		CardButton17
+		{
+			ControlName RuiButton
+			InheritProperties RuiSmallButton
+			classname MWSCardButton
+			scriptID 17
+			xpos 970
+			ypos 588
+			wide 176
+			tall 196
+			labelText ""
+			zpos 20
+			navUp CardButton11
+			navLeft CardButton16
+			navRight DetailsPreviewFocus
+			navDown MwsFilter
+		}
+
+
+		GridMessage
+		{
+			ControlName Label
+			xpos 80
+			ypos 510
+			wide 1067
+			tall 80
+			labelText "#MWS_LOADING"
+			font Default_28
+			textAlignment center
+			fgcolor_override "210 220 230 255"
+			visible 0
+			zpos 30
+		}
+
+		DetailsBackground
+		{
+			ControlName RuiPanel
+			classname MWSPreviewPane
+			xpos 1178
+			ypos 190
+			wide 500
+			tall 590
+			rui "ui/knowledgebase_panel.rpak"
+			visible 0
+			zpos 0
+		}
+
+		DetailsPreviewFocus
+		{
+			ControlName RuiButton
+			classname MWSPreviewPane
+			xpos 1178
+			ypos 190
+			wide 500
+			tall 590
+			labelText ""
+			visible 0
+			zpos 10
+			navLeft CardButton11
+			navDown MwsSearch
+		}
+
+		PageLabel
+		{
+			ControlName Label
+			xpos 202
+			ypos 811
+			wide 822
+			tall 26
+			labelText "#MWS_SCROLL_TO_BROWSE"
+			font Default_18
+			textAlignment center
+			fgcolor_override "176 185 194 255"
+			zpos 2
+		}
+
+		DetailsImage
+		{
+			ControlName RuiPanel
+			classname MWSPreviewPane
+			xpos 1218
+			ypos 238
+			wide 420
+			tall 260
+			visible 0
+			scaleImage 1
+			rui "ui/basic_image.rpak"
+			zpos 2
+		}
+		DetailsName
+		{
+			ControlName Label
+			classname MWSPreviewPane
+			xpos 1198
+			ypos 506
+			wide 460
+			tall 30
+			visible 0
+			labelText "#MWS_SELECT_MOD"
+			font Default_21
+			fgcolor_override "255 255 255 255"
+			zpos 2
+		}
+		DetailsAuthor
+		{
+			ControlName Label
+			classname MWSPreviewPane
+			xpos 1198
+			ypos 536
+			wide 460
+			tall 20
+			visible 0
+			labelText ""
+			font Default_16
+			fgcolor_override "176 185 194 255"
+			zpos 2
+		}
+		DetailsDescription
+		{
+			ControlName Label
+			classname MWSPreviewPane
+			xpos 1198
+			ypos 560
+			wide 460
+			tall 116
+			visible 0
+			labelText ""
+			font Default_16
+			wrap 1
+			fgcolor_override "225 230 235 255"
+			zpos 2
+		}
+		DetailsStatus
+		{
+			ControlName Label
+			classname MWSPreviewPane
+			xpos 1198
+			ypos 680
+			wide 460
+			tall 20
+			visible 0
+			labelText ""
+			font Default_16
+			fgcolor_override "137 180 202 255"
+			zpos 2
+		}
+		ProgressLabel
+		{
+			ControlName Label
+			classname MWSPreviewPane
+			xpos 1198
+			ypos 704
+			wide 460
+			tall 20
+			visible 0
+			labelText ""
+			font Default_16
+			fgcolor_override "190 198 205 255"
+			zpos 2
+		}
+		RemoveAction
+		{
+			ControlName RuiButton
+			InheritProperties RuiSmallButton
+			xpos 1510
+			ypos 730
+			wide 148
+			tall 40
+			labelText "#MWS_ACTION_REMOVE"
+			visible 0
+			navLeft DetailsPreviewFocus
+			zpos 11
+		}
+
+
+		FooterButtons
+		{
+			ControlName CNestedPanel
+			InheritProperties FooterButtons
+		}
+	}
+}

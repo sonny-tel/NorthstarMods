@@ -1,76 +1,139 @@
-resource/ui/menus/panels/modlist_setting.res
+resource/ui/menus/panels/modlist_settings.res
 {
-	BtnMod
+
+
+	ModIcon
 	{
-		ControlName 			RuiButton
-		InheritProperties 		RuiSmallButton
-		classname 				ModButton
-		labelText				"please show up"
-		
-		pin_to_sibling			ControlBox
-		pin_corner_to_sibling 	LEFT
-		pin_to_sibling_corner 	RIGHT
+		ControlName RuiPanel
+		xpos 0
+		ypos 6
+		wide 176
+		tall 98
+		visible 0
+		scaleImage 1
+		zpos 2
+		rui "ui/basic_image.rpak"
 	}
 
-	Header
+	MetadataBackground
 	{
-		ControlName	Label
-		InheritProperties		SubheaderText		
-		labelText			"labelText"
+		ControlName RuiPanel
+		xpos 0
+		ypos 104
+		wide 176
+		tall 72
+		visible 1
+		zpos 3
+		rui "ui/knowledgebase_panel.rpak"
 	}
 
-	ControlBox
+	ModName
 	{
-		ControlName				RuiPanel
-		classname 				ControlBox
-
-		tall					30
-		wide					5
-		ypos					5
-		rui 					"ui/basic_image.rpak"
-
-		pin_corner_to_sibling	LEFT
-		pin_to_sibling_corner	LEFT
+		ControlName Label
+		xpos 7
+		ypos 107
+		wide 162
+		tall 18
+		labelText ""
+		font Default_16
+		wrap 0
+		fgcolor_override "255 255 255 255"
+		zpos 5
 	}
 
-	BottomLine
+	ModVersion
 	{
-		ControlName 			ImagePanel
-		InheritProperties		MenuTopBar
-		ypos					0
-		wide 					%50
-
-		pin_to_sibling			BtnMod
-		pin_corner_to_sibling 	TOP_LEFT
-		pin_to_sibling_corner 	BOTTOM_LEFT
+		ControlName Label
+		xpos 7
+		ypos 125
+		wide 162
+		tall 18
+		labelText ""
+		font Default_16
+		fgcolor_override "154 164 174 220"
+		zpos 5
 	}
 
-	WarningImage
+	ModStatus
 	{
-		ControlName	RuiPanel
+		ControlName Label
+		xpos 7
+		ypos 143
+		wide 162
+		tall 18
+		labelText ""
+		font Default_16
+		fgcolor_override "176 185 194 255"
+		zpos 5
+	}
 
-		rui		ui/basic_image.rpak
-		wide	30
-		tall	30
-        xpos 5
-		visible	0
-
-		pin_to_sibling			BtnMod
-		pin_corner_to_sibling	LEFT
-		pin_to_sibling_corner	RIGHT
+	StateBar
+	{
+		ControlName RuiPanel
+		xpos 0
+		ypos 0
+		wide 176
+		tall 6
+		visible 1
+		scaleImage 1
+		zpos 30
+		rui "ui/basic_image.rpak"
 	}
 
 	EnabledImage
 	{
-		ControlName	RuiPanel
+		ControlName RuiPanel
+		xpos 8
+		ypos 12
+		wide 22
+		tall 22
+		visible 0
+		scaleImage 1
+		zpos 9
+		rui "ui/basic_image.rpak"
+	}
 
-		rui		ui/basic_image.rpak
-		wide	30
-		tall	30
-		visible	0
+	WarningImage
+	{
+		ControlName RuiPanel
+		xpos 146
+		ypos 12
+		wide 22
+		tall 22
+		visible 0
+		scaleImage 1
+		zpos 9
+		rui "ui/basic_image.rpak"
+	}
 
-		pin_to_sibling			BtnMod
-		pin_corner_to_sibling	RIGHT
-		pin_to_sibling_corner	LEFT
+	UpdateBadge
+	{
+		ControlName Label
+		xpos 48
+		ypos 12
+		wide 80
+		tall 22
+		labelText "#MWS_ACTION_UPDATE"
+		font Default_16
+		allcaps 1
+		textAlignment center
+		fgcolor_override "255 255 255 255"
+		bgcolor_override "137 180 202 230"
+		paintbackground 1
+		visible 0
+		zpos 10
+	}
+
+	BtnMod
+	{
+		ControlName RuiButton
+		InheritProperties RuiSmallButton
+		classname ModButton
+		xpos 0
+		ypos 0
+		wide 176
+		tall 176
+		labelText ""
+		zpos 40
 	}
 }

@@ -1,0 +1,189 @@
+resource/ui/menus/moddetails.menu
+{
+	menu
+	{
+		ControlName Frame
+		xpos 0
+		ypos 0
+		zpos 3
+		wide f0
+		tall f0
+		autoResize 0
+		visible 1
+		enabled 1
+		pinCorner 0
+		PaintBackgroundType 0
+		infocus_bgcolor_override "0 0 0 0"
+		outoffocus_bgcolor_override "0 0 0 0"
+
+		Overlay
+		{
+			ControlName Label
+			xpos 0
+			ypos 0
+			wide %100
+			tall %100
+			labelText ""
+			bgcolor_override "0 0 0 235"
+			paintbackground 1
+			zpos 0
+		}
+
+		Vignette
+		{
+			ControlName ImagePanel
+			InheritProperties MenuVignette
+			zpos 1
+		}
+
+		Title
+		{
+			ControlName Label
+			InheritProperties MenuTitle
+			labelText "#MODS_DETAILS_TITLE"
+			zpos 3
+		}
+
+		DetailsBackground
+		{
+			ControlName RuiPanel
+			xpos 70
+			ypos 145
+			wide 1608
+			tall 650
+			rui "ui/knowledgebase_panel.rpak"
+			zpos 2
+		}
+
+		DetailsName
+		{
+			ControlName Label
+			xpos 100
+			ypos 168
+			wide 1548
+			tall 42
+			labelText ""
+			font Default_36
+			fgcolor_override "255 255 255 255"
+			zpos 3
+		}
+
+		DetailsMeta
+		{
+			ControlName Label
+			xpos 100
+			ypos 214
+			wide 1548
+			tall 52
+			labelText ""
+			font Default_18
+			wrap 1
+			fgcolor_override "154 175 194 255"
+			zpos 3
+		}
+
+		DescriptionHeader
+		{
+			ControlName Label
+			xpos 100
+			ypos 278
+			wide 1548
+			tall 26
+			labelText "#MODS_DETAILS_DESCRIPTION"
+			font Default_21
+			fgcolor_override "218 226 234 255"
+			zpos 3
+		}
+
+		DetailsDescription
+		{
+			ControlName Label
+			xpos 100
+			ypos 308
+			wide 1548
+			tall 142
+			labelText ""
+			font Default_18
+			wrap 1
+			fgcolor_override "225 230 235 255"
+			zpos 3
+		}
+
+		AssetsHeader
+		{
+			ControlName Label
+			xpos 100
+			ypos 468
+			wide 730
+			tall 30
+			labelText "#MODS_DETAILS_ASSETS"
+			font Default_24
+			fgcolor_override "218 226 234 255"
+			zpos 3
+		}
+
+		DetailsAssets
+		{
+			ControlName Label
+			xpos 100
+			ypos 494
+			wide 730
+			tall 250
+			labelText ""
+			font Default_16
+			wrap 1
+			textAlignment north-west
+			fgcolor_override "210 220 230 255"
+			zpos 3
+		}
+
+		ConVarsHeader
+		{
+			ControlName Label
+			xpos 880
+			ypos 468
+			wide 730
+			tall 30
+			labelText "#MODS_DETAILS_CONVARS"
+			font Default_24
+			fgcolor_override "218 226 234 255"
+			zpos 3
+		}
+
+		DetailsConVars
+		{
+			ControlName Label
+			xpos 880
+			ypos 494
+			wide 730
+			tall 250
+			labelText ""
+			font Default_16
+			wrap 1
+			textAlignment north-west
+			fgcolor_override "210 220 230 255"
+			zpos 3
+		}
+
+		DetailsScrollStatus
+		{
+			ControlName Label
+			xpos 100
+			ypos 752
+			wide 1510
+			tall 24
+			labelText ""
+			font Default_16
+			textAlignment center
+			fgcolor_override "137 180 202 255"
+			zpos 3
+		}
+
+
+		FooterButtons
+		{
+			ControlName CNestedPanel
+			InheritProperties FooterButtons
+		}
+	}
+}

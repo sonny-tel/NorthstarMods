@@ -252,6 +252,13 @@
       "ClientCallback": {
         "After": "NSClientSaveCompatMode"
       }
+    },
+    {
+      "Path": "ui/menu_ns_modworkshop.nut",
+      "RunOn": "UI",
+      "UICallback": {
+        "Before": "AddNorthstarModWorkshopMenu"
+      }
     }
   ],
   "Localisation": [
