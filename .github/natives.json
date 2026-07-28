@@ -412,6 +412,12 @@
       "returnTypeString": "void",
       "argTypes": "int"
     },
+	{
+      "name": "NSMWSInitializeThumbnailAtlas",
+      "helpText": "",
+      "returnTypeString": "bool",
+      "argTypes": ""
+    },
     {
       "name": "NSSetModDownloadReady",
       "helpText": "",
