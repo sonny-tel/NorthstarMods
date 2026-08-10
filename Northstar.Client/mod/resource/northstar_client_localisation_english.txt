@@ -500,7 +500,6 @@ Press Yes if you agree to this. This choice can be changed in the mods menu at a
 		"MWS_SCROLL_UNAVAILABLE"							"SCROLL UNAVAILABLE"
 		"MWS_NOT_READY"										"MODWORKSHOP IS NOT READY"
 		"MWS_NO_MODS_FOUND"									"NO MODS FOUND"
-		"MWS_NO_MATCHING_MANAGED_MODS"						"NO MATCHING MANAGED MODS"
 		"MWS_PAGE_RANGE"									"%s1 - %s2 of %s3  ·  %[|MOUSE3]% Scroll%s4"
 		"MWS_CACHED_SUFFIX"									"  ·  cached"
 		"MWS_BY_AUTHOR"										"by %s1"

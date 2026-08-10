@@ -47,6 +47,7 @@ struct
 	bool previewVisible = false
 	int inventoryGeneration = 0
 	bool forcePageRefresh = false
+	bool focusCardsOnNextRender = false
 	array<string> detailsLines
 	int detailsScrollOffset = 0
 	bool operationDialogRunning = false
@@ -87,7 +88,6 @@ void function InitModWorkshopMenu()
 	RuiSetString( Hud_GetRui( Hud_GetChild( file.menu, "MwsSort" ) ), "buttonText", "" )
 	RuiSetString( Hud_GetRui( Hud_GetChild( file.menu, "MwsFilter" ) ), "buttonText", "" )
 	AddCallback_InputEvent( InputEventType.IE_AnalogValueChanged, OnAnalogueScroll )
-	AddButtonEventHandler( Hud_GetChild( file.menu, "RemoveAction" ), UIE_CLICK, OnRemoveAction )
 
 	AddMenuEventHandler( file.menu, eUIEvent.MENU_OPEN, OnModWorkshopOpened )
 	AddMenuEventHandler( file.menu, eUIEvent.MENU_CLOSE, OnModWorkshopClosed )
@@ -102,6 +102,7 @@ void function InitModWorkshopMenu()
 void function OnModWorkshopOpened()
 {
 	file.isOpen = true
+	file.focusCardsOnNextRender = true
 	SetPreviewVisible( false )
 	UI_SetPresentationType( ePresentationType.NO_MODELS )
 	NSMWSInitializeThumbnailAtlas()
@@ -115,6 +116,7 @@ void function OnModWorkshopOpened()
 void function OnModWorkshopClosed()
 {
 	file.isOpen = false
+	file.focusCardsOnNextRender = false
 	Signal( uiGlobal.signalDummy, "MWS_SearchChanged" )
 	NSMWSCancelPage()
 	NSMWSCancelDetails()
@@ -137,6 +139,7 @@ void function OnRefresh( var button )
 {
 	if ( file.loading )
 		return
+	file.focusCardsOnNextRender = ModWorkshop_IsCardFocused()
 	file.loading = true
 	ShowGridMessage( "#MWS_LOADING" )
 	Hud_SetText( Hud_GetChild( file.menu, "PageLabel" ), "#MWS_LOADING_SHORT" )
@@ -148,6 +151,7 @@ void function OnRefresh( var button )
 void function OnSearchChanged( var button )
 {
 	string value = Hud_GetUTF8Text( button )
+	file.focusCardsOnNextRender = false
 	Signal( uiGlobal.signalDummy, "MWS_SearchChanged" )
 	thread ApplySearchAfterDelay( value )
 }
@@ -158,6 +162,7 @@ void function ApplySearchAfterDelay( string value )
 	wait MWS_SEARCH_DELAY
 	if ( !file.isOpen )
 		return
+	file.focusCardsOnNextRender = false
 	file.search = value
 	ResetScroll()
 	RequestCurrentPage( false )
@@ -165,6 +170,7 @@ void function ApplySearchAfterDelay( string value )
 
 void function OnSortChanged( var button )
 {
+	file.focusCardsOnNextRender = false
 	file.sort = Hud_GetDialogListSelectionValue( button )
 	ResetScroll()
 	RequestCurrentPage( false )
@@ -172,6 +178,7 @@ void function OnSortChanged( var button )
 
 void function OnFilterChanged( var button )
 {
+	file.focusCardsOnNextRender = false
 	file.filter = int( Hud_GetDialogListSelectionValue( button ) )
 	ResetScroll()
 	if ( file.filter == 2 )
@@ -183,6 +190,17 @@ void function OnFilterChanged( var button )
 		return
 	}
 	RequestCurrentPage( false )
+}
+
+bool function ModWorkshop_IsCardFocused()
+{
+	var focused = GetFocus()
+	foreach ( var button in file.cardButtons )
+	{
+		if ( focused == button )
+			return true
+	}
+	return false
 }
 
 void function OnAnalogueScroll( int eventType, int nTick, int nData, int nData2, int nData3 )
@@ -209,7 +227,7 @@ void function OnScrollDown()
 	if ( nextOffset != file.scrollOffset )
 	{
 		file.scrollOffset = nextOffset
-		RenderVisibleEntries()
+		RenderVisibleEntries( true )
 		return
 	}
 	if ( file.page >= file.lastPage )
@@ -217,6 +235,7 @@ void function OnScrollDown()
 	file.page++
 	file.scrollOffset = 0
 	file.scrollToEnd = false
+	file.focusCardsOnNextRender = true
 	RequestCurrentPage( false )
 }
 
@@ -228,13 +247,14 @@ void function OnScrollUp()
 	if ( nextOffset != file.scrollOffset )
 	{
 		file.scrollOffset = nextOffset
-		RenderVisibleEntries()
+		RenderVisibleEntries( true )
 		return
 	}
 	if ( file.page <= 1 )
 		return
 	file.page--
 	file.scrollToEnd = true
+	file.focusCardsOnNextRender = true
 	RequestCurrentPage( false )
 }
 
@@ -304,16 +324,19 @@ void function RenderPage( MWSPageSnapshot snapshot )
 
 	if ( file.entries.len() == 0 )
 	{
-		ShowGridMessage( file.filter == 0 ? "#MWS_NO_MODS_FOUND" : "#MWS_NO_MATCHING_MANAGED_MODS" )
+		file.focusCardsOnNextRender = false
+		ShowGridMessage( "#MWS_NO_MODS_FOUND" )
 		Hud_SetText( Hud_GetChild( file.menu, "PageLabel" ), "#NO_RESULTS" )
 		ClearDetails()
 		return
 	}
 	HideGridMessage()
-	RenderVisibleEntries()
+	bool focusCards = file.focusCardsOnNextRender
+	file.focusCardsOnNextRender = false
+	RenderVisibleEntries( focusCards )
 }
 
-void function RenderVisibleEntries()
+void function RenderVisibleEntries( bool focusCards )
 {
 	HideAllCards()
 	int visibleCount = minint( MWS_VISIBLE_COUNT, file.entries.len() - file.scrollOffset )
@@ -348,7 +371,8 @@ void function RenderVisibleEntries()
 			}
 		}
 	}
-	Hud_SetFocused( file.cardButtons[ focusIndex ] )
+	if ( focusCards )
+		Hud_SetFocused( file.cardButtons[ focusIndex ] )
 	SelectCard( file.scrollOffset + focusIndex )
 	UpdateScrollLabel( visibleCount )
 }
@@ -425,7 +449,6 @@ void function SelectCard( int index )
 	SetDetailsDescription( entry.summary )
 	Hud_SetText( Hud_GetChild( file.menu, "DetailsStatus" ), GetDownloadCountText( entry.downloads ) )
 	Hud_SetText( Hud_GetChild( file.menu, "ProgressLabel" ), "" )
-	UpdateRemoveAction()
 	file.detailsGeneration = NSMWSRequestDetails( entry.id, false )
 }
 
@@ -477,24 +500,8 @@ void function NSUICodeCallback_ModWorkshopDetailsChanged( string modId )
 		Localize( "#MWS_DETAILS_STATS", string( details.downloads ), string( details.likes ), string( details.views ) )
 	)
 	Hud_SetText( Hud_GetChild( file.menu, "ProgressLabel" ), "" )
-	UpdateRemoveAction()
 }
 
-void function UpdateRemoveAction()
-{
-	var remove = Hud_GetChild( file.menu, "RemoveAction" )
-	if ( file.selectedIndex < 0 || file.selectedIndex >= file.entries.len() )
-	{
-		Hud_Hide( remove )
-		Hud_SetEnabled( remove, false )
-		return
-	}
-
-	MWSPageEntry entry = file.entries[ file.selectedIndex ]
-	bool busy = IsOperationBusy( NSMWSGetOperationState().state )
-	Hud_SetVisible( remove, file.previewVisible && entry.installed )
-	Hud_SetEnabled( remove, file.previewVisible && entry.installed && !busy )
-}
 
 void function OpenDownloadDialog()
 {
@@ -556,26 +563,7 @@ void function ConfirmPendingAction()
 	file.browseOperationGeneration = NSMWSGetOperationState().generation
 }
 
-void function OnRemoveAction( var button )
-{
-	if ( file.selectedIndex < 0 || file.selectedIndex >= file.entries.len() )
-		return
-	MWSPageEntry entry = file.entries[ file.selectedIndex ]
-	if ( !entry.installed || IsOperationBusy( NSMWSGetOperationState().state ) )
-		return
-	DialogData dialogData
-	dialogData.header = Localize( "#MWS_REMOVE_MOD" )
-	dialogData.message = Localize( "#MWS_CONFIRM_REMOVE", entry.name )
-	AddDialogButton( dialogData, "#MWS_ACTION_REMOVE", ConfirmRemove )
-	AddDialogButton( dialogData, "#CANCEL" )
-	OpenDialog( dialogData )
-}
 
-void function ConfirmRemove()
-{
-	if ( !NSMWSRemove( file.selectedId ) )
-		ShowOperationError( Localize( "#MWS_REMOVE_QUEUE_FAILED" ) )
-}
 
 
 void function ShowMigrationPrompt( MWSOperationSnapshot operation )
@@ -637,7 +625,6 @@ void function NSUICodeCallback_ModWorkshopOperationChanged()
 		return
 	if ( operation.id == file.selectedId )
 		Hud_SetText( Hud_GetChild( file.menu, "ProgressLabel" ), GetOperationProgressText( operation ) )
-	UpdateRemoveAction()
 
 	if ( IsOperationTerminal( operation.state ) && operation.generation != file.lastTerminalGeneration )
 	{
@@ -654,13 +641,17 @@ void function NSUICodeCallback_ModWorkshopUpdatesChanged( int generation, int up
 	{
 		MWSPageSnapshot snapshot = NSMWSGetPage()
 		if ( snapshot.state == eMWSLoadState.READY && snapshot.generation == file.requestGeneration )
+		{
+			file.focusCardsOnNextRender = file.focusCardsOnNextRender || ModWorkshop_IsCardFocused()
 			RenderPage( snapshot )
+		}
 		return
 	}
 	if ( stage == MWS_INVENTORY_LOCAL_REMOTE_PENDING && file.filter == 2 )
 		return
 	bool forceRefresh = file.forcePageRefresh
 	file.forcePageRefresh = false
+	file.focusCardsOnNextRender = file.focusCardsOnNextRender || ModWorkshop_IsCardFocused()
 	ResetScroll()
 	RequestCurrentPage( forceRefresh )
 }
@@ -768,16 +759,6 @@ void function SetPreviewVisible( bool visible )
 	foreach ( var element in file.previewElements )
 		Hud_SetVisible( element, visible )
 	Hud_SetEnabled( file.detailsPreviewFocus, visible )
-	if ( visible )
-	{
-		UpdateRemoveAction()
-	}
-	else
-	{
-		var remove = Hud_GetChild( file.menu, "RemoveAction" )
-		Hud_Hide( remove )
-		Hud_SetEnabled( remove, false )
-	}
 }
 
 void function ClearDetails()
@@ -790,7 +771,6 @@ void function ClearDetails()
 	SetDetailsDescription( "" )
 	Hud_SetText( Hud_GetChild( file.menu, "DetailsStatus" ), "" )
 	Hud_SetText( Hud_GetChild( file.menu, "ProgressLabel" ), "" )
-	UpdateRemoveAction()
 }
 
 string function GetDownloadCountText( int downloads )

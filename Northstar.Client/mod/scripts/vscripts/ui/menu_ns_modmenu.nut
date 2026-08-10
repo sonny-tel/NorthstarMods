@@ -328,7 +328,7 @@ void function OnModsFilterChanged( var unused )
 	file.selectedIndex = -1
 	file.selectedName = ""
 	file.selectedVersion = ""
-	ModsMenu_RefreshAndRender( true )
+	ModsMenu_RefreshAndRender( false )
 }
 
 void function OnModsFiltersClear( var button )

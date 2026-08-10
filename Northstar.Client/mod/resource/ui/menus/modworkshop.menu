@@ -752,19 +752,6 @@ resource/ui/menus/modworkshop.menu
 			fgcolor_override "190 198 205 255"
 			zpos 2
 		}
-		RemoveAction
-		{
-			ControlName RuiButton
-			InheritProperties RuiSmallButton
-			xpos 1510
-			ypos 730
-			wide 148
-			tall 40
-			labelText "#MWS_ACTION_REMOVE"
-			visible 0
-			navLeft DetailsPreviewFocus
-			zpos 11
-		}
 
 
 		FooterButtons
