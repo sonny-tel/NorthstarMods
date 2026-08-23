@@ -298,14 +298,15 @@ void function Evac( int evacTeam, float initialWait, float arrivalTime, float wa
 
 				foreach ( entity player in GetPlayerArrayOfTeam( evacTeam ) )
 					SetPlayerChallengeEvacState( player, 0 )
-			}
 
-			foreach ( entity player in dropship.s.evacSlots )
-			{
-				if ( !IsValid( player ) )
-					continue
-
-				player.ClearInvulnerable()
+				foreach ( entity player in dropship.s.evacSlots )
+				{
+					if ( IsValid( player ) && IsAlive( player ) )
+					{
+						player.ClearParent()
+						player.Die( null, null, { damageSourceId = eDamageSourceId.evac_dropship_explosion, scriptType = DF_GIB } )
+					}
+				}
 			}
 
 			// this is called whether dropship is destroyed or evac finishes, callback can handle this itself
@@ -384,7 +385,7 @@ void function Evac( int evacTeam, float initialWait, float arrivalTime, float wa
 	file.shouldholsterweapons[ dropship ] <- true
 	foreach ( entity player in dropship.s.evacSlots )
 		if ( IsValid( player ) )
-			player.HolsterWeapon()
+			HolsterViewModelAndDisableWeapons( player )
 
 	// fly away
 	dropship.Signal( "EvacShipLeaves" )
@@ -516,7 +517,7 @@ void function AddPlayerToEvacDropship( entity dropship, entity player )
 	player.ForceStand()
 
 	if ( dropship in file.shouldholsterweapons && file.shouldholsterweapons[ dropship ] ) // don't let people have their weapons in the dropship after it leaves
-		player.HolsterWeapon()
+		HolsterViewModelAndDisableWeapons( player )
 
 	FirstPersonSequenceStruct fp
 	// fp.firstPersonAnim = EVAC_EMBARK_ANIMS_1P[ slot ]
