@@ -636,16 +636,19 @@ void function TryAuthWithLocalServer()
 
 	OpenDialog( dialogData )
 
-	thread NSTryAuthWithLocalServer()
-
-	while ( NSIsAuthenticatingWithServer() )
+	if ( !GetConVarBool( "ns_auth_allow_insecure" ) )
 	{
-		if ( file.stopNSLocalAuth )
+		thread NSTryAuthWithLocalServer()
+
+		while ( NSIsAuthenticatingWithServer() )
 		{
-			file.stopNSLocalAuth = false
-			return
+			if ( file.stopNSLocalAuth )
+			{
+				file.stopNSLocalAuth = false
+				return
+			}
+			WaitFrame()
 		}
-		WaitFrame()
 	}
 
 	if ( NSWasAuthSuccessful() || GetConVarBool( "ns_auth_allow_insecure" ) )

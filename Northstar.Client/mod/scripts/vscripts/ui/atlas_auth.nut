@@ -10,7 +10,7 @@ void function AtlasAuthDialog_Threaded()
 	// wait at least 1 frame so that the main menu can be loaded first
 	WaitFrame()
 
-	while ( !NSIsMasterServerAuthenticated() || GetConVarBool( "ns_auth_allow_insecure" ) )
+	while ( !NSIsMasterServerAuthenticated() && !GetConVarBool( "ns_auth_allow_insecure" ) )
 		WaitFrame()
 
 	if ( GetConVarBool( "ns_auth_allow_insecure" ) )
