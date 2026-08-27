@@ -23,7 +23,7 @@ struct
 	table<string, int> enumRealValues
 
 	table<string, table<string, float> > sliderConfigs = {
-		scorelimit = { min = 5.0, max = 5000.0, step = 5.0 },
+		scorelimit = { min = 1.0, max = 5000.0, step = 5.0 },
 		roundscorelimit = { min = 0.0, max = 200.0, step = 1.0 },
 		timelimit = { min = 1.0, max = 500.0, step = 1.0 },
 		respawnprotection = { min = 0.0, max = 10.0, step = 0.5 },
