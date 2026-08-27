@@ -579,5 +579,7 @@ Press Yes if you agree to this. This choice can be changed in the mods menu at a
 		"MODS_BROWSE"						"Browse"
 		"MODS_MOD_WORKSHOP"					"Mod Workshop"
 		"MODS_MANAGE"						"Manage"
+		
+		"SCRIPT_ERROR_NOTIFICATION"			"Something is causing %s1 script errors"
 	}
 }
