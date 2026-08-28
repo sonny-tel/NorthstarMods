@@ -170,7 +170,7 @@ void function InitModMenu()
 		file.menu,
 		BUTTON_A,
 		"",
-		"%[|MOUSE1]% Details    %[|MOUSE2]% Disable",
+		"%[|MOUSE1]% Disable    %[|MOUSE2]% Details",
 		null,
 		ModsMenu_ShouldShowMouseFooter,
 		UpdateModsInputFooter
@@ -679,7 +679,8 @@ void function OnModButtonFocused( var button )
 
 void function OnModButtonPressed( var button )
 {
-	ModsMenu_RequestFullDetails( ModsMenu_GetButtonModIndex( button ) )
+	ModsMenu_SelectMod( ModsMenu_GetButtonModIndex( button ) )
+	ModsMenu_RequestToggleSelectedMod()
 }
 
 void function ModsMenu_RequestFullDetails( int index )
@@ -722,8 +723,7 @@ void function OnModsInputButtonPressed( int eventType, int nTick, int nData, int
 	int index = ModsMenu_GetFocusedModIndex()
 	if ( index < 0 || index >= file.visibleMods.len() )
 		return
-	ModsMenu_SelectMod( index )
-	ModsMenu_RequestToggleSelectedMod()
+	ModsMenu_RequestFullDetails( index )
 }
 
 
@@ -801,7 +801,7 @@ void function UpdateModsInputFooter( InputDef data )
 		if ( modIndex >= 0 && modIndex < file.visibleMods.len() )
 		{
 			bool enabled = file.visibleMods[ modIndex ].enabled
-			SetFooterText( file.menu, footerIndex, enabled ? "%[|MOUSE1]% Details    %[|MOUSE2]% Disable" : "%[|MOUSE1]% Details    %[|MOUSE2]% Enable" )
+			SetFooterText( file.menu, footerIndex, enabled ? "%[|MOUSE1]% Disable    %[|MOUSE2]% Details" : "%[|MOUSE1]% Enable    %[|MOUSE2]% Details" )
 		}
 		WaitFrame()
 	}
