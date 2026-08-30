@@ -55,6 +55,10 @@ struct
 	bool rightClickHeld = false
 	bool cardDialogPending = false
 	int cardDialogGeneration = 0
+	bool detailsDialogPending = false
+	int detailsDialogGeneration = 0
+	bool fullDetailsPending = false
+	int fullDetailsGeneration = 0
 } file
 
 const int MODS_CARD_COLUMNS = 6
@@ -222,6 +226,8 @@ void function OnModDetailsOpened()
 {
 	file.fullDetailsOpen = true
 	file.fullDetailsScrollOffset = 0
+	file.detailsDialogGeneration++
+	file.detailsDialogPending = false
 	ModsMenu_UpdateFullDetails()
 }
 
@@ -229,6 +235,8 @@ void function OnModDetailsClosed()
 {
 	file.fullDetailsOpen = false
 	file.fullDetailsModIndex = -1
+	file.detailsDialogGeneration++
+	file.detailsDialogPending = false
 	file.fullAssetLines.clear()
 	file.fullConVarLines.clear()
 }
@@ -245,6 +253,8 @@ void function OnModMenuOpened()
 	file.cardDialogGeneration++
 	file.rightClickHeld = false
 	file.cardDialogPending = false
+	file.fullDetailsGeneration++
+	file.fullDetailsPending = false
 	file.page = 0
 	file.selectedIndex = -1
 	file.selectedName = ""
@@ -271,6 +281,8 @@ void function OnModMenuClosed()
 	file.cardDialogGeneration++
 	file.rightClickHeld = false
 	file.cardDialogPending = false
+	file.fullDetailsGeneration++
+	file.fullDetailsPending = false
 	if ( !file.enabledStateDirty )
 		return
 
@@ -683,17 +695,54 @@ void function OnModButtonPressed( var button )
 	ModsMenu_RequestToggleSelectedMod()
 }
 
+void function ModsMenu_ClearFullDetailsPending( int generation )
+{
+	if ( generation == file.fullDetailsGeneration )
+		file.fullDetailsPending = false
+}
+
 void function ModsMenu_RequestFullDetails( int index )
 {
-	if ( !file.isOpen || uiGlobal.activeMenu != file.menu ||
+	if ( file.fullDetailsPending || !file.isOpen || uiGlobal.activeMenu != file.menu ||
 		index < 0 || index >= file.visibleMods.len() )
 	{
 		return
 	}
-	ModsMenu_SelectMod( index )
+
 	ModInfo mod = file.visibleMods[ index ]
-	file.fullDetailsModIndex = mod.index
+	file.fullDetailsPending = true
+	file.fullDetailsGeneration++
+	thread ModsMenu_OpenFullDetails( mod.index, mod.name, mod.version, file.fullDetailsGeneration )
+}
+
+void function ModsMenu_OpenFullDetails( int stableIndex, string modName, string modVersion, int generation )
+{
+	WaitFrame()
+	if ( generation != file.fullDetailsGeneration || !file.isOpen || uiGlobal.activeMenu != file.menu )
+	{
+		ModsMenu_ClearFullDetailsPending( generation )
+		return
+	}
+
+	int index = -1
+	foreach ( int visibleIndex, ModInfo mod in file.visibleMods )
+	{
+		if ( mod.index == stableIndex && mod.name == modName && mod.version == modVersion )
+		{
+			index = visibleIndex
+			break
+		}
+	}
+	if ( index < 0 )
+	{
+		ModsMenu_ClearFullDetailsPending( generation )
+		return
+	}
+
+	ModsMenu_SelectMod( index )
+	file.fullDetailsModIndex = stableIndex
 	AdvanceMenu( file.detailsMenu )
+	ModsMenu_ClearFullDetailsPending( generation )
 }
 
 void function ModsMenu_WaitForCardDialogClose( int generation )
@@ -1234,21 +1283,87 @@ void function OnModPageButtonPressed( var button )
 	LaunchExternalWebBrowser( link, WEBBROWSER_FLAG_FORCEEXTERNAL )
 }
 
-void function OnUpdateModButtonPressed( var button )
+void function ModsMenu_ClearDetailsDialogPending( int generation )
 {
+	if ( generation == file.detailsDialogGeneration )
+		file.detailsDialogPending = false
+}
+
+void function ModsMenu_WaitForDetailsDialogClose( int generation )
+{
+	while ( file.isOpen && file.fullDetailsOpen && generation == file.detailsDialogGeneration &&
+		uiGlobal.activeMenu == GetMenu( "Dialog" ) )
+	{
+		WaitFrame()
+	}
+	wait 0.1
+	ModsMenu_ClearDetailsDialogPending( generation )
+}
+
+void function ModsMenu_RequestDetailsAction( bool update )
+{
+	if ( file.detailsDialogPending || !ModsMenu_IsActionFooterActive() )
+		return
 	int modIndex = ModsMenu_GetSelectedSourceIndex()
 	if ( modIndex < 0 || modIndex >= file.mods.len() )
 		return
 	ModInfo mod = file.mods[ modIndex ]
-	if ( !ModsMenu_CanUpdateWorkshopMod( mod ) || ModsMenu_IsOperationBusy( NSMWSGetOperationState().state ) )
+	if ( ModsMenu_IsOperationBusy( NSMWSGetOperationState().state ) ||
+		( update ? !ModsMenu_CanUpdateWorkshopMod( mod ) : !mod.canDelete ) )
+	{
 		return
+	}
+
+	file.detailsDialogPending = true
+	file.detailsDialogGeneration++
+	thread ModsMenu_OpenDetailsActionDialog( mod.index, mod.name, mod.version, update, file.detailsDialogGeneration )
+}
+
+void function ModsMenu_OpenDetailsActionDialog( int stableIndex, string modName, string modVersion, bool update, int generation )
+{
+	WaitFrame()
+	if ( generation != file.detailsDialogGeneration || !ModsMenu_IsActionFooterActive() )
+	{
+		ModsMenu_ClearDetailsDialogPending( generation )
+		return
+	}
+
+	int modIndex = ModsMenu_GetSelectedSourceIndex()
+	if ( modIndex < 0 || modIndex >= file.mods.len() )
+	{
+		ModsMenu_ClearDetailsDialogPending( generation )
+		return
+	}
+	ModInfo mod = file.mods[ modIndex ]
+	if ( mod.index != stableIndex || mod.name != modName || mod.version != modVersion ||
+		ModsMenu_IsOperationBusy( NSMWSGetOperationState().state ) ||
+		( update ? !ModsMenu_CanUpdateWorkshopMod( mod ) : !mod.canDelete ) )
+	{
+		ModsMenu_ClearDetailsDialogPending( generation )
+		return
+	}
 
 	DialogData dialogData
-	dialogData.header = "#MWS_UPDATE_MOD"
-	dialogData.message = Localize( "#MODS_CONFIRM_UPDATE", mod.name )
-	AddDialogButton( dialogData, "#MWS_ACTION_UPDATE", ModsMenu_ConfirmWorkshopUpdate )
+	if ( update )
+	{
+		dialogData.header = "#MWS_UPDATE_MOD"
+		dialogData.message = Localize( "#MODS_CONFIRM_UPDATE", mod.name )
+		AddDialogButton( dialogData, "#MWS_ACTION_UPDATE", ModsMenu_ConfirmWorkshopUpdate )
+	}
+	else
+	{
+		dialogData.header = "#MODS_UNINSTALL_TITLE"
+		dialogData.message = mod.deleteModCount > 1 ? Localize( "#MODS_CONFIRM_UNINSTALL_PACKAGE", mod.name, string( mod.deleteModCount ) ) : Localize( "#MODS_CONFIRM_UNINSTALL", mod.name )
+		AddDialogButton( dialogData, "#MODS_UNINSTALL_MOD", ModsMenu_ConfirmDelete )
+	}
 	AddDialogButton( dialogData, "#CANCEL" )
 	OpenDialog( dialogData )
+	ModsMenu_WaitForDetailsDialogClose( generation )
+}
+
+void function OnUpdateModButtonPressed( var button )
+{
+	ModsMenu_RequestDetailsAction( true )
 }
 
 void function ModsMenu_ConfirmWorkshopUpdate()
@@ -1263,18 +1378,7 @@ void function ModsMenu_ConfirmWorkshopUpdate()
 
 void function OnDeleteModButtonPressed( var button )
 {
-	int modIndex = ModsMenu_GetSelectedSourceIndex()
-	if ( modIndex < 0 || modIndex >= file.mods.len() )
-		return
-	ModInfo mod = file.mods[ modIndex ]
-	if ( !mod.canDelete || ModsMenu_IsOperationBusy( NSMWSGetOperationState().state ) )
-		return
-	DialogData dialogData
-	dialogData.header = "#MODS_UNINSTALL_TITLE"
-	dialogData.message = mod.deleteModCount > 1 ? Localize( "#MODS_CONFIRM_UNINSTALL_PACKAGE", mod.name, string( mod.deleteModCount ) ) : Localize( "#MODS_CONFIRM_UNINSTALL", mod.name )
-	AddDialogButton( dialogData, "#MODS_UNINSTALL_MOD", ModsMenu_ConfirmDelete )
-	AddDialogButton( dialogData, "#CANCEL" )
-	OpenDialog( dialogData )
+	ModsMenu_RequestDetailsAction( false )
 }
 
 void function ModsMenu_ConfirmDelete()
@@ -1300,6 +1404,14 @@ void function ModsMenu_CloseFullDetailsAfterDelete()
 
 void function ModsMenu_ShowActionError( string message )
 {
+	thread ModsMenu_OpenActionError( message )
+}
+
+void function ModsMenu_OpenActionError( string message )
+{
+	WaitFrame()
+	if ( !file.isOpen || ( uiGlobal.activeMenu != file.detailsMenu && uiGlobal.activeMenu != file.menu ) )
+		return
 	DialogData dialogData
 	dialogData.header = "#MWS_ERROR_TITLE"
 	dialogData.message = message
