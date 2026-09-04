@@ -163,6 +163,9 @@ void function AddTeamScore( int team, int amount )
 	GameRules_SetTeamScore( team, GameRules_GetTeamScore( team ) + amount )
 	GameRules_SetTeamScore2( team, GameRules_GetTeamScore2( team ) + amount )
 
+	if ( !GetConVarBool( "mp_enablematchending" ) )
+		return
+
 	int scoreLimit
 	if ( IsRoundBased() )
 		scoreLimit = GameMode_GetRoundScoreLimit( GAMETYPE )
@@ -178,6 +181,9 @@ void function AddTeamScore( int team, int amount )
 
 void function SetWinner( int team, string winningReason = "", string losingReason = "" )
 {
+	if ( !GetConVarBool( "mp_enablematchending" ) )
+		return
+
 	SetServerVar( "winningTeam", team )
 
 	file.gameWonThisFrame = true
@@ -430,7 +436,7 @@ void function GameStateEnter_Playing_Threaded()
 			endTime = expect float( GetServerVar( "gameEndTime" ) )
 
 		// time's up!
-		if ( Time() >= endTime && file.timerBased )
+		if ( Time() >= endTime && file.timerBased && GetConVarBool( "mp_enabletimelimit" ) && GetConVarBool( "mp_enablematchending" ) )
 		{
 			int winningTeam
 			if ( file.timeoutWinnerDecisionFunc != null )
